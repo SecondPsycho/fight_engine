@@ -11,6 +11,13 @@ using namespace std;
 
 //https://www.sfml-dev.org/documentation/2.5.1/
 
+class Vector2D {
+    public:
+        int x,y;
+        Vector2D(int px, int py) {
+            this->x = px; this->y = py;
+        }
+};
 
 class Rect {
     public:
@@ -28,22 +35,29 @@ class Rect {
 
 class KinematicBody2D {
     public:
-        KinematicBody2D() {
+        KinematicBody2D(int px, int py, int ph, int pw) {
+            this->x = px; this->y = py; this->h = ph; this->w = pw;
+            this->hbx = 0; this->hby = 0;
+        };
+        void move(Vector2D v) {
+            this->x += v.x;
+            this->y += v.y;
+            this->hitbox.x = this->x + this->hbx;
+            this->hitbox.y = this->y + this->hby;
+        }
+        int pos() {
+            return this->hitbox.y;
         }
     private:
-        int x, y, hx, hy;
+        int x, y, h, w, hbx, hby;
         Rect hitbox;
 };
 
 int main() {
-    /*
-    Rect rect0(2,2,4,4);
-    Rect rect1(1,5,2,2);
-    if (rect0.collides(rect1)) {
-        cout << "Collision.\n";
-    } else {
-        cout << "Miss.\n";
-    }
-    //*/
+    KinematicBody2D player1(0,0,4,2);
+    Vector2D g(0,1);
+    cout << player1.pos() << '\n';
+    player1.move(g);
+    cout << player1.pos() << '\n';
     return 0;
 }
