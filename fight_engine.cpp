@@ -13,8 +13,11 @@
 using namespace std;
 
 
-void create_window (string name, int h, int w) {
+sf::RenderWindow create_window (string name, int h, int w) {
+    //We may have to Malloc this.
     sf::RenderWindow window(sf::VideoMode(h, w), name);
+    window.setKeyRepeatEnabled(false);
+    return window;
 }
 
 
