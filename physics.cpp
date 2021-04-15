@@ -3,13 +3,18 @@
     Joey, Cordell, Matthew, and Owen
 */
 
-//#include <string>
-//#include <SFML/Audio.hpp>
-//#include <SFML/Graphics.hpp>
+#include <string>
+#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 #include <iostream>
 using namespace std;
 
 //https://www.sfml-dev.org/documentation/2.5.1/
+
+struct sprite_data {
+    sf::Texture imageSource;
+    sf::Sprite imageSprite;
+};
 
 class Vector2D {
     public:
@@ -51,6 +56,7 @@ class KinematicBody2D {
     private:
         int x, y, h, w, hbx, hby;
         Rect hitbox;
+        sprite_data sprite;
 };
 
 int main() {

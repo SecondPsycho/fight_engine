@@ -3,18 +3,48 @@
 
 int main(int argc, char* argv[]){
     create_window("Awesome Game", 800, 800);
+    
+    //Create a Sprite
+    sprite_data temp_sprite = draw_sprite("./images/monster_idle.png");
+    KinematicBody2D wolf;
+    wolf.setSprite(&temp_sprite);
+    //Vector2u size = temp_sprite.imageSource.getSize();
+      
     while (window.isOpen()) {
-        sf::Event event;
+        Event event;
         while(window.pollEvent(event)){
-            if(event.type == sf::Event::Closed){
-                window.close();
-            }
+          switch (event.type) {
+            case Event::Closed:
+              window.close();
+              break;
+            case Event::KeyPressed:
+              switch (event.key.code) {
+                case Keyboard::Escape:
+                  window.close();
+                  break;
+                case Keyboard::W:
+                  wolf.move(Vector2D(0,10));
+                  break;
+                case Keyboard::S:
+                  wolf.move(Vector2D(0,-10));
+                  break;
+                case Keyboard::A:
+                  wolf.move(Vector2D(10,0));
+                  break;
+                case Keyboard::D:
+                  wolf.move(Vector2D(-10,0));
+                  break;
+                default:
+                  break;
+              }
+            default:
+              break;
+          }
         }
-        sprite_data temp_sprite = draw_sprite("./images/monster_idle.png");
-        sf::Vector2u size = temp_sprite.imageSource.getSize();
-        temp_sprite.imageSprite.setOrigin(0, 0);
-        window.clear(sf::Color(42,42,42,255)); // Dark gray.
-        window.draw(temp_sprite.imageSprite);
+
+        //Draw the Screen
+        window.clear(Color(42,42,42,255)); // Dark gray.
+        window.draw(wolf.getSprite());
         window.display();
     }
     return 0;

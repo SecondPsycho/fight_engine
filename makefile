@@ -4,11 +4,11 @@ INCLUDE_SFML_EXTRAS = -lsfml-audio -lsfml-network
 
 
 test: test.cpp fight_engine.cpp
-	g++ -o game test.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall 
+	g++ -o game test.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
 	./game
 
 physics: physics.cpp
-	g++ -o physics physics.cpp -Wall -Werror
+	g++ -o physics physics.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
 	./physics
 
 clean:
