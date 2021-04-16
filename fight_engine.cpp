@@ -5,6 +5,8 @@
 
 #include <iostream>
 #include <string>
+#include <dirent.h>
+#include <sys/types.h>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -15,35 +17,65 @@ using namespace sf;
 using namespace std;
 
 
-//SPRITE HANDLING:
+
+
+
+
+//STRUCTS:
 struct sprite_data{
     Texture imageSource;
     Sprite imageSprite;
 };
 
-sprite_data draw_sprite(string sprite_path){
+struct animation_data{
+    sprite_data *animation_frames;
+    int MAX_SIZE = 0;
+    int counter = 0;
+    public:
+        void createAnimationData(int size){
+            MAX_SIZE = size;
+            animation_frames = new sprite_data[size];
+        }
+        void addAnimationData(sprite_data sprite){
+            if(counter>=MAX_SIZE){
+                cerr << "Too many frames loaded" << endl;
+                return;
+            }
+            animation_frames[counter] = sprite;
+        }
+};
+
+
+
+//FUNCTIONS
+//create a sprite
+sprite_data make_sprite(string sprite_path){
     sprite_data sprite;
-    //sf::Texture imageSource;
-    //sf::Sprite imageSprite;
     if(!sprite.imageSource.loadFromFile(sprite_path)){
-        cout << "hi I'm error" << endl;
+        cerr << "sprite creation error error" << endl;
         return sprite;
     }
     sprite.imageSprite.setTexture(sprite.imageSource);
     return sprite;
-
-    /*while(window.isOpen()){
-        sf::Event event;
-        while(window.pollEvent(event)){
-            //do nothing?
-        }
-
-        window.draw(imageSprite);
-        window.display();
-    }*/
-
 }
 
+// https://www.tutorialspoint.com/How-can-I-get-the-list-of-files-in-a-directory-using-C-Cplusplus
+//print out all entries in a directory
+void list_dir(const char *path) {
+    struct dirent *entry;
+    DIR *dir = opendir(path);
+
+    if (dir == NULL) {
+        return;                                                                         //WIP
+    }
+    while ((entry = readdir(dir)) != NULL) {
+        cout << entry->d_name << endl;
+    }
+    closedir(dir);
+}
+
+
+//CLASSES
 //PHYSICS
 class Vector2D {
     public:
@@ -71,7 +103,7 @@ class KinematicBody2D {
         }
         void setSprite(sprite_data* newsprite) {
             this->sprite = newsprite;
-            (this->sprite)->imageSprite.setOrigin(this->x-this->spx,this->y-this->spy);
+            (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
         }
         sprite_data getSpriteData() {
             return *(this->sprite);
@@ -83,15 +115,37 @@ class KinematicBody2D {
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
-            (this->sprite)->imageSprite.setOrigin(this->x-this->spx,this->y-this->spy);
-            //(this->hitbox)->x = this->x + this->hbx;
-            //(this->hitbox)->y = this->y + this->hby;
-        }
+            if (this->spset) { (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy); };
+            if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx); };
+        };
+        void tick() {
+            this->v.inc(this->a);
+            this->move(this->v);
+        };
+
+        void setAcceleration(Vector2D pa) {
+            this->a = pa;
+        };
+        void incAcceleration(Vector2D pa) {
+            this->a.inc(pa);
+        };
+
+        void setSpeed(Vector2D pv) {
+            this->v = pv;
+        };
+        void incSpeed(Vector2D pv) {
+            this->v.inc(pv);
+        };
+
+        int pos() {
+            return this->y;
+        };
 
     private:
         int x, y, h, w, hbx, hby, spx, spy;
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
-        //Rect* hitbox;
+        bool hbset; bool spset;
+        Hitbox* hitbox;
         sprite_data* sprite;
 };
