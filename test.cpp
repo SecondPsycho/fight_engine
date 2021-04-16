@@ -1,6 +1,36 @@
 #include "fight_engine.cpp"
 
 
+class NewGame {
+  public:
+    NewGame(KinematicBody2D player, int n) {
+      this->statics_count = 0;
+      this->statics_max = n;
+      this->statics = new KinematicBody2D[this->statics_max];
+      this->player = player;
+    }
+    void addStatic(KinematicBody2D newstatic) {
+      if (this->statics_count < this->statics_max) {
+        this->statics[this->statics_count] = newstatic;
+        this->statics_count++;
+      } else {
+        cout << "Cannot add another static.\n";
+      }
+    }
+    KinematicBody2D* getStatic(int n) {
+      if (n < this->statics_max && n >= 0) {
+        return &(this->statics[n]);
+      }
+      cout << "Invalid Static Index.\n";
+      return nullptr;
+    }
+  private:
+    KinematicBody2D player;
+    KinematicBody2D* statics;
+    int statics_count;
+    int statics_max;
+};
+
 int main(int argc, char* argv[]){
     create_window("Awesome Game", 800, 800);
     
@@ -8,6 +38,10 @@ int main(int argc, char* argv[]){
     wolf.setSprite((make_sprite("./images/monster_idle.png")));
     sprite_data* temp_sprite = wolf.getSpriteData();
 
+    NewGame Game(wolf, 1);
+    Game.addStatic(KinematicBody2D(0,600,800,200));
+    Game.getStatic(0)->initRectangle();
+    
     list_dir("./images");
     //Create a Sprite
     animation_data new_animation;
@@ -50,6 +84,7 @@ int main(int argc, char* argv[]){
 
         //Draw the Screen
         window.clear(Color(42,42,42,255)); // Dark gray.
+        window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
         window.draw(wolf.getSprite());
         window.display();
     }

@@ -110,7 +110,7 @@ class Hitbox {
 //An object that holds a Sprite and a Hitbox
 class KinematicBody2D {
     public:
-        KinematicBody2D(int px, int py, int ph, int pw) {
+        KinematicBody2D(int px, int py, int pw, int ph) {
             this->x = px; this->y = py; this->h = ph; this->w = pw;
             this->hbx = 0; this->hby = 0; //Allow the Hitbox's position to be different from the KB2D
             this->spx = 0; this->spy = 0; //Allow the Sprite's position to be different from the KB2D
@@ -122,29 +122,13 @@ class KinematicBody2D {
             this->spx = 0; this->spy = 0;
             this->hbset = false; this->spset = false;
         }
-        void setSprite(sprite_data* newsprite) {
-            this->spset = true;
-            this->sprite = newsprite;
-            (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
-        }
-        sprite_data* getSpriteData() {
-            return (this->sprite);
-        }
-        Sprite getSprite() {
-            return (this->sprite)->imageSprite;
-        }
 
-        void setHitbox(Hitbox* newhitbox) {
-            this->hbset = true;
-            this->hitbox = newhitbox;
-            (this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx);
-        };
-        
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
             if (this->spset) { (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy); };
             if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx); };
+            if (this->hbset) { this->rectangle.setPosition(this->x,this->y); };
         };
         void tick() {
             this->v.inc(this->a);
@@ -165,6 +149,36 @@ class KinematicBody2D {
             this->v.inc(pv);
         };
 
+        void setSprite(sprite_data* newsprite) {
+            this->spset = true;
+            this->sprite = newsprite;
+            (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
+        }
+        sprite_data* getSpriteData() {
+            return (this->sprite);
+        }
+        Sprite getSprite() {
+            return (this->sprite)->imageSprite;
+        }
+
+        void setHitbox(Hitbox* newhitbox) {
+            this->hbset = true;
+            this->hitbox = newhitbox;
+            (this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx);
+        };
+
+        void initRectangle() {
+            cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << '\n';
+            this->rectangle.setSize(Vector2f(this->w,this->h));
+            this->rectangle.setPosition(this->x,this->y);
+            this->rectangle.setFillColor(Color(0,0,0,255));
+            this->rcset = true;
+        };
+
+        RectangleShape getRectangle(){
+            return this->rectangle;
+        }
+
         int pos() { 
             //This function is a Diagnostic
             return this->y;
@@ -174,7 +188,8 @@ class KinematicBody2D {
         int x, y, h, w, hbx, hby, spx, spy;
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
-        bool hbset; bool spset;
+        bool hbset; bool spset; bool rcset;
         Hitbox* hitbox;
         sprite_data* sprite;
+        RectangleShape rectangle;
 };
