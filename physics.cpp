@@ -107,16 +107,17 @@ class KinematicBody2D {
             this->sprite = newsprite;
             (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
         };
-        void setHitbox(Hitbox* newhitbox) {
-            this->hbset = true;
-            this->hitbox = newhitbox;
-            (this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx);
-        };
         sprite_data getSpriteData() {
             return *(this->sprite);
         };
         Sprite getSprite() {
             return (this->sprite)->imageSprite;
+        };
+
+        void setHitbox(Hitbox* newhitbox) {
+            this->hbset = true;
+            this->hitbox = newhitbox;
+            (this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx);
         };
         
         void move(Vector2D v) {

@@ -17,10 +17,6 @@ using namespace sf;
 using namespace std;
 
 
-
-
-
-
 //STRUCTS:
 struct sprite_data{
     Texture imageSource;
@@ -36,12 +32,12 @@ struct animation_data{
             MAX_SIZE = size;
             animation_frames = new sprite_data[size];
         }
-        void addAnimationData(sprite_data sprite){
+        void addAnimationData(sprite_data* sprite){
             if(counter>=MAX_SIZE){
                 cerr << "Too many frames loaded" << endl;
                 return;
             }
-            animation_frames[counter] = sprite;
+            animation_frames[counter] = *sprite;
         }
 };
 
@@ -49,13 +45,13 @@ struct animation_data{
 
 //FUNCTIONS
 //create a sprite
-sprite_data make_sprite(string sprite_path){
-    sprite_data sprite;
-    if(!sprite.imageSource.loadFromFile(sprite_path)){
+sprite_data* make_sprite(string sprite_path){
+    sprite_data* sprite = new sprite_data;
+    if(!(*sprite).imageSource.loadFromFile(sprite_path)){
         cerr << "sprite creation error error" << endl;
         return sprite;
     }
-    sprite.imageSprite.setTexture(sprite.imageSource);
+    sprite->imageSprite.setTexture(sprite->imageSource);
     return sprite;
 }
 
@@ -86,7 +82,30 @@ class Vector2D {
         Vector2D(int px, int py) {
             this->x = px; this->y = py;
         }
+        void inc(Vector2D vector) {
+            this->x += vector.x;
+            this->y += vector.y;
+        }
 };
+
+class Hitbox {
+    public:
+        int x,y,h,w;
+        Hitbox(int px, int py, int ph, int pw) {
+            this->x = px; this->y = py; this->h = ph; this->w = pw;
+        };
+        Hitbox() {
+            this->x = 0; this->y = 0; this->h = 0; this->w = 0;
+        };
+        void setOrigin(int px, int py) {
+            this->x = px;
+            this->y = py;
+        }
+        bool collides(Hitbox rect) {
+            return (this->x < (rect.x + rect.w) && (this->x + this->w) > rect.x && this->y < (rect.y + rect.h) && (this->y + this->h) > rect.y);
+        }
+};
+
 
 //An object that holds a Sprite and a Hitbox
 class KinematicBody2D {
@@ -95,22 +114,31 @@ class KinematicBody2D {
             this->x = px; this->y = py; this->h = ph; this->w = pw;
             this->hbx = 0; this->hby = 0; //Allow the Hitbox's position to be different from the KB2D
             this->spx = 0; this->spy = 0; //Allow the Sprite's position to be different from the KB2D
+            this->hbset = false; this->spset = false;
         };
         KinematicBody2D() {
             this->x = 0; this->y = 0; this->h = 0; this->w = 0;
             this->hbx = 0; this->hby = 0;
             this->spx = 0; this->spy = 0;
+            this->hbset = false; this->spset = false;
         }
         void setSprite(sprite_data* newsprite) {
+            this->spset = true;
             this->sprite = newsprite;
             (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
         }
-        sprite_data getSpriteData() {
-            return *(this->sprite);
+        sprite_data* getSpriteData() {
+            return (this->sprite);
         }
         Sprite getSprite() {
             return (this->sprite)->imageSprite;
         }
+
+        void setHitbox(Hitbox* newhitbox) {
+            this->hbset = true;
+            this->hitbox = newhitbox;
+            (this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx);
+        };
         
         void move(Vector2D v) {
             this->x += v.x;
@@ -137,7 +165,8 @@ class KinematicBody2D {
             this->v.inc(pv);
         };
 
-        int pos() {
+        int pos() { 
+            //This function is a Diagnostic
             return this->y;
         };
 

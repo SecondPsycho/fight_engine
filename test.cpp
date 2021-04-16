@@ -4,14 +4,16 @@
 int main(int argc, char* argv[]){
     create_window("Awesome Game", 800, 800);
     
+    KinematicBody2D wolf;
+    wolf.setSprite((make_sprite("./images/monster_idle.png")));
+    sprite_data* temp_sprite = wolf.getSpriteData();
+
     list_dir("./images");
     //Create a Sprite
-    sprite_data temp_sprite = make_sprite("./images/monster_idle.png");
     animation_data new_animation;
     new_animation.createAnimationData(4);
     new_animation.addAnimationData(temp_sprite);
-    KinematicBody2D wolf;
-    wolf.setSprite(&temp_sprite);
+    
     //Vector2u size = temp_sprite.imageSource.getSize();
       
     while (window.isOpen()) {
