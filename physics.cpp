@@ -7,6 +7,7 @@
 #include <string>
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+#include <ctime>
 
 //https://www.sfml-dev.org/documentation/2.5.1/
 
@@ -21,17 +22,28 @@ struct sprite_data{
     Sprite imageSprite;
 };
 
-/*
 struct animation_data{
-    string animation_frames[];
+    sprite_data *animation_frames;
+    int MAX_SIZE = 0;
+    int counter = 0;
     public:
-        createAnimationData(int size){
-            animation_frames = new Array(size);
+        void createAnimationData(int size){
+            MAX_SIZE = size;
+            animation_frames = new sprite_data[size];
         }
-    
+        void addAnimationData(sprite_data sprite){
+            if(counter>=MAX_SIZE){
+                cerr << "Too many frames loaded" << endl;
+                return;
+            }
+            animation_frames[counter] = sprite;
+        }
 };
-//*/
 
+
+
+//FUNCTIONS
+//create a sprite
 sprite_data make_sprite(string sprite_path){
     sprite_data sprite;
     if(!sprite.imageSource.loadFromFile(sprite_path)){
@@ -40,18 +52,48 @@ sprite_data make_sprite(string sprite_path){
     }
     sprite.imageSprite.setTexture(sprite.imageSource);
     return sprite;
-
-    /*while(window.isOpen()){
-        sf::Event event;
-        while(window.pollEvent(event)){
-            //do nothing?
-        }
-
-        window.draw(imageSprite);
-        window.display();
-    }*/
-
 }
+
+// https://www.tutorialspoint.com/How-can-I-get-the-list-of-files-in-a-directory-using-C-Cplusplus
+//print out all entries in a directory
+/*
+void list_dir(const char *path) {
+    struct dirent *entry;
+    DIR *dir = opendir(path);
+
+    if (dir == NULL) {
+        return;                                                                         //WIP
+    }
+    while ((entry = readdir(dir)) != NULL) {
+        cout << entry->d_name << endl;
+    }
+    closedir(dir);
+}
+//*/
+
+//Game Time
+class Framerate {
+    public:
+        time_t start_up;
+        time_t start_time;
+        time_t current_time;
+        int fps;
+        Framerate(int pfps) {
+            this->fps = pfps;
+            this->start_up = time(NULL);
+            this->start_time = start_up*30;
+        };
+        void setFPS(int pfps) {
+            this->fps = pfps;
+        };
+        void stop() {
+            this->current_time = time(NULL)*30;
+            while ((this->current_time - this->start_time) < this->fps) {
+                this->current_time = time(NULL)*30;
+            }
+            cout << this->current_time - this->start_time << '\n';
+        }
+};
 
 //PHYSICS
 class Vector2D {
@@ -159,6 +201,15 @@ class KinematicBody2D {
 
 int main() {
     KinematicBody2D player1(0,0,4,2);
+    Framerate ticker(30);
+    ticker.stop();
+    ticker.stop();
+    ticker.stop();
+    ticker.stop();
+    ticker.stop();
+    ticker.stop();
+    //cout << ticker.start_time / ticker.start_up << '\n';
+    /*
     player1.setAcceleration(Vector2D(0,-1));
     player1.tick();
     cout << player1.pos() << '\n';
@@ -166,5 +217,6 @@ int main() {
     cout << player1.pos() << '\n';
     player1.tick();
     cout << player1.pos() << '\n';
+    //*/
     return 0;
 }

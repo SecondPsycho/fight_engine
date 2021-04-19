@@ -5,6 +5,9 @@
 
 #include <iostream>
 #include <string>
+#include <list>
+#include <string.h>
+#include <stdio.h>
 #include <dirent.h>
 #include <sys/types.h>
 #include <SFML/Audio.hpp>
@@ -22,6 +25,7 @@ using namespace std;
 
 
 //STRUCTS:
+
 struct sprite_data{
     Texture imageSource;
     Sprite imageSprite;
@@ -29,19 +33,26 @@ struct sprite_data{
 
 struct animation_data{
     sprite_data *animation_frames;
-    int MAX_SIZE = 0;
     int counter = 0;
+    list<sprite_data> animations;
     public:
-        void createAnimationData(int size){
-            MAX_SIZE = size;
-            animation_frames = new sprite_data[size];
+        // void createAnimationData(int size){
+        //     MAX_SIZE = size;
+        //     animation_frames = new sprite_data[size];
+        // }
+        // void addAnimationData(sprite_data sprite){
+        //     if(counter>=MAX_SIZE){
+        //         cerr << "ERROR: Too many frames loaded" << endl;
+        //         return;
+        //     }
+        //     animation_frames[counter] = sprite;
+        //     counter++;
+        // }
+        void createAnimationData(){
+            
         }
-        void addAnimationData(sprite_data sprite){
-            if(counter>=MAX_SIZE){
-                cerr << "Too many frames loaded" << endl;
-                return;
-            }
-            animation_frames[counter] = sprite;
+        void addAnimationData(list<sprite_data> animation_list){
+            
         }
 };
 
@@ -52,7 +63,7 @@ struct animation_data{
 sprite_data make_sprite(string sprite_path){
     sprite_data sprite;
     if(!sprite.imageSource.loadFromFile(sprite_path)){
-        cerr << "sprite creation error error" << endl;
+        cerr << "ERROR: Sprite creation failed" << endl;
         return sprite;
     }
     sprite.imageSprite.setTexture(sprite.imageSource);
@@ -65,17 +76,58 @@ void list_dir(const char *path) {
     struct dirent *entry;
     DIR *dir = opendir(path);
 
+    
     if (dir == NULL) {
         return;                                                                         //WIP
     }
     while ((entry = readdir(dir)) != NULL) {
-        cout << entry->d_name << endl;
+        if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0){
+            cout << entry->d_name << endl;
+        }
     }
     closedir(dir);
 }
 
 
 //CLASSES
+
+
+class TextBox {
+    public:
+        TextBox(Vector2D newPosition, string newFontPath, string newText="") {
+            this->position = newPosition;
+            this->text = newText;
+
+            if (!font.loadFromFile(newFontPath)) {
+                cerr << "Error: Invalid font path" << endl
+            }
+
+            self.setFont(font);
+            self.setString(text);
+        }
+
+        void setText (string newText) {
+            this->text = newText;
+            self.setString(text);
+        }
+        
+        void setPosition (Vector2D newPosition) {
+            this->position = newPosition;
+        }
+
+        void draw(Window theWindow) {
+            theWindow.draw(self);
+        }
+
+    private:
+        Vector2D position;
+        string text;
+        Font font;
+        Text self;
+}
+
+
+
 //PHYSICS
 class Vector2D {
     public:
@@ -116,26 +168,26 @@ class KinematicBody2D {
             this->x += v.x;
             this->y += v.y;
             if (this->spset) { (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy); };
-            if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx); };
+            // if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx); };
         };
-        void tick() {
-            this->v.inc(this->a);
-            this->move(this->v);
-        };
+        // void tick() {
+        //     this->v.inc(this->a);
+        //     this->move(this->v);
+        // };
 
         void setAcceleration(Vector2D pa) {
             this->a = pa;
         };
-        void incAcceleration(Vector2D pa) {
-            this->a.inc(pa);
-        };
+        // void incAcceleration(Vector2D pa) {
+        //     this->a.inc(pa);
+        // };
 
         void setSpeed(Vector2D pv) {
             this->v = pv;
         };
-        void incSpeed(Vector2D pv) {
-            this->v.inc(pv);
-        };
+        // void incSpeed(Vector2D pv) {
+        //     this->v.inc(pv);
+        // };
 
         int pos() {
             return this->y;
@@ -146,6 +198,12 @@ class KinematicBody2D {
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
         bool hbset; bool spset;
-        Hitbox* hitbox;
+        // Hitbox* hitbox;
         sprite_data* sprite;
 };
+
+//LINKED LIST IMPLEMENTATION
+
+
+// std::list<sprite_data> l;
+// l.push_front();
