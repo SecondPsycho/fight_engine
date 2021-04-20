@@ -28,22 +28,23 @@ struct sprite_data{
 };
 
 struct animation_data{
+    int MAX_SIZE; //I added this line to make the rest of the struct make sense. I don't know what MAX_SIZE is used for. -Cordell King
     sprite_data *animation_frames;
     int counter = 0;
     list<sprite_data> animations;
     public:
-        // void createAnimationData(int size){
-        //     MAX_SIZE = size;
-        //     animation_frames = new sprite_data[size];
-        // }
-        // void addAnimationData(sprite_data sprite){
-        //     if(counter>=MAX_SIZE){
-        //         cerr << "ERROR: Too many frames loaded" << endl;
-        //         return;
-        //     }
-        //     animation_frames[counter] = sprite;
-        //     counter++;
-        // }
+        void createAnimationData(int size){
+            this->MAX_SIZE = size;
+            animation_frames = new sprite_data[size];
+        }
+        void addAnimationData(sprite_data* sprite){
+            if(counter>=this->MAX_SIZE){
+                cerr << "ERROR: Too many frames loaded" << endl;
+                return;
+            }
+            animation_frames[counter] = *sprite;
+            counter++;
+        }
         void createAnimationData(){
             
         }
@@ -56,9 +57,9 @@ struct animation_data{
 
 //FUNCTIONS
 //create a sprite
-sprite_data make_sprite(string sprite_path){
-    sprite_data sprite;
-    if(!sprite.imageSource.loadFromFile(sprite_path)){
+sprite_data* make_sprite(string sprite_path){
+    sprite_data* sprite = new sprite_data;
+    if(!sprite->imageSource.loadFromFile(sprite_path)){
         cerr << "ERROR: Sprite creation failed" << endl;
         return sprite;
     }
@@ -87,44 +88,6 @@ void list_dir(const char *path) {
 
 //CLASSES
 
-
-class TextBox {
-    public:
-        TextBox(Vector2D newPosition, string newFontPath, string newText="") {
-            this->position = newPosition;
-            this->text = newText;
-
-            if (!font.loadFromFile(newFontPath)) {
-                cerr << "Error: Invalid font path" << endl
-            }
-
-            self.setFont(font);
-            self.setString(text);
-        }
-
-        void setText (string newText) {
-            this->text = newText;
-            self.setString(text);
-        }
-        
-        void setPosition (Vector2D newPosition) {
-            this->position = newPosition;
-        }
-
-        void draw(Window theWindow) {
-            theWindow.draw(self);
-        }
-
-    private:
-        Vector2D position;
-        string text;
-        Font font;
-        Text self;
-}
-
-
-
-//PHYSICS
 class Vector2D {
     public:
         int x,y;
@@ -140,6 +103,43 @@ class Vector2D {
         }
 };
 
+class TextBox {
+    public:
+        TextBox(Vector2D newPosition, string newFontPath, string newText="") {
+            this->position = newPosition;
+            this->text = newText;
+
+            if (!font.loadFromFile(newFontPath)) {
+                cerr << "Error: Invalid font path" << endl;
+            }
+
+            self.setFont(font);
+            self.setString(text);
+        }
+
+        void setText (string newText) {
+            this->text = newText;
+            self.setString(text);
+        }
+        
+        void setPosition (Vector2D newPosition) {
+            this->position = newPosition;
+        }
+
+        /*// I've tried to pass the 'window' as a parameter before. It's never worked. -Cordell King
+        void draw(Window theWindow) {
+            theWindow.draw(self);
+        }
+        //*/
+
+    private:
+        Vector2D position;
+        string text;
+        Font font;
+        Text self;
+};
+
+//PHYSICS
 class Hitbox {
     public:
         int x,y,h,w;
@@ -164,8 +164,8 @@ class KinematicBody2D {
     public:
         KinematicBody2D(int px, int py, int pw, int ph) {
             this->x = px; this->y = py; this->h = ph; this->w = pw;
-            this->hbx = 0; this->hby = 0; //Allow the Hitbox's position to be different from the KB2D
-            this->spx = 0; this->spy = 0; //Allow the Sprite's position to be different from the KB2D
+            this->hbx = 0; this->hby = 0; //Allow the Hitbox's position to be different from the KB2D -Cordell King
+            this->spx = 0; this->spy = 0; //Allow the Sprite's position to be different from the KB2D -Cordell King
             this->hbset = false; this->spset = false;
         };
         KinematicBody2D() {
@@ -179,9 +179,10 @@ class KinematicBody2D {
             this->x += v.x;
             this->y += v.y;
             if (this->spset) { (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy); };
-            // if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx); };
+            if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx); };
         };
         // void tick() {
+            //This function is designed to be called every frame to make the physics work. -Cordell King
         //     this->v.inc(this->a);
         //     this->move(this->v);
         // };
@@ -239,9 +240,10 @@ class KinematicBody2D {
         int x, y, h, w, hbx, hby, spx, spy;
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
-        bool hbset; bool spset;
-        // Hitbox* hitbox;
+        bool hbset; bool spset; bool rcset;
+        Hitbox* hitbox;
         sprite_data* sprite;
+        RectangleShape rectangle;
 };
 
 //LINKED LIST IMPLEMENTATION
