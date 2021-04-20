@@ -75,23 +75,23 @@ void list_dir(const char *path) {
 class Framerate {
     public:
         time_t start_up;
-        time_t start_time;
+        time_t last_time;
         time_t current_time;
         int fps;
         Framerate(int pfps) {
             this->fps = pfps;
             this->start_up = time(NULL);
-            this->start_time = start_up*30;
+            this->last_time = start_up*this->fps;
+            this->current_time = time(NULL)*this->fps;
         };
         void setFPS(int pfps) {
             this->fps = pfps;
         };
-        void stop() {
-            this->current_time = time(NULL)*30;
-            while ((this->current_time - this->start_time) < this->fps) {
-                this->current_time = time(NULL)*30;
+        void next_frame() {
+            while ((this->current_time - this->last_time) < 1) {
+                this->current_time = time(NULL)*this->fps;
             }
-            cout << this->current_time - this->start_time << '\n';
+            this->last_time = this->last_time + 1;
         }
 };
 
@@ -203,21 +203,16 @@ class KinematicBody2D {
 int main() {
     KinematicBody2D player1(0,0,4,2);
     Framerate ticker(30);
-    ticker.stop();
-    ticker.stop();
-    ticker.stop();
-    ticker.stop();
-    ticker.stop();
-    ticker.stop();
-    //cout << ticker.start_time / ticker.start_up << '\n';
-    /*
-    player1.setAcceleration(Vector2D(0,-1));
-    player1.tick();
-    cout << player1.pos() << '\n';
-    player1.tick();
-    cout << player1.pos() << '\n';
-    player1.tick();
-    cout << player1.pos() << '\n';
-    //*/
+    int t = 0;
+    int seconds = 0;
+    while (1 == 1) {
+        ticker.next_frame();
+        t += 1;
+        if (t >= 30) {
+            seconds += 1;
+            cout << seconds << '\n';
+            t -= 30;
+        }
+    }
     return 0;
 }
