@@ -48,45 +48,60 @@ int main(int argc, char* argv[]){
     new_animation.createAnimationData(4);
     new_animation.addAnimationData(temp_sprite);
     
-    //Vector2u size = temp_sprite.imageSource.getSize();
-      
-    while (window.isOpen()) {
-        Event event;
-        while(window.pollEvent(event)){
-          switch (event.type) {
-            case Event::Closed:
-              window.close();
-              break;
-            case Event::KeyPressed:
-              switch (event.key.code) {
-                case Keyboard::Escape:
-                  window.close();
-                  break;
-                case Keyboard::W:
-                  wolf.move(Vector2D(0,10));
-                  break;
-                case Keyboard::S:
-                  wolf.move(Vector2D(0,-10));
-                  break;
-                case Keyboard::A:
-                  wolf.move(Vector2D(10,0));
-                  break;
-                case Keyboard::D:
-                  wolf.move(Vector2D(-10,0));
-                  break;
-                default:
-                  break;
-              }
-            default:
-              break;
-          }
-        }
+    //Vector2u size = temp_sprite.imageSource.getSize(); //Does anybody actually want this line? -Cordell King
+    
+    Event event;
 
-        //Draw the Screen
-        window.clear(Color(42,42,42,255)); // Dark gray.
-        window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
-        window.draw(wolf.getSprite());
-        window.display();
+    /*
+    Framerate ticker(30);
+    int t = 0;
+    int seconds = 0;
+    //*/
+    while (window.isOpen()) {
+      /* Framerate Control -Cordell King
+      ticker.next_frame();
+      t += 1;
+      if (t >= 30) {
+        cout << seconds <<"\n";
+        t -= 30;
+        seconds += 1;
+      };
+      //*/
+      while(window.pollEvent(event)){
+        switch (event.type) {
+          case Event::Closed:
+            window.close();
+            break;
+          case Event::KeyPressed:
+            switch (event.key.code) {
+              case Keyboard::Escape:
+                window.close();
+                break;
+              case Keyboard::W:
+                wolf.move(Vector2D(0,10));
+                break;
+              case Keyboard::S:
+                wolf.move(Vector2D(0,-10));
+                break;
+              case Keyboard::A:
+                wolf.move(Vector2D(10,0));
+                break;
+              case Keyboard::D:
+                wolf.move(Vector2D(-10,0));
+                break;
+              default:
+                break;
+            }
+          default:
+            break;
+        }
+      }
+
+      //Draw the Screen
+      window.clear(Color(42,42,42,255)); // Dark gray.
+      window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
+      window.draw(wolf.getSprite());
+      window.display();
     }
     return 0;
 }

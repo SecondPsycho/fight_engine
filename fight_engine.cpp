@@ -88,6 +88,29 @@ void list_dir(const char *path) {
 
 //CLASSES
 
+//Framerate
+class Framerate {
+    private:
+        time_t last_time;
+        time_t current_time;
+        int fps;
+    public:
+        Framerate(int pfps) {
+            this->fps = pfps;
+            this->last_time = time(NULL)*this->fps;
+            this->current_time = time(NULL)*this->fps;
+        };
+        void setFPS(int pfps) {
+            this->fps = pfps;
+        };
+        void next_frame() {
+            while ((this->current_time - this->last_time) < 1) {
+                this->current_time = time(NULL)*this->fps;
+            }
+            this->last_time = this->last_time + 1;
+        }
+};
+
 class Vector2D {
     public:
         int x,y;
