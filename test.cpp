@@ -52,22 +52,19 @@ int main(int argc, char* argv[]){
     
     Event event;
 
-    /* Framerate Control -Cordell King
-    Framerate ticker(2);
+    // Framerate Control -Cordell King
+    Framerate ticker(30);
     int t = 0;
-    //int seconds = 0;
-    //*/
+    int seconds = 0;
     while (window.isOpen()) {
-      /* Framerate Control -Cordell King
+      // Framerate Control -Cordell King
       ticker.next_frame();
       t += 1;
-      cout << t;
-      if (t >= 2) {
-        cout << '\n' << seconds << ' ' << t << "\n";
-        t -= 2;
+      if (t >= 30) {
         seconds += 1;
+        cout << seconds << " seconds\n";
+        t -= 30;
       };
-      //*/
       
       while(window.pollEvent(event)){
         switch (event.type) {
