@@ -104,7 +104,7 @@ class Framerate {
             this->fps = pfps;
         };
         void next_frame() {
-            while ((this->current_time - this->last_time) < 1) {
+            while ((this->current_time - this->last_time) <= 1) {
                 this->current_time = time(NULL)*this->fps;
             }
             this->last_time = this->last_time + 1;

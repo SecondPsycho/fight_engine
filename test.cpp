@@ -52,21 +52,23 @@ int main(int argc, char* argv[]){
     
     Event event;
 
-    /*
-    Framerate ticker(30);
+    /* Framerate Control -Cordell King
+    Framerate ticker(2);
     int t = 0;
-    int seconds = 0;
+    //int seconds = 0;
     //*/
     while (window.isOpen()) {
       /* Framerate Control -Cordell King
       ticker.next_frame();
       t += 1;
-      if (t >= 30) {
-        cout << seconds <<"\n";
-        t -= 30;
+      cout << t;
+      if (t >= 2) {
+        cout << '\n' << seconds << ' ' << t << "\n";
+        t -= 2;
         seconds += 1;
       };
       //*/
+      
       while(window.pollEvent(event)){
         switch (event.type) {
           case Event::Closed:
@@ -107,7 +109,7 @@ int main(int argc, char* argv[]){
 }
 
 
-/*
+/* Does ANYBODY want this code? -Cordell King
 void main(int argc, char** argv[]){
   sf::RenderWindow window(sf::VideoMode(640,480),
     "Bouncing mushroom.");
