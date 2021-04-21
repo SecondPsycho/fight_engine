@@ -91,23 +91,23 @@ void list_dir(const char *path) {
 //Framerate
 class Framerate {
     private:
-        time_t last_time;
-        time_t current_time;
+        clock_t last_time;
+        clock_t current_time;
         int fps;
     public:
         Framerate(int pfps) {
             this->fps = pfps;
-            this->last_time = time(NULL)*this->fps;
-            this->current_time = time(NULL)*this->fps;
+            this->last_time = clock()*this->fps;
+            this->current_time = clock()*this->fps;
         };
         void setFPS(int pfps) {
             this->fps = pfps;
         };
         void next_frame() {
-            while ((this->current_time - this->last_time) < 1) {
-                this->current_time = time(NULL)*this->fps;
+            while ((this->current_time - this->last_time) <= CLOCKS_PER_SEC) {
+                this->current_time = clock()*this->fps;
             }
-            this->last_time = this->last_time + 1;
+            this->last_time = this->last_time + CLOCKS_PER_SEC;
         }
 };
 
@@ -177,6 +177,7 @@ class Hitbox {
             this->y = py;
         }
         bool collides(Hitbox rect) {
+            cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
             return (this->x < (rect.x + rect.w) && (this->x + this->w) > rect.x && this->y < (rect.y + rect.h) && (this->y + this->h) > rect.y);
         }
 };
@@ -196,50 +197,69 @@ class KinematicBody2D {
             this->hbx = 0; this->hby = 0;
             this->spx = 0; this->spy = 0;
             this->hbset = false; this->spset = false;
-        }
+        };
 
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
             if (this->spset) { (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy); };
-            if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx); };
+            if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->hby); };
         };
-        // void tick() {
+        void tick() {
             //This function is designed to be called every frame to make the physics work. -Cordell King
-        //     this->v.inc(this->a);
-        //     this->move(this->v);
-        // };
+            this->v.inc(this->a);
+            this->move(this->v);
+        };
 
+        /*
         void setAcceleration(Vector2D pa) {
             this->a = pa;
         };
-        // void incAcceleration(Vector2D pa) {
-        //     this->a.inc(pa);
-        // };
+        void incAcceleration(Vector2D pa) {
+            this->a.inc(pa);
+        };
 
         void setSpeed(Vector2D pv) {
             this->v = pv;
         };
-        // void incSpeed(Vector2D pv) {
-        //     this->v.inc(pv);
-        // };
+        void setSpeedY(int pvy) {
+            this->v.y = pvy;
+        }
+        void setSpeedX(int pvx) {
+            this->v.x = pvx;
+        }
+        void incSpeed(Vector2D pv) {
+            this->v.inc(pv);
+        };
+        //*/
 
         void setSprite(sprite_data* newsprite) {
             this->spset = true;
             this->sprite = newsprite;
             (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
-        }
+        };
         sprite_data* getSpriteData() {
             return (this->sprite);
-        }
+        };
         Sprite getSprite() {
             return (this->sprite)->imageSprite;
-        }
-
+        };
+        
+        void initHitbox() {
+            this->hitbox = new Hitbox(this->x, this->y, this->w, this->h);
+            this->hbset = true;
+        };
         void setHitbox(Hitbox* newhitbox) {
             this->hbset = true;
             this->hitbox = newhitbox;
             (this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx);
+        };
+        Hitbox* getHitbox() {
+            return this->hitbox;
+        };
+
+        bool collides(KinematicBody2D *hostile) {
+            return this->hitbox->collides(*(hostile->getHitbox()));
         };
 
         void initRectangle() {
@@ -252,36 +272,25 @@ class KinematicBody2D {
 
         RectangleShape getRectangle(){
             return this->rectangle;
-        }
+        };
 
         int pos() { 
             //This function is a Diagnostic
             return this->y;
         };
 
-    private:
-        int x, y, h, w, hbx, hby, spx, spy;
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
+    private:
+        int x, y, w, h, hbx, hby, spx, spy;
         bool hbset; bool spset; bool rcset;
         Hitbox* hitbox;
         sprite_data* sprite;
         RectangleShape rectangle;
 };
 
-int main() {
-    KinematicBody2D player1(0,0,4,2);
-    Framerate ticker(30);
-    int t = 0;
-    int seconds = 0;
-    while (1 == 1) {
-        ticker.next_frame();
-        t += 1;
-        if (t >= 30) {
-            seconds += 1;
-            cout << seconds << '\n';
-            t -= 30;
-        }
-    }
-    return 0;
-}
+//LINKED LIST IMPLEMENTATION
+
+
+// std::list<sprite_data> l;
+// l.push_front();
