@@ -7,8 +7,8 @@ test: test.cpp fight_engine.cpp
 	g++ -o game test.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
 	./game
 
-physics: physics.cpp
-	g++ -o physics physics.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
+physics: physics.cpp ptest.cpp
+	g++ -o physics ptest.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
 	./physics
 
 clean:
