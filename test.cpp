@@ -42,7 +42,7 @@ int main(int argc, char* argv[]){
     animation_data walk;
 
     //Create a Sprite
-    KinematicBody2D wolf(100,100,64,64);
+    KinematicBody2D wolf(100,300,64,64);
     wolf.setSprite((make_sprite("./images/walk/monster_walk1.png")));
     wolf.initHitbox();
     //wolf.a.y = 1;
@@ -51,18 +51,24 @@ int main(int argc, char* argv[]){
     wolf.setSprite((make_sprite("./images/walk/monster_walk2.png")));
     walk.addAnimationData(wolf.getSpriteData());
 
-    NewGame Game(wolf, 1);
+    NewGame Game(wolf, 2);
     Game.addStatic(KinematicBody2D(0,600,800,200));
     Game.getStatic(0)->initRectangle();
     Game.getStatic(0)->initHitbox();
+
+    Game.addStatic(KinematicBody2D(200,200,200,200));
+    Game.getStatic(1)->initRectangle();
+    Game.getStatic(1)->initHitbox();
     
     list_dir("./images");
     cout << "walk.getSize() = " << walk.getSize() << endl;
 
-    
+    SFX my_music("The_Last_Encounter_Original_Version (online-audio-converter.com).wav");
+    my_music.play();
         
     Event event;
     int keys[5] = {0,0,0,0,0};
+    int *collide;
 
     // Framerate Control -Cordell King
     Framerate ticker(30);
@@ -135,14 +141,17 @@ int main(int argc, char* argv[]){
       wolf.setSprite(walk.frameTick());
       wolf.tick();
       /* Working on Collision
-      if (wolf.collides(Game.getStatic(0))) {
+      if (wolf.collidesDir(Game.getStatic(0))) {
         cout << "Hit!\n";
       }
       //*/
+      collide = wolf.collidesDir(Game.getStatic(1));
+      //cout << collide[0] << ' ' << collide[1] << ' ' << collide[2] << endl;
 
       //Draw the Screen
       window.clear(Color(42,42,42,255)); // Dark gray.
       window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
+      window.draw(Game.getStatic(1)->getRectangle());
       window.draw(wolf.getSprite());
       window.display();
     }

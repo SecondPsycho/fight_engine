@@ -127,6 +127,50 @@ class Framerate {
         }
 };
 
+//Sound
+class SFX {                                                     // The biggest mistake you can make is assuming any of this is gonna actually work -owen
+    public:
+        SFX(string soundEffectPath) {
+            if (!this->buffer.loadFromFile(soundEffectPath)) {
+                cerr << "ERROR: Invalid file path" << endl;
+            }
+            this->soundEffect.setBuffer(this->buffer);
+        } 
+
+        void play() {
+            this->soundEffect.play();
+        }
+
+        void pause() {
+            this->soundEffect.pause();
+        }
+
+        void setPlayingOffset(float sec) {
+            Time t = sf::seconds(sec);
+            this->soundEffect.setPlayingOffset(t);
+        }
+
+        void stop() {
+            this->soundEffect.stop();
+        }
+
+        void setPitch(float pitch) {
+            this->soundEffect.setPitch(pitch); // 1 = normal pitch, 1.2 = higher pitch, 0.8 = lower pitch, etc
+        }
+
+        void setVolume(float vol) {
+            this->soundEffect.setVolume(vol); //0 = mute, 100 = full volume
+        }
+
+        void setLoop(bool isLooping) {
+            this->soundEffect.setLoop(isLooping);
+        }
+
+    private:
+        SoundBuffer buffer;
+        Sound soundEffect;
+};
+
 class Vector2D {
     public:
         int x,y;
@@ -178,52 +222,6 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
         Text self;
 };
 
-
-class SFX {                                                     // The biggest mistake you can make is assuming any of this is gonna actually work -owen
-    public:
-        SFX(string soundEffectPath) {
-            if (!this->buffer.loadFromFile(soundEffectPath)) {
-                cerr << "ERROR: Invalid file path" << endl;
-            }
-            this->soundEffect.setBuffer(this->buffer);
-        } 
-
-        void play() {
-            this->soundEffect.play();
-        }
-
-        void pause() {
-            this->soundEffect.pause();
-        }
-
-        void setPlayingOffset(float sec) {
-            Time t = sf::seconds(sec);
-            this->soundEffect.setPlayingOffset(t);
-        }
-
-        void stop() {
-            this->soundEffect.stop();
-        }
-
-        void setPitch(float pitch) {
-            this->soundEffect.setPitch(pitch); // 1 = normal pitch, 1.2 = higher pitch, 0.8 = lower pitch, etc
-        }
-
-        void setVolume(float vol) {
-            this->soundEffect.setVolume(vol); //0 = mute, 100 = full volume
-        }
-
-        void setLoop(bool isLooping) {
-            this->soundEffect.setLoop(isLooping);
-        }
-
-    private:
-        SoundBuffer buffer;
-        Sound soundEffect;
-};
-
-
-
 //PHYSICS
 class Hitbox {
     public:
@@ -239,9 +237,33 @@ class Hitbox {
             this->y = py;
         }
         bool collides(Hitbox rect) {
-            cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
+            //cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
             return (this->x < (rect.x + rect.w) && (this->x + this->w) > rect.x && this->y < (rect.y + rect.h) && (this->y + this->h) > rect.y);
         }
+        //* Directional Collision
+        int* collidesDir(Hitbox rect) {
+            int* side = new int[3];
+            side[0] = 0;
+            side[1] = 0;
+            side[2] = 0;
+            if (this->collides(rect)) {
+                side[2] = 1;
+                if (this->y < rect.y){
+                    side[1] += 1;
+                }
+                if ((this->y + this->h) > (rect.y + rect.h)) {
+                    side[1] -= 1;
+                }
+                if (this->x < rect.x) {
+                    side[0] += 1;
+                }
+                if ((this->x + this->w) > (rect.x + rect.w)) {
+                    side[0] -= 1;
+                }
+            }
+            return side;
+        }
+        //*/
 };
 
 
@@ -323,6 +345,9 @@ class KinematicBody2D {
         bool collides(KinematicBody2D *hostile) {
             return this->hitbox->collides(*(hostile->getHitbox()));
         };
+        int* collidesDir(KinematicBody2D *hostile) {
+            return this->hitbox->collidesDir(*(hostile->getHitbox()));
+        }
 
         void initRectangle() {
             cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << '\n';
