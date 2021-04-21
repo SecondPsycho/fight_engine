@@ -31,15 +31,25 @@ class NewGame {
     int statics_max;
 };
 
+
+
+
 int main(int argc, char* argv[]){
     create_window("Awesome Game", 800, 800);
     window.setKeyRepeatEnabled(false);
     
+    //Create an Animation
+    animation_data new_animation;
+
+    //Create a Sprite
     KinematicBody2D wolf(0,0,64,64);
-    wolf.setSprite((make_sprite("./images/monster_idle.png")));
+    wolf.setSprite((make_sprite("./images/walk/monster_walk1.png")));
     wolf.initHitbox();
     wolf.a.y = -1;
     sprite_data* temp_sprite = wolf.getSpriteData();
+    new_animation.addAnimationData(temp_sprite);
+    wolf.setSprite((make_sprite("./images/walk/monster_walk2.png")));
+    new_animation.addAnimationData(wolf.getSpriteData());
 
     NewGame Game(wolf, 1);
     Game.addStatic(KinematicBody2D(0,600,800,200));
@@ -47,13 +57,10 @@ int main(int argc, char* argv[]){
     Game.getStatic(0)->initHitbox();
     
     list_dir("./images");
-    //Create a Sprite
-    animation_data new_animation;
-    new_animation.createAnimationData(4);
-    new_animation.addAnimationData(temp_sprite);
+    cout << "new_animation.size() = " << new_animation.size() << endl;
+
     
-    //Vector2u size = temp_sprite.imageSource.getSize(); //Does anybody actually want this line? -Cordell King
-    
+        
     Event event;
     int keys[5] = {0,0,0,0,0};
 
@@ -82,6 +89,9 @@ int main(int argc, char* argv[]){
                 wolf.move(Vector2D(0,-10));
                 break;
               //*/
+              case Keyboard::F:
+                wolf.setSprite((make_sprite("./images/walk/monster_walk1.png")));
+                break;
               case Keyboard::A:
                 keys[2] = 1;
                 break;

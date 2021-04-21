@@ -166,13 +166,13 @@ class TextBox {
 class Hitbox {
     public:
         int x,y,h,w;
-        Hitbox(int px, int py, int ph, int pw) {
+        Hitbox(int px, int py, int pw, int ph) {
             this->x = px; this->y = py; this->h = ph; this->w = pw;
         };
         Hitbox() {
             this->x = 0; this->y = 0; this->h = 0; this->w = 0;
         };
-        void setOrigin(int px, int py) {
+        void setPosition(int px, int py) {
             this->x = px;
             this->y = py;
         }
@@ -202,8 +202,9 @@ class KinematicBody2D {
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
-            if (this->spset) { (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy); };
-            if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->hby); };
+            //if (this->spset) { (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy); };
+            if (this->spset) { (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy); };
+            if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
         };
         void tick() {
             //This function is designed to be called every frame to make the physics work. -Cordell King
@@ -236,7 +237,8 @@ class KinematicBody2D {
         void setSprite(sprite_data* newsprite) {
             this->spset = true;
             this->sprite = newsprite;
-            (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
+            //(this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
+            (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy);
         };
         sprite_data* getSpriteData() {
             return (this->sprite);
@@ -252,7 +254,7 @@ class KinematicBody2D {
         void setHitbox(Hitbox* newhitbox) {
             this->hbset = true;
             this->hitbox = newhitbox;
-            (this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx);
+            (this->hitbox)->setPosition(this->x+this->hbx,this->y+this->spx);
         };
         Hitbox* getHitbox() {
             return this->hitbox;

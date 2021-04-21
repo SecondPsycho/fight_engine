@@ -28,29 +28,21 @@ struct sprite_data{
 };
 
 struct animation_data{
-    int MAX_SIZE; //I added this line to make the rest of the struct make sense. I don't know what MAX_SIZE is used for. -Cordell King
-    sprite_data *animation_frames;
-    int counter = 0;
-    list<sprite_data> animations;
-    public:
-        void createAnimationData(int size){
-            this->MAX_SIZE = size;
-            animation_frames = new sprite_data[size];
-        }
-        void addAnimationData(sprite_data* sprite){
-            if(counter>=this->MAX_SIZE){
-                cerr << "ERROR: Too many frames loaded" << endl;
-                return;
-            }
-            animation_frames[counter] = *sprite;
-            counter++;
-        }
-        void createAnimationData(){
-            
-        }
-        void addAnimationData(list<sprite_data> animation_list){
-            
-        }
+    list<sprite_data*> animations;
+    void createAnimationData(){
+        //do nothing?
+    }
+    void addAnimationData(sprite_data* frame){
+        this->animations.push_back(frame);
+    }
+    int size(){
+        return this->animations.size();
+    }
+    sprite_data* getFrame(int index){
+        // if(index < this->size()){
+        // }
+        return this->animations.front();
+    }
 };
 
 
@@ -126,7 +118,7 @@ class Vector2D {
         }
 };
 
-class TextBox {
+class TextBox { //"Man I hope no one expects this to work" -Owen
     public:
         TextBox(Vector2D newPosition, string newFontPath, string newText="") {
             this->position = newPosition;
@@ -283,7 +275,7 @@ class KinematicBody2D {
         Vector2D a; //Save an acceleration
     private:
         int x, y, w, h, hbx, hby, spx, spy;
-        bool hbset; bool spset; bool rcset;
+        bool hbset, spset, rcset;
         Hitbox* hitbox;
         sprite_data* sprite;
         RectangleShape rectangle;

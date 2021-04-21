@@ -1,4 +1,4 @@
-#include "fight_engine.cpp"
+#include "physics.cpp"
 
 
 class NewGame {
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]){
     KinematicBody2D wolf(0,0,64,64);
     wolf.setSprite((make_sprite("./images/monster_idle.png")));
     wolf.initHitbox();
-    wolf.a.y = -1;
+    wolf.a.y = 1;
     sprite_data* temp_sprite = wolf.getSpriteData();
 
     NewGame Game(wolf, 1);
@@ -91,13 +91,13 @@ int main(int argc, char* argv[]){
               case Keyboard::Space:
                 if (keys[4] == 0){
                   keys[4] = 1;
-                  wolf.v.y = 20;
+                  wolf.v.y = -20;
                 }
                 break;
               default:
                 break;
             }
-            wolf.v.x = 10*(keys[2]-keys[3]);
+            wolf.v.x = 10*(keys[3]-keys[2]);
             break;
           case Event::KeyReleased:
             switch (event.key.code) {
@@ -113,7 +113,7 @@ int main(int argc, char* argv[]){
               default:
                 break;
             }
-            wolf.v.x = 10*(keys[2]-keys[3]);
+            wolf.v.x = 10*(keys[3]-keys[2]);
             break;
           default:
             break;
@@ -122,7 +122,7 @@ int main(int argc, char* argv[]){
 
       //Apply physics
       wolf.tick();
-      /* Working on Collision
+      //* Working on Collision
       if (wolf.collides(Game.getStatic(0))) {
         cout << "Hit!\n";
       }
