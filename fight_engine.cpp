@@ -177,6 +177,7 @@ class Hitbox {
             this->y = py;
         }
         bool collides(Hitbox rect) {
+            cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
             return (this->x < (rect.x + rect.w) && (this->x + this->w) > rect.x && this->y < (rect.y + rect.h) && (this->y + this->h) > rect.y);
         }
 };
@@ -196,50 +197,69 @@ class KinematicBody2D {
             this->hbx = 0; this->hby = 0;
             this->spx = 0; this->spy = 0;
             this->hbset = false; this->spset = false;
-        }
+        };
 
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
             if (this->spset) { (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy); };
-            if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx); };
+            if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->hby); };
         };
-        // void tick() {
+        void tick() {
             //This function is designed to be called every frame to make the physics work. -Cordell King
-        //     this->v.inc(this->a);
-        //     this->move(this->v);
-        // };
+            this->v.inc(this->a);
+            this->move(this->v);
+        };
 
+        /*
         void setAcceleration(Vector2D pa) {
             this->a = pa;
         };
-        // void incAcceleration(Vector2D pa) {
-        //     this->a.inc(pa);
-        // };
+        void incAcceleration(Vector2D pa) {
+            this->a.inc(pa);
+        };
 
         void setSpeed(Vector2D pv) {
             this->v = pv;
         };
-        // void incSpeed(Vector2D pv) {
-        //     this->v.inc(pv);
-        // };
+        void setSpeedY(int pvy) {
+            this->v.y = pvy;
+        }
+        void setSpeedX(int pvx) {
+            this->v.x = pvx;
+        }
+        void incSpeed(Vector2D pv) {
+            this->v.inc(pv);
+        };
+        //*/
 
         void setSprite(sprite_data* newsprite) {
             this->spset = true;
             this->sprite = newsprite;
             (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
-        }
+        };
         sprite_data* getSpriteData() {
             return (this->sprite);
-        }
+        };
         Sprite getSprite() {
             return (this->sprite)->imageSprite;
-        }
-
+        };
+        
+        void initHitbox() {
+            this->hitbox = new Hitbox(this->x, this->y, this->w, this->h);
+            this->hbset = true;
+        };
         void setHitbox(Hitbox* newhitbox) {
             this->hbset = true;
             this->hitbox = newhitbox;
             (this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx);
+        };
+        Hitbox* getHitbox() {
+            return this->hitbox;
+        };
+
+        bool collides(KinematicBody2D *hostile) {
+            return this->hitbox->collides(*(hostile->getHitbox()));
         };
 
         void initRectangle() {
@@ -252,17 +272,17 @@ class KinematicBody2D {
 
         RectangleShape getRectangle(){
             return this->rectangle;
-        }
+        };
 
         int pos() { 
             //This function is a Diagnostic
             return this->y;
         };
 
-    private:
-        int x, y, h, w, hbx, hby, spx, spy;
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
+    private:
+        int x, y, w, h, hbx, hby, spx, spy;
         bool hbset; bool spset; bool rcset;
         Hitbox* hitbox;
         sprite_data* sprite;
