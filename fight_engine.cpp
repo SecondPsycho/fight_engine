@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <string>
-#include <list>
+#include <vector>
 #include <string.h>
 #include <stdio.h>
 #include <dirent.h>
@@ -28,20 +28,42 @@ struct sprite_data{
 };
 
 struct animation_data{
-    list<sprite_data*> animations;
+    vector<sprite_data*> animations;
+    int cur_frame = 0;
+    int frame_tick = 1;
+    int max_frame_tick = 10;
     void createAnimationData(){
-        //do nothing?
+        /* This does nothing */
     }
     void addAnimationData(sprite_data* frame){
         this->animations.push_back(frame);
     }
-    int size(){
-        return this->animations.size();
+    int getSize(){
+        return (int) this->animations.size();
+    }
+    sprite_data* getCurrentFrame() {
+        return this->animations.at(this->cur_frame);
+    }
+    sprite_data* getNextFrame() {
+        this->cur_frame += 1;
+        if (this->cur_frame >= this->getSize()) {
+            this->cur_frame = 0;
+        }
+        return this->animations.at(cur_frame);
     }
     sprite_data* getFrame(int index){
-        // if(index < this->size()){
-        // }
+        if(index < this->getSize()){
+            return this->animations.at(index);
+        }
         return this->animations.front();
+    }
+    sprite_data* frameTick() {
+        if (this->frame_tick > 1) { 
+            this->frame_tick--; 
+            return this->getCurrentFrame();
+        };
+        this->frame_tick = this->max_frame_tick;
+        return this->getNextFrame();
     }
 };
 
@@ -94,6 +116,8 @@ class Framerate {
         };
         void setFPS(int pfps) {
             this->fps = pfps;
+            this->last_time = (clock()*this->fps)-CLOCKS_PER_SEC;
+            this->current_time = clock()*this->fps;
         };
         void next_frame() {
             while ((this->current_time - this->last_time) <= CLOCKS_PER_SEC) {
@@ -154,6 +178,52 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
         Text self;
 };
 
+
+class SFX {                                                     // The biggest mistake you can make is assuming any of this is gonna actually work -owen
+    public:
+        SFX(string soundEffectPath) {
+            if (!this->buffer.loadFromFile(soundEffectPath)) {
+                cerr << "ERROR: Invalid file path" << endl;
+            }
+            this->soundEffect.setBuffer(this->buffer);
+        } 
+
+        void play() {
+            this->soundEffect.play();
+        }
+
+        void pause() {
+            this->soundEffect.pause();
+        }
+
+        void setPlayingOffset(float sec) {
+            Time t = sf::seconds(sec);
+            this->soundEffect.setPlayingOffset(t);
+        }
+
+        void stop() {
+            this->soundEffect.stop();
+        }
+
+        void setPitch(float pitch) {
+            this->soundEffect.setPitch(pitch); // 1 = normal pitch, 1.2 = higher pitch, 0.8 = lower pitch, etc
+        }
+
+        void setVolume(float vol) {
+            this->soundEffect.setVolume(vol); //0 = mute, 100 = full volume
+        }
+
+        void setLoop(bool isLooping) {
+            this->soundEffect.setLoop(isLooping);
+        }
+
+    private:
+        SoundBuffer buffer;
+        Sound soundEffect;
+};
+
+
+
 //PHYSICS
 class Hitbox {
     public:
@@ -164,7 +234,7 @@ class Hitbox {
         Hitbox() {
             this->x = 0; this->y = 0; this->h = 0; this->w = 0;
         };
-        void setOrigin(int px, int py) {
+        void setPosition(int px, int py) {
             this->x = px;
             this->y = py;
         }
@@ -194,8 +264,8 @@ class KinematicBody2D {
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
-            if (this->spset) { (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy); };
-            if (this->hbset) {(this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->hby); };
+            if (this->spset) { (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy); };
+            if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
         };
         void tick() {
             //This function is designed to be called every frame to make the physics work. -Cordell King
@@ -228,7 +298,7 @@ class KinematicBody2D {
         void setSprite(sprite_data* newsprite) {
             this->spset = true;
             this->sprite = newsprite;
-            (this->sprite)->imageSprite.setOrigin(this->x+this->spx,this->y+this->spy);
+            (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy);
         };
         sprite_data* getSpriteData() {
             return (this->sprite);
@@ -244,7 +314,7 @@ class KinematicBody2D {
         void setHitbox(Hitbox* newhitbox) {
             this->hbset = true;
             this->hitbox = newhitbox;
-            (this->hitbox)->setOrigin(this->x+this->hbx,this->y+this->spx);
+            (this->hitbox)->setPosition(this->x+this->hbx,this->y+this->spx);
         };
         Hitbox* getHitbox() {
             return this->hitbox;

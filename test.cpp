@@ -39,17 +39,17 @@ int main(int argc, char* argv[]){
     window.setKeyRepeatEnabled(false);
     
     //Create an Animation
-    animation_data new_animation;
+    animation_data walk;
 
     //Create a Sprite
-    KinematicBody2D wolf(0,0,64,64);
+    KinematicBody2D wolf(100,100,64,64);
     wolf.setSprite((make_sprite("./images/walk/monster_walk1.png")));
     wolf.initHitbox();
-    wolf.a.y = -1;
+    //wolf.a.y = 1;
     sprite_data* temp_sprite = wolf.getSpriteData();
-    new_animation.addAnimationData(temp_sprite);
+    walk.addAnimationData(temp_sprite);
     wolf.setSprite((make_sprite("./images/walk/monster_walk2.png")));
-    new_animation.addAnimationData(wolf.getSpriteData());
+    walk.addAnimationData(wolf.getSpriteData());
 
     NewGame Game(wolf, 1);
     Game.addStatic(KinematicBody2D(0,600,800,200));
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]){
     Game.getStatic(0)->initHitbox();
     
     list_dir("./images");
-    cout << "new_animation.size() = " << new_animation.size() << endl;
+    cout << "walk.getSize() = " << walk.getSize() << endl;
 
     
         
@@ -90,7 +90,8 @@ int main(int argc, char* argv[]){
                 break;
               //*/
               case Keyboard::F:
-                wolf.setSprite((make_sprite("./images/walk/monster_walk1.png")));
+                //wolf.setSprite((make_sprite("./images/walk/monster_walk1.png")));
+                wolf.setSprite(walk.getNextFrame());
                 break;
               case Keyboard::A:
                 keys[2] = 1;
@@ -101,13 +102,13 @@ int main(int argc, char* argv[]){
               case Keyboard::Space:
                 if (keys[4] == 0){
                   keys[4] = 1;
-                  wolf.v.y = 20;
+                  wolf.v.y = -20;
                 }
                 break;
               default:
                 break;
             }
-            wolf.v.x = 10*(keys[2]-keys[3]);
+            wolf.v.x = 10*(keys[3]-keys[2]);
             break;
           case Event::KeyReleased:
             switch (event.key.code) {
@@ -123,7 +124,7 @@ int main(int argc, char* argv[]){
               default:
                 break;
             }
-            wolf.v.x = 10*(keys[2]-keys[3]);
+            wolf.v.x = 10*(keys[3]-keys[2]);
             break;
           default:
             break;
@@ -131,6 +132,7 @@ int main(int argc, char* argv[]){
       }
 
       //Apply physics
+      wolf.setSprite(walk.frameTick());
       wolf.tick();
       /* Working on Collision
       if (wolf.collides(Game.getStatic(0))) {
