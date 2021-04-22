@@ -82,7 +82,7 @@ sprite_data* make_sprite(string sprite_path){
 }
 
 // https://www.tutorialspoint.com/How-can-I-get-the-list-of-files-in-a-directory-using-C-Cplusplus
-//print out all entries in a directory
+/* print out all entries in a directory
 void list_dir(const char *path) {
     struct dirent *entry;
     DIR *dir = opendir(path);
@@ -98,6 +98,7 @@ void list_dir(const char *path) {
     }
     closedir(dir);
 }
+//*/
 
 
 //CLASSES
@@ -303,32 +304,17 @@ class KinematicBody2D {
             this->move(this->v);
         };
 
-        /*
-        void setAcceleration(Vector2D pa) {
-            this->a = pa;
-        };
-        void incAcceleration(Vector2D pa) {
-            this->a.inc(pa);
-        };
-
-        void setSpeed(Vector2D pv) {
-            this->v = pv;
-        };
-        void setSpeedY(int pvy) {
-            this->v.y = pvy;
-        }
-        void setSpeedX(int pvx) {
-            this->v.x = pvx;
-        }
-        void incSpeed(Vector2D pv) {
-            this->v.inc(pv);
-        };
-        //*/
-
         void setSprite(sprite_data* newsprite) {
             this->spset = true;
-            this->sprite = newsprite;
-            (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy);
+            if (this->hflip) {
+                this->flipH();
+                this->sprite = newsprite;
+                (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy);
+                this->flipH();
+            } else {
+                this->sprite = newsprite;
+                (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy);
+            }
         };
         sprite_data* getSpriteData() {
             return (this->sprite);
@@ -338,8 +324,18 @@ class KinematicBody2D {
         };
 
         void flipH() {
-            //Flips the sprite, but the origin is now at the top-right corner. This throws off collision.
-            this->sprite->imageSprite.setScale(-1,1);
+            if (this->hflip) {
+                this->sprite->imageSprite.setScale(1,1);
+                this->sprite->imageSprite.setOrigin(0,0);
+                this->hflip = false;
+            } else {
+                this->sprite->imageSprite.setScale(-1,1);
+                this->sprite->imageSprite.setOrigin(64,0);
+                this->hflip = true;
+            }
+        }
+        bool isFlippedH() {
+            return this->hflip;
         }
         
         void initHitbox() {
@@ -361,7 +357,7 @@ class KinematicBody2D {
         int* collidesDir(KinematicBody2D *hostile) {
             return this->hitbox->collidesDir(*(hostile->getHitbox()));
         }
-        bool blocks(KinematicBody2D *hostile) {
+        int* blocks(KinematicBody2D *hostile) {
             int* side = this->collidesDir(hostile);
             if (side[2] == 1) {
                 if (side[1] == -1) {
@@ -377,13 +373,11 @@ class KinematicBody2D {
                     hostile->setPos(Vector2D(hostile->x,this->y+this->h));
                     hostile->v.y = 0;
                 }
-                return true;
             }
-            return false;
+            return side;
         }
 
         void initRectangle() {
-            //cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << '\n';
             this->rectangle.setSize(Vector2f(this->w,this->h));
             this->rectangle.setPosition(this->x,this->y);
             this->rectangle.setFillColor(Color(0,0,0,255));
@@ -393,8 +387,11 @@ class KinematicBody2D {
             return this->rectangle;
         };
 
-        int pos() { 
+        int posX() { 
             //This function is a Diagnostic
+            return this->x;
+        };
+        int posY() {
             return this->y;
         };
 
@@ -404,14 +401,8 @@ class KinematicBody2D {
     private:
         int x, y, w, h, hbx, hby, spx, spy;
         bool hbset, spset, rcset;
-        //bool hflip;
+        bool hflip = false;
         Hitbox* hitbox;
         sprite_data* sprite;
         RectangleShape rectangle;
 };
-
-//LINKED LIST IMPLEMENTATION
-
-
-// std::list<sprite_data> l;
-// l.push_front();
