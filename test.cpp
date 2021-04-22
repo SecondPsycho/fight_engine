@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
     KinematicBody2D wolf(100,300,64,64);
     wolf.setSprite((make_sprite("./images/walk/monster_walk1.png")));
     wolf.initHitbox();
-    //wolf.a.y = 1;
+    wolf.a.y = 1;
     sprite_data* temp_sprite = wolf.getSpriteData();
     walk.addAnimationData(temp_sprite);
     wolf.setSprite((make_sprite("./images/walk/monster_walk2.png")));
@@ -63,12 +63,15 @@ int main(int argc, char* argv[]){
     list_dir("./images");
     cout << "walk.getSize() = " << walk.getSize() << endl;
 
+    /* Test to the Music
     SFX my_music("The_Last_Encounter_Original_Version (online-audio-converter.com).wav");
     my_music.play();
+    //*/
         
     Event event;
     int keys[5] = {0,0,0,0,0};
-    int *collide;
+    //bool wolf_moving_right = true;
+    //int *collide;
 
     // Framerate Control -Cordell King
     Framerate ticker(30);
@@ -114,7 +117,6 @@ int main(int argc, char* argv[]){
               default:
                 break;
             }
-            wolf.v.x = 10*(keys[3]-keys[2]);
             break;
           case Event::KeyReleased:
             switch (event.key.code) {
@@ -130,23 +132,44 @@ int main(int argc, char* argv[]){
               default:
                 break;
             }
-            wolf.v.x = 10*(keys[3]-keys[2]);
             break;
           default:
             break;
         }
       }
 
-      //Apply physics
-      wolf.setSprite(walk.frameTick());
-      wolf.tick();
-      /* Working on Collision
-      if (wolf.collidesDir(Game.getStatic(0))) {
-        cout << "Hit!\n";
+      //Apply animation
+      if (wolf.v.x != 0) {
+        wolf.setSprite(walk.frameTick());
+      }
+      /*
+      if (wolf.v.x > 0) {
+        wolf.setSprite(walk.frameTick());
+        if (wolf_moving_right) {
+          wolf.flipH();
+          wolf_moving_right = false;
+        }
+        
+      } else if (wolf.v.x < 0) {
+        wolf.setSprite(walk.frameTick());
+        if (!wolf_moving_right) {
+          wolf.flipH();
+          wolf_moving_right = true;
+        }
       }
       //*/
-      collide = wolf.collidesDir(Game.getStatic(1));
+      //Apply physics
+      wolf.v.x = 10*(keys[3]-keys[2]);
+      wolf.tick();
       //cout << collide[0] << ' ' << collide[1] << ' ' << collide[2] << endl;
+      for (int i = 0; i < 2; i++) {
+        Game.getStatic(i)->blocks(&wolf);
+        /*
+        if (i == 0) {
+          cout << wolf.x << ' ' << wolf.y << ' ' << wolf.w << ' ' << wolf.h << "   " << Game.getStatic(0)->x << ' ' << Game.getStatic(0)->y << ' ' << Game.getStatic(0)->w << ' ' << Game.getStatic(0)->h << "   " << endl;
+        }
+        //*/
+      };
 
       //Draw the Screen
       window.clear(Color(42,42,42,255)); // Dark gray.

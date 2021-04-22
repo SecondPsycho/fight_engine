@@ -226,11 +226,11 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
 class Hitbox {
     public:
         int x,y,h,w;
-        Hitbox(int px, int py, int ph, int pw) {
-            this->x = px; this->y = py; this->h = ph; this->w = pw;
+        Hitbox(int px, int py, int pw, int ph) {
+            this->x = px; this->y = py; this->w = pw; this->h = ph;
         };
         Hitbox() {
-            this->x = 0; this->y = 0; this->h = 0; this->w = 0;
+            this->x = 0; this->y = 0; this->w = 0; this->h = 0;
         };
         void setPosition(int px, int py) {
             this->x = px;
@@ -271,23 +271,31 @@ class Hitbox {
 class KinematicBody2D {
     public:
         KinematicBody2D(int px, int py, int pw, int ph) {
-            this->x = px; this->y = py; this->h = ph; this->w = pw;
+            this->x = px; this->y = py; this->w = pw; this->h = ph;
             this->hbx = 0; this->hby = 0; //Allow the Hitbox's position to be different from the KB2D -Cordell King
             this->spx = 0; this->spy = 0; //Allow the Sprite's position to be different from the KB2D -Cordell King
             this->hbset = false; this->spset = false;
         };
         KinematicBody2D() {
-            this->x = 0; this->y = 0; this->h = 0; this->w = 0;
+            this->x = 0; this->y = 0; this->w = 0; this->h = 0;
             this->hbx = 0; this->hby = 0;
             this->spx = 0; this->spy = 0;
             this->hbset = false; this->spset = false;
         };
 
+        void setPos(Vector2D v) {
+            this->x = v.x;
+            this->y = v.y;
+            if (this->spset) {(this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy); };
+            if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
+            if (this->rcset) {(this->rectangle).setPosition(this->x,this->y); };
+        }
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
-            if (this->spset) { (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy); };
+            if (this->spset) {(this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy); };
             if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
+            if (this->rcset) {(this->rectangle).setPosition(this->x,this->y); };
         };
         void tick() {
             //This function is designed to be called every frame to make the physics work. -Cordell King
@@ -328,6 +336,11 @@ class KinematicBody2D {
         Sprite getSprite() {
             return (this->sprite)->imageSprite;
         };
+
+        void flipH() {
+            //Flips the sprite, but the origin is now at the top-right corner. This throws off collision.
+            this->sprite->imageSprite.setScale(-1,1);
+        }
         
         void initHitbox() {
             this->hitbox = new Hitbox(this->x, this->y, this->w, this->h);
@@ -348,15 +361,34 @@ class KinematicBody2D {
         int* collidesDir(KinematicBody2D *hostile) {
             return this->hitbox->collidesDir(*(hostile->getHitbox()));
         }
+        bool blocks(KinematicBody2D *hostile) {
+            int* side = this->collidesDir(hostile);
+            if (side[2] == 1) {
+                if (side[1] == -1) {
+                    hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
+                    hostile->v.y = 0;
+                } else if (side[0] == -1) {
+                    hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
+                    hostile->v.x = 0;
+                } else if (side[0] == 1) {
+                    hostile->setPos(Vector2D(this->x+this->w,hostile->y));
+                    hostile->v.x = 0;
+                } else if (side[1] == 1) {
+                    hostile->setPos(Vector2D(hostile->x,this->y+this->h));
+                    hostile->v.y = 0;
+                }
+                return true;
+            }
+            return false;
+        }
 
         void initRectangle() {
-            cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << '\n';
+            //cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << '\n';
             this->rectangle.setSize(Vector2f(this->w,this->h));
             this->rectangle.setPosition(this->x,this->y);
             this->rectangle.setFillColor(Color(0,0,0,255));
             this->rcset = true;
         };
-
         RectangleShape getRectangle(){
             return this->rectangle;
         };
@@ -368,9 +400,11 @@ class KinematicBody2D {
 
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
+        
     private:
         int x, y, w, h, hbx, hby, spx, spy;
         bool hbset, spset, rcset;
+        //bool hflip;
         Hitbox* hitbox;
         sprite_data* sprite;
         RectangleShape rectangle;
