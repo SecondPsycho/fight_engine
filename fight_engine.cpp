@@ -362,16 +362,16 @@ class KinematicBody2D {
             if (side[2] == 1) {
                 if (side[1] == -1) {
                     hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
-                    hostile->v.y = 0;
+                    hostile->v.y = this->v.y;
                 } else if (side[0] == -1) {
                     hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
-                    hostile->v.x = 0;
+                    hostile->v.x = this->v.x;
                 } else if (side[0] == 1) {
                     hostile->setPos(Vector2D(this->x+this->w,hostile->y));
-                    hostile->v.x = 0;
+                    hostile->v.x = this->v.x;
                 } else if (side[1] == 1) {
                     hostile->setPos(Vector2D(hostile->x,this->y+this->h));
-                    hostile->v.y = 0;
+                    hostile->v.y = this->v.y;
                 }
             }
             return side;
