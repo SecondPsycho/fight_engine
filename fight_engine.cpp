@@ -128,8 +128,8 @@ class Framerate {
         }
 };
 
-//Sound
-class SFX {                                                     // The biggest mistake you can make is assuming any of this is gonna actually work -owen
+// SOUND AND MUSIC
+class SFX { 
     public:
         SFX(string soundEffectPath) {
             if (!this->buffer.loadFromFile(soundEffectPath)) {
@@ -170,6 +170,48 @@ class SFX {                                                     // The biggest m
     private:
         SoundBuffer buffer;
         Sound soundEffect;
+};
+
+class Song {                                                     // The biggest mistake you can make is assuming any of this is gonna actually work -owen
+    public:
+        Song(string musicPath) {
+            if (!this->music.openFromFile(musicPath)) {
+                cerr << "ERROR: Invalid file path" << endl;
+            }
+            this->music.setLoop(true);
+        } 
+
+        void play() {
+            this->music.play();
+        }
+
+        void pause() {
+            this->music.pause();
+        }
+
+        void setPlayingOffset(float sec) {
+            Time t = sf::seconds(sec);
+            this->music.setPlayingOffset(t);
+        }
+
+        void stop() {
+            this->music.stop();
+        }
+
+        void setPitch(float pitch) {
+            this->music.setPitch(pitch); // 1 = normal pitch, 1.2 = higher pitch, 0.8 = lower pitch, etc
+        }
+
+        void setVolume(float vol) {
+            this->music.setVolume(vol); //0 = mute, 100 = full volume
+        }
+
+        void setLoop(bool isLooping) {
+            this->music.setLoop(isLooping);
+        }
+
+    private:
+        Music music;
 };
 
 class Vector2D {
@@ -363,18 +405,36 @@ class KinematicBody2D {
                 if (side[1] == -1) {
                     hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
                     hostile->v.y = this->v.y;
+                    //hostile->v.x = this->v.x;
                 } else if (side[0] == -1) {
                     hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
                     hostile->v.x = this->v.x;
+                    //hostile->v.y = this->v.y;
                 } else if (side[0] == 1) {
                     hostile->setPos(Vector2D(this->x+this->w,hostile->y));
                     hostile->v.x = this->v.x;
+                    //hostile->v.y = this->v.y;
                 } else if (side[1] == 1) {
                     hostile->setPos(Vector2D(hostile->x,this->y+this->h));
                     hostile->v.y = this->v.y;
+                    //hostile->v.x = this->v.x;
                 }
             }
             return side;
+        }
+        void dampen(Vector2D f) {
+            if (this->v.x > 0) {
+                this->v.x -= f.x;
+            } else if (this->v.x < 0) {
+                this->v.x += f.x;
+            }
+            //*
+            if (this->v.y > 0) {
+                this->v.y -= f.y;
+            } else if (this->v.y < 0) {
+                this->v.y += f.y;
+            }
+            //*/
         }
 
         void initRectangle() {

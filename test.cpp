@@ -52,7 +52,7 @@ int main(int argc, char* argv[]){
     walk.addAnimationData(make_sprite("./images/walk/monster_walk2.png"));
     leap.addAnimationData(make_sprite("./images/monster_leap.png"));
 
-    KinematicBody2D wolf(100,300,64,64);
+    KinematicBody2D wolf(50,100,64,64);
     wolf.setSprite(idle.getCurrentFrame());
     wolf.initHitbox();
     wolf.a.y = 1;
@@ -80,14 +80,19 @@ int main(int argc, char* argv[]){
     //cout << "walk.getSize() = " << walk.getSize() << endl;
 
     //* Test to the Music
-    SFX my_music("The_Last_Encounter_Original_Version (online-audio-converter.com).wav");
+    Song my_music("sounds/The_Last_Encounter_Original_Version (online-audio-converter.com).wav");
+    my_music.setPitch(1.2f);
+    my_music.setVolume(10.0f);
     my_music.play();
+    SFX pew_sound("sounds/pew.wav");
+    pew_sound.setVolume(100.0f);
     //*/
         
     Event event;
     int keys[5] = {0,0,0,0,0};
     int *collide;
     bool wolf_on_ground = false;
+    Vector2D f(1,0);
 
     // Framerate Control -Cordell King
     Framerate ticker(30);
@@ -121,6 +126,7 @@ int main(int argc, char* argv[]){
                 break;
               case Keyboard::Space:
                 if (keys[4] == 0 && wolf_on_ground){
+                  pew_sound.play();
                   keys[4] = 1;
                   wolf.v.y = -20;
                 }
@@ -160,24 +166,31 @@ int main(int argc, char* argv[]){
         Game.getStatic(3)->v.y = -5;
       }
 
-      //Apply physics
-      wolf.v.x = 10*(keys[3]-keys[2]);
+      //Apply Physics
+      wolf.v.x += 10*(keys[3]-keys[2]);
       wolf.tick();
       Game.getStatic(2)->tick();
       Game.getStatic(3)->tick();
+
+      //Physics Cleanup
+      wolf.v.x -= 10*(keys[3]-keys[2]);
+      wolf.dampen(f);
+
       wolf_on_ground = false;
       for (int i = 0; i < Game.getStaticsCount(); i++) {
         collide = Game.getStatic(i)->blocks(&wolf);
         if (collide[2] && collide[1]==-1) {
           wolf_on_ground = true;
-        }
+          wolf.v.x = Game.getStatic(i)->v.x;
+        };
       };
 
       //Apply animation
       if (!wolf_on_ground) {
+        //wolf.v.x = 0;
         wolf.setSprite(leap.getCurrentFrame()); // Do leap animation
       }
-      else if (wolf.v.x != 0) {
+      else if (keys[2]^keys[3]) {
         wolf.setSprite(walk.frameTick()); // Do walking animations
       }
       else {
