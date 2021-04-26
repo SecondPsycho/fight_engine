@@ -2,6 +2,16 @@
     THE FIGHTING GAME ENGINE
     Joey, Cordell, Matthew, and Owen
 */
+/**
+ * @file fight_engine.cpp
+ * @brief This is the file containing all our code for our game engine built for fighting games
+ * 
+ * @author Cordell
+ * @author Joey
+ * @author Matthew
+ * @author Owen
+*/
+
 
 #include <iostream>
 #include <string>
@@ -21,23 +31,42 @@ using namespace std;
 
 
 //STRUCTS:
-
+/**
+ * @struct sprite_data
+ *
+ * @brief The struct which contains all of the data necessary for a single sprite.
+ * 
+ */
 struct sprite_data{
     Texture imageSource;
     Sprite imageSprite;
+    Sprite flippedSprite;
 };
 
+/**
+ * @struct animation_data
+ *
+ * @brief The struct which contains all of the data and functions for an animation. 
+ * 
+ */
 struct animation_data{
     vector<sprite_data*> animations;
     int cur_frame = 0;
     int frame_tick = 1;
     int max_frame_tick = 10;
-    void createAnimationData(){
-        /* This does nothing */
-    }
+    /**
+    * @brief Enqueues the provided sprite data into the 'animations' vector.
+    * 
+    * @param frame The pointer to the sprite_data to add to the back of the animation.
+    */
     void addAnimationData(sprite_data* frame){
         this->animations.push_back(frame);
     }
+    /**
+     * @brief Get the size of the animations vector.
+     * 
+     * @return Return the size of the animations vector.
+     */
     int getSize(){
         return (int) this->animations.size();
     }
@@ -71,6 +100,12 @@ struct animation_data{
 
 //FUNCTIONS
 //create a sprite
+/**
+ * @brief Creates a sprite struct from a sprite path.
+ * 
+ * @param sprite_path Pass in a string of the path to the sprite image.
+ * @return sprite_data* A pointer to the sprite_data struct that is created from the sprite_path that was passed in is returned.
+ */
 sprite_data* make_sprite(string sprite_path){
     sprite_data* sprite = new sprite_data;
     if(!sprite->imageSource.loadFromFile(sprite_path)){
@@ -78,6 +113,11 @@ sprite_data* make_sprite(string sprite_path){
         return sprite;
     }
     sprite->imageSprite.setTexture(sprite->imageSource);
+
+    //Store the flipped sprite
+    sprite->flippedSprite.setTexture(sprite->imageSource); 
+    sprite->flippedSprite.setScale(-1,1);
+    sprite->flippedSprite.setOrigin(sprite->imageSprite.getTexture()->getSize().x,0);
     return sprite;
 }
 
@@ -129,7 +169,7 @@ class Framerate {
 };
 
 // SOUND AND MUSIC
-class SFX { 
+class SFX { //use this for quick clips, not running soundtracks, and .wav works best for these
     public:
         SFX(string soundEffectPath) {
             if (!this->buffer.loadFromFile(soundEffectPath)) {
@@ -172,7 +212,12 @@ class SFX {
         Sound soundEffect;
 };
 
-class Song {                                                     // The biggest mistake you can make is assuming any of this is gonna actually work -owen
+/**
+ * @class Song
+ * @brief The Song class that can play music.
+ * 
+ */
+class Song { //use this for running soundtracks, not for quick clips, and .ogg works best for these
     public:
         Song(string musicPath) {
             if (!this->music.openFromFile(musicPath)) {
@@ -313,6 +358,14 @@ class Hitbox {
 //An object that holds a Sprite and a Hitbox
 class KinematicBody2D {
     public:
+        /**
+        * @brief Initialize a KinematicBody2D. Parameters optional.
+        * 
+        * @param px x-position (int)
+        * @param py y-position (int)
+        * @param pw width (int)
+        * @param ph height (int)
+        */
         KinematicBody2D(int px, int py, int pw, int ph) {
             this->x = px; this->y = py; this->w = pw; this->h = ph;
             this->hbx = 0; this->hby = 0; //Allow the Hitbox's position to be different from the KB2D -Cordell King
@@ -325,54 +378,54 @@ class KinematicBody2D {
             this->spx = 0; this->spy = 0;
             this->hbset = false; this->spset = false;
         };
-
+        
+        /**
+        * @brief Set the Position of a KinematicBody2D.
+        * 
+        * @param v A Vector2D holding the new oordinates.
+        */
         void setPos(Vector2D v) {
             this->x = v.x;
             this->y = v.y;
-            if (this->spset) {(this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy); };
             if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
             if (this->rcset) {(this->rectangle).setPosition(this->x,this->y); };
         }
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
-            if (this->spset) {(this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy); };
             if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
             if (this->rcset) {(this->rectangle).setPosition(this->x,this->y); };
         };
         void tick() {
             //This function is designed to be called every frame to make the physics work. -Cordell King
             this->v.inc(this->a);
-            this->move(this->v);
+            this->p.inc(this->v);
+            this->move(this->p);
+            this->p = Vector2D(0,0);
         };
 
         void setSprite(sprite_data* newsprite) {
             this->spset = true;
-            if (this->hflip) {
-                this->flipH();
-                this->sprite = newsprite;
-                (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy);
-                this->flipH();
-            } else {
-                this->sprite = newsprite;
-                (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy);
-            }
+            this->sprite = newsprite;
         };
         sprite_data* getSpriteData() {
             return (this->sprite);
         };
         Sprite getSprite() {
-            return (this->sprite)->imageSprite;
+            
+            if (this->hflip) {
+                (this->sprite)->flippedSprite.setPosition(this->x+this->spx,this->y+this->spy);
+                return (this->sprite)->flippedSprite;
+            } else {
+                (this->sprite)->imageSprite.setPosition(this->x+this->spx,this->y+this->spy);
+                return (this->sprite)->imageSprite;
+            }
         };
 
         void flipH() {
             if (this->hflip) {
-                this->sprite->imageSprite.setScale(1,1);
-                this->sprite->imageSprite.setOrigin(0,0);
                 this->hflip = false;
             } else {
-                this->sprite->imageSprite.setScale(-1,1);
-                this->sprite->imageSprite.setOrigin(64,0);
                 this->hflip = true;
             }
         }
@@ -405,19 +458,19 @@ class KinematicBody2D {
                 if (side[1] == -1) {
                     hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
                     hostile->v.y = this->v.y;
-                    //hostile->v.x = this->v.x;
+                    hostile->p.x += this->v.x;
                 } else if (side[0] == -1) {
                     hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
                     hostile->v.x = this->v.x;
-                    //hostile->v.y = this->v.y;
+                    hostile->p.y += this->v.y;
                 } else if (side[0] == 1) {
                     hostile->setPos(Vector2D(this->x+this->w,hostile->y));
                     hostile->v.x = this->v.x;
-                    //hostile->v.y = this->v.y;
+                    hostile->p.y += this->v.y;
                 } else if (side[1] == 1) {
                     hostile->setPos(Vector2D(hostile->x,this->y+this->h));
                     hostile->v.y = this->v.y;
-                    //hostile->v.x = this->v.x;
+                    hostile->p.x += this->v.x;
                 }
             }
             return side;
@@ -428,13 +481,11 @@ class KinematicBody2D {
             } else if (this->v.x < 0) {
                 this->v.x += f.x;
             }
-            //*
             if (this->v.y > 0) {
                 this->v.y -= f.y;
             } else if (this->v.y < 0) {
                 this->v.y += f.y;
             }
-            //*/
         }
 
         void initRectangle() {
@@ -455,6 +506,7 @@ class KinematicBody2D {
             return this->y;
         };
 
+        Vector2D p; //Save movement to apply next frame
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
         

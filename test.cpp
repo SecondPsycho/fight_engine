@@ -181,13 +181,11 @@ int main(int argc, char* argv[]){
         collide = Game.getStatic(i)->blocks(&wolf);
         if (collide[2] && collide[1]==-1) {
           wolf_on_ground = true;
-          wolf.v.x = Game.getStatic(i)->v.x;
         };
       };
 
       //Apply animation
       if (!wolf_on_ground) {
-        //wolf.v.x = 0;
         wolf.setSprite(leap.getCurrentFrame()); // Do leap animation
       }
       else if (keys[2]^keys[3]) {
