@@ -4,7 +4,7 @@
 */
 /**
  * @file fight_engine.cpp
- * @brief This is the file containing all our code for our game engine built for fighting games
+ * @brief This is the file containing all our code for our game engine built for fighting games.
  * 
  * @author Cordell
  * @author Joey
@@ -397,20 +397,28 @@ class KinematicBody2D {
         };
         
         /**
-        * @brief Set the Position of a KinematicBody2D.
+        * @brief Set the Position of the KinematicBody2D.
         * 
-        * @param v A Vector2D holding the new oordinates.
+        * @param v A Vector2D holding the new coordinates.
         */
         void setPos(Vector2D v) {
             this->x = v.x;
             this->y = v.y;
             if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
         }
+        /**
+        * @brief Move the KinematicBody2D relative to its current coordinates.
+        * 
+        * @param v A Vector2D holding the distances to move.
+        */
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
             if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
         };
+        /**
+        * @brief Update the Physics. Run every frame.
+        */
         void tick() {
             //This function is designed to be called every frame to make the physics work. -Cordell King
             this->v.inc(this->a);
@@ -418,14 +426,28 @@ class KinematicBody2D {
             this->move(this->p);
             this->p = Vector2D(0,0);
         };
-
+        
+        /**
+        * @brief Change the Current Sprite. Useful for animations.
+        * 
+        * @param newsprite A pointer to the sprite_data object which holds the sprite.
+        */
         void setSprite(sprite_data* newsprite) {
-            this->spset = true;
+            //this->spset = true; Test This -Cordell King
             this->sprite = newsprite;
         };
+        /**
+        * @brief Get the sprite_data from the KinematicBody2D. Do NOT use for drawing. Use getSprite() instead.
+        * @return A pointer to the sprite_data from the KinematicBody2D.
+        */
+        //I may remove this function. Are we using it? -Cordell King
         sprite_data* getSpriteData() {
             return (this->sprite);
         };
+        /**
+        * @brief Get the Sprite. Use for drawing.
+        * @return The Sprite to be drawn.
+        */
         Sprite getSprite() {
             if (this->hflip) {
                 (this->sprite)->flippedSprite.setPosition(this->x+this->spx,this->y+this->spy);
@@ -436,6 +458,9 @@ class KinematicBody2D {
             }
         };
 
+        /**
+        * @brief Flip the KinematicBody2D horizontally for display purposes.
+        */
         void flipH() {
             if (this->hflip) {
                 this->hflip = false;
@@ -443,34 +468,84 @@ class KinematicBody2D {
                 this->hflip = true;
             }
         }
+        /**
+        * @brief Set the horizontal flip direction for display purposes.
+        * @param toFlip Whether we want it flipped from default or not.
+        */
+        /* Test this Later
+        void flipH(bool toFlip) {
+            this->hflip = toFlip;
+        }
+        //*/
+        /**
+        * @brief Determine if the KinematicBody2D is already flipped.
+        */
         bool isFlippedH() {
             return this->hflip;
         }
         
+        /**
+        * @brief Initialize the Hitbox. Use if you intend to use a Hitbox for this KinematicBody2D.
+        */
         void initHitbox() {
             this->hitbox = new Hitbox(this->x, this->y, this->w, this->h);
             this->hbset = true;
         };
+        /**
+        * @brief Set up the Hitbox to a pre-existing Hitbox. Can be used instead of initHitbox().
+        * @param newhitbox A pointer to the new Hitbox.
+        */
         void setHitbox(Hitbox* newhitbox) {
             this->hbset = true;
             this->hitbox = newhitbox;
             (this->hitbox)->setPosition(this->x+this->hbx,this->y+this->spx);
         };
+        /**
+        * @brief Adjust the location and size of the Hitbox. Doesn't work yet.
+        * @param px The Hitbox's new x location, relative to the origin of the KinematicBody2D.
+        * @param py The Hitbox's new y location, relative to the origin of the KinematicBody2D.
+        * @param pw The Hitbox's new width.
+        * @param ph The Hitbox's new height.
+        */
+        /*
         void adjustHitbox(int px, int py, int pw, int ph) {
             this->hitbox->setSize(pw,ph);
             this->hbx = px;
             this->hby = py;
         };
+        //*/
+        /**
+        * @brief The Hitbox.
+        * @return A pointer to the Hitbox.
+        */
         Hitbox* getHitbox() {
             return this->hitbox;
         };
-
+        
+        /**
+        * @brief See if this KinematicBody2D collides with another.
+        * 
+        * @param hostile A pointer to the other KinematicBody2D
+        * @return A boolean indicating whether or not they collide.
+        */
         bool collides(KinematicBody2D *hostile) {
             return this->hitbox->collides(*(hostile->getHitbox()));
         };
+        /**
+        * @brief See if this KinematicBody2D collides with another.
+        * 
+        * @param hostile A pointer to the other KinematicBody2D
+        * @return A boolean indicating whether or not they collide.
+        */
         int* collidesDir(KinematicBody2D *hostile) {
             return this->hitbox->collidesDir(*(hostile->getHitbox()));
         }
+        /**
+        * @brief See if this KinematicBody2D collides with another, and on which side.
+        * 
+        * @param hostile A pointer to the other KinematicBody2D
+        * @return A pointer to an array of 3 integers. The first indicates collision on the left or right side. The second indicates collision on the top or bottom. The third indicates collision in general.
+        */
         int* blocks(KinematicBody2D *hostile) {
             int* side = this->collidesDir(hostile);
             if (side[2] == 1) {
@@ -494,6 +569,12 @@ class KinematicBody2D {
             }
             return side;
         }
+    
+        /**
+        * @brief Slow down the current velocity by a set amount.
+        * 
+        * @param f a Vector2D indicating how much to slow.
+        */
         void dampen(Vector2D f) {
             if (this->v.x > 0) {
                 this->v.x -= f.x;
@@ -507,23 +588,47 @@ class KinematicBody2D {
             }
         }
 
+        /**
+        * @brief Set up the Rectangle. Use if you intend to draw a Rectangle over the KinematicBody2D.
+        */
         void initRectangle() {
             this->rectangle.setSize(Vector2f(this->w,this->h));
             this->rectangle.setPosition(this->x,this->y);
             this->rectangle.setFillColor(Color(0,0,0,255));
             this->rcset = true;
         };
+        
+        /**
+        * @brief Get the Rectangle for drawing purposes. Make sure you've called initRectangle() first.
+        * 
+        * @return The Rectangle of the KinematicBody2D.
+        */
         RectangleShape getRectangle(){
-            if (this->rcset) {(this->rectangle).setPosition(this->x,this->y); };
+            (this->rectangle).setPosition(this->x,this->y); //Test this -Cordell King
             return this->rectangle;
         };
 
+        /**
+        * @brief Get the current x-position of the KinematicBody2D.
+        * 
+        * @return An integer with the current x-position.
+        */
         int posX() { 
             return this->x;
         };
+        /**
+        * @brief Get the current y-position of the KinematicBody2D.
+        * 
+        * @return An integer with the current y-position.
+        */
         int posY() {
             return this->y;
         };
+        /**
+        * @brief Get the current position of the KinematicBody2D.
+        * 
+        * @return A Vector2D with the current x and y-positions.
+        */
         Vector2D pos() {
             return Vector2D(this->x,this->y);
         };
