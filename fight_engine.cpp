@@ -323,12 +323,16 @@ class Hitbox {
         void setPosition(int px, int py) {
             this->x = px;
             this->y = py;
+        };
+        void setSize(int pw, int ph) {
+            this->w = pw;
+            this->h = ph;
         }
         bool collides(Hitbox rect) {
             //cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
-            return (this->x < (rect.x + rect.w) && (this->x + this->w) > rect.x && this->y < (rect.y + rect.h) && (this->y + this->h) > rect.y);
+            return (this->x <= (rect.x + rect.w) && (this->x + this->w) >= rect.x && this->y <= (rect.y + rect.h) && (this->y + this->h) >= rect.y);
         }
-        //* Directional Collision
+        // Directional Collision
         int* collidesDir(Hitbox rect) {
             int* side = new int[3];
             side[0] = 0;
@@ -351,7 +355,20 @@ class Hitbox {
             }
             return side;
         }
-        //*/
+        void initRectangle() {
+            this->rectangle.setSize(Vector2f(this->w,this->h));
+            this->rectangle.setOutlineColor(Color(255,255,0,255));
+            this->rectangle.setOutlineThickness(1);
+            this->rectangle.setFillColor(Color(0,0,0,0));
+            this->rcset = true;
+        }
+        RectangleShape getRectangle() {
+            this->rectangle.setPosition(this->x,this->y);
+            return this->rectangle;
+        }
+    private:
+    bool rcset;
+        RectangleShape rectangle;
 };
 
 
@@ -388,13 +405,11 @@ class KinematicBody2D {
             this->x = v.x;
             this->y = v.y;
             if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
-            if (this->rcset) {(this->rectangle).setPosition(this->x,this->y); };
         }
         void move(Vector2D v) {
             this->x += v.x;
             this->y += v.y;
             if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
-            if (this->rcset) {(this->rectangle).setPosition(this->x,this->y); };
         };
         void tick() {
             //This function is designed to be called every frame to make the physics work. -Cordell King
@@ -412,7 +427,6 @@ class KinematicBody2D {
             return (this->sprite);
         };
         Sprite getSprite() {
-            
             if (this->hflip) {
                 (this->sprite)->flippedSprite.setPosition(this->x+this->spx,this->y+this->spy);
                 return (this->sprite)->flippedSprite;
@@ -441,6 +455,11 @@ class KinematicBody2D {
             this->hbset = true;
             this->hitbox = newhitbox;
             (this->hitbox)->setPosition(this->x+this->hbx,this->y+this->spx);
+        };
+        void adjustHitbox(int px, int py, int pw, int ph) {
+            this->hitbox->setSize(pw,ph);
+            this->hbx = px;
+            this->hby = py;
         };
         Hitbox* getHitbox() {
             return this->hitbox;
@@ -495,15 +514,18 @@ class KinematicBody2D {
             this->rcset = true;
         };
         RectangleShape getRectangle(){
+            if (this->rcset) {(this->rectangle).setPosition(this->x,this->y); };
             return this->rectangle;
         };
 
         int posX() { 
-            //This function is a Diagnostic
             return this->x;
         };
         int posY() {
             return this->y;
+        };
+        Vector2D pos() {
+            return Vector2D(this->x,this->y);
         };
 
         Vector2D p; //Save movement to apply next frame

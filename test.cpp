@@ -55,6 +55,8 @@ int main(int argc, char* argv[]){
     KinematicBody2D wolf(50,100,64,64);
     wolf.setSprite(idle.getCurrentFrame());
     wolf.initHitbox();
+    wolf.getHitbox()->initRectangle(); //Testing
+    //wolf.adjustHitbox(2,4,52,50);
     wolf.a.y = 1;
 
     NewGame Game(wolf, 6);
@@ -167,13 +169,13 @@ int main(int argc, char* argv[]){
       }
 
       //Apply Physics
-      wolf.v.x += 10*(keys[3]-keys[2]);
+      wolf.p.x += 10*(keys[3]-keys[2]);
       wolf.tick();
       Game.getStatic(2)->tick();
       Game.getStatic(3)->tick();
 
       //Physics Cleanup
-      wolf.v.x -= 10*(keys[3]-keys[2]);
+      //wolf.v.x -= 10*(keys[3]-keys[2]);
       wolf.dampen(f);
 
       wolf_on_ground = false;
@@ -203,6 +205,7 @@ int main(int argc, char* argv[]){
       window.draw(Game.getStatic(2)->getRectangle());
       window.draw(Game.getStatic(3)->getRectangle());
       window.draw(wolf.getSprite());
+      window.draw(wolf.getHitbox()->getRectangle());
 
       window.display();
     }
