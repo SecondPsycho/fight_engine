@@ -70,6 +70,7 @@ struct animation_data{
     int getSize(){
         return (int) this->animations.size();
     }
+    /* Do something */
     sprite_data* getCurrentFrame() {
         return this->animations.at(this->cur_frame);
     }
