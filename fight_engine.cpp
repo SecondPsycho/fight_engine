@@ -389,25 +389,57 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
 class Hitbox {
     public:
         int x,y,h,w;
+        /**
+         * @brief Construct a new Hitbox object.
+         * @param px Initial x value.
+         * @param py Initial y value.
+         * @param pw Inital width.
+         * @param ph Initial height.
+         */
         Hitbox(int px, int py, int pw, int ph) {
             this->x = px; this->y = py; this->w = pw; this->h = ph;
         };
+        /**
+         * @brief Construct a new Hitbox object.
+         */
         Hitbox() {
             this->x = 0; this->y = 0; this->w = 0; this->h = 0;
         };
+        /**
+         * @brief Set the new position.
+         * @param px New x position.
+         * @param py New y position.
+         */
         void setPosition(int px, int py) {
             this->x = px;
             this->y = py;
         };
+        /**
+         * @brief Set the new size.
+         * @param pw New width.
+         * @param ph New height.
+         */
         void setSize(int pw, int ph) {
             this->w = pw;
             this->h = ph;
         }
+        /**
+         * @brief Boolean function to tell you if this hitbox is colliding with another.
+         * @param rect The other hitbox to check collision against.
+         * @return true When the two objects are colliding.
+         * @return false When the two objects aren't colliding.
+         */
         bool collides(Hitbox rect) {
             //cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
             return (this->x <= (rect.x + rect.w) && (this->x + this->w) >= rect.x && this->y <= (rect.y + rect.h) && (this->y + this->h) >= rect.y);
         }
         // Directional Collision
+        /**
+         * @brief Gives a collision detection that includes what side the collision is happening on.
+         * @param rect The other hitbox to check collision against.
+         * @return int* An array containing directional collision data.
+         */
+        //TODO Cordell I left this saying the above but if you could flesh that out with what direction each index has that would be awesome.
         int* collidesDir(Hitbox rect) {
             int* side = new int[3];
             side[0] = 0;
@@ -444,6 +476,9 @@ class Hitbox {
             }
             return side;
         }
+        /**
+         * @brief Initializes rectangle data for a hitbox.
+         */
         void initRectangle() {
             this->rectangle.setSize(Vector2f(this->w,this->h));
             this->rectangle.setOutlineColor(Color(255,255,0,255));
@@ -451,6 +486,10 @@ class Hitbox {
             this->rectangle.setFillColor(Color(0,0,0,0));
             this->rcset = true;
         }
+        /**
+         * @brief Get the Rectangle object.
+         * @return RectangleShape Returns the rectangle object and the data for it.
+         */
         RectangleShape getRectangle() {
             this->rectangle.setPosition(this->x,this->y);
             return this->rectangle;
