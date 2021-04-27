@@ -1,0 +1,267 @@
+<meta charset="utf-8" lang="en">  <!-- this line allows UTF-8 characters in the .html file -->
+
+<!-- This template is based on the Princeton COS 423 LaTeX assignment template -->
+
+
+**A00_LinearAlgebra**
+
+
+!!! note
+    This document contains a sample problem and solution.
+    Use it as a template for how to write and format a solution in [Markdeep](https://casual-effects.com/markdeep/).
+    See the [feature demo](https://casual-effects.com/markdeep/features.md.html) for a comprehensive list of features.
+
+
+Author(s)
+================
+
+
+<!-- Note: wrapping table in div.noheader will hide the table's header -->
+<!-- Note: wrapping table in div.firstcol will style the first column different from other columns -->
+<div class="noheader firstcol">
+                         |   
+------------------------ | -------------
+name                     | Benoit B Mandelbrot
+computer + OS            | my Linux laptop
+time to complete         | 3 hours
+partner / collaborators  | Donald Knuth, Ada Lovelace, Alan Turing<br>(Note: should be empty unless collaboration was explicitly allowed)
+additional help          | see Reflection section
+</div>
+
+
+
+!!! note: Grader's note
+    List your name and the names of _all_ with whom you collaborated, whether they helped you, you helped them, or you all worked together.
+
+!!! WARNING
+    You are permitted to collaborate with others _only_ if the assignment write up explicitly states that collaboration is permitted.
+
+!!! WARNING
+    Any work you turn in must be written in your own words.
+    Collaboration involves only the development of ideas and thinking through the problem.
+    Collaboration does not include debugging, proofreading, or otherwise discussing what is written.
+    If allowed, you may collaborate on the algorithm (whiteboard only), but you alone must write up the solution.
+
+!!! WARNING
+    You are _not_ permitted to search online for anything related to the assignment.
+    You may search for general things, such as looking up symbols.
+
+!!! ERROR: Seriously
+    Turn in only the work that you have written yourself.
+    Diffing all of the submissions requires only a trivial amount of effort on my part.
+
+
+
+
+$\LaTeX$ Maths
+=====================
+
+
+Use $\LaTeX$-like maths formatting to add maths notation in your write up.
+In case you're not familiar with LaTeX, see the following links.
+
+- [mimetextutorial](http://www.forkosh.com/mimetextutorial.html)
+- [LaTeX/Mathematics | Wikibooks](https://en.wikibooks.org/wiki/LaTeX/Mathematics)
+- [Mathematical Expressions | ShareLaTeX](https://www.sharelatex.com/learn/Mathematical_expressions)
+- [LaTeX Math Symbols](http://web.ift.uib.no/Teori/KURS/WRK/TeX/symALL.html)
+
+
+!!! warning: Pronunciation of $\LaTeX$
+    $\LaTeX$ (or LaTeX) is [pronounced](https://en.wikipedia.org/wiki/LaTeX#Pronouncing_and_writing_%22LaTeX%22) as
+    _LAH-tekh_, not _LAH-teks_ or _LAY-teks_, because $\LaTeX$ is based on $\TeX$, and the finally "X" in $\TeX$ is actually a capital chi ($\chi$).
+    Most people won't care how you pronounce it, but using the "correct" pronunciation is beneficial for two situations:
+    
+    1. When those who don't know what you're talking about overhear you, they won't get the wrong impression (e.g., "I wrote my assignment in latex..." and "I've worked in latex before..."), and
+    2. When those who care very deeply about how it's pronounced (and there are more than you might think) overhear you, they won't think poorly of you.
+
+
+Surrounding your maths with a single dollar sign (`$`) will inline your maths into the text.
+Using double dollar signs (`$$`) will present your maths in display math, as though they were their own figure.
+
+!!! note: A slight technical tangent...
+    Display math is technically considered to be the same as text.
+    In other words, the maths following a paragraph of text are to be read as though it were written out in English along with the preceding text.
+    This means, technically, that you should include proper punctuation, conjunctions, clauses, etc.
+    I will not grade on technicality, but you would benefit from considering this.
+
+$\LaTeX$ contains many useful maths notations and commands, but sometimes it's convenient to have a shortcut for a commonly used notation.
+Use `\newcommand` to create new math commands.
+This must be done inside math-mode, using either single or double dollar signs.
+
+Use the `matrix` environment (starting with `\begin{matrix}` and ending with `\end{matrix}`) to write up your matrices and vectors.
+Separate your columns with `&` and your rows with `\\`.
+Note: the `matrix` environment will not automatically surround the matrix with the usual square brackets.
+Use `\left[` and `\right]` to add the brackets.
+
+Use `\begin{align}` or `\begin{align*}` to include multiple lines of equations.
+Separate lines with `\\`, and separate left- and right-hand sides of equation (aligning the `=`) with the `&`.
+The `align` environment will number each of the equations (lines), while the `align*` environment will not.
+You can suppress equation numbering in `align` using the `\nonumber` command before the `\\`.
+
+!!! note
+    The `\label{}` and `\ref{}` commands allow you to label and reference your equations.
+    Be sure to place the `\label{}` command before the `\\`.
+    You do are not required to use these in your write up.
+
+
+
+<!-- add your own newcommands below -->
+$$
+    \newcommand{\x}{\mathbf{x}}
+    \newcommand{\y}{\mathbf{y}}
+$$
+
+
+
+
+Maths Problems
+================
+
+
+1. If $\vec\x = \left[\begin{matrix} -1 & 1 \end{matrix}\right]^T$ and $y = -2$, then what is $y \vec\x$?
+
+$$ \begin{align}
+    y \vec\x
+        & = -2 \cdot \left[\begin{matrix} -1 \\ 1 \end{matrix}\right]   \label{eq:eqn1} \\
+        & = \left[\begin{matrix} 2 \\ -2 \end{matrix}\right]            \label{eq:eqn2}
+\end{align} $$
+
+My solution to this problem is found in the work above ($\ref{eq:eqn2}$).
+
+
+
+2. If $\vec\x = \left[\begin{matrix} 3 & 2 & 1 \end{matrix}\right]^T$ and $\vec\y = \left[\begin{matrix} -1 & 0 & 1 \end{matrix}\right]^T$, then what is $\vec\x + \vec\y$?
+
+
+$$ \begin{align}
+    \vec\x + \vec\y
+        & = \left[\begin{matrix} 3 \\ 2 \\ 1 \end{matrix}\right] + \left[\begin{matrix} -1 \\ 0 \\ 1 \end{matrix}\right] \nonumber\\
+        & = \left[\begin{matrix} 2 \\ 2 \\ 2 \end{matrix}\right] \label{eq:eqn3}
+\end{align} $$
+
+Another solution ($\ref{eq:eqn3}$).
+
+
+
+3. Compute $\left[\begin{matrix} 1 & -1 \end{matrix}\right] \left[\begin{matrix} 2 \\ 2 \end{matrix}\right]$.
+
+$$ \begin{equation}
+    \left[\begin{matrix} 1 & -1 \end{matrix}\right] \left[\begin{matrix} 2 \\ 2 \end{matrix}\right]
+    = \left[\begin{matrix} 1*2 + (-1)*2 \end{matrix}\right]
+    = \left[\begin{matrix} 2 - 2 \end{matrix}\right]
+    = \left[\begin{matrix} 0 \end{matrix}\right]
+\end{equation} $$
+
+
+4. Compute $\left[\begin{matrix} 1 & 0 \\ 0 & 1 \end{matrix}\right]^T$.
+
+$$ \left[\begin{matrix} 1 & 0 \\ 0 & 1 \end{matrix}\right]^T = \left[\begin{matrix} 1 & 0 \\ 0 & 1 \end{matrix}\right] $$
+
+
+
+5. Compute $\left[\begin{matrix} 1 & 0 \\ 0 & 1 \end{matrix}\right]^{-1}$.
+
+$$ \left[\begin{matrix} 1 & 0 \\ 0 & 1 \end{matrix}\right]^{-1} = \left[\begin{matrix} 1 & 0 \\ 0 & 1 \end{matrix}\right] $$
+
+
+
+
+Coding Example
+=================
+
+Markdeep will automatically highlight coding blocks for you.
+Simply surround your code with coding fences, at least three tildes  (`~~~`).
+Markdeep will detect which language you're using, but you can specify it explicitly by adding the language after the beginning fence.
+
+~~~
+% example code
+for i = 1:length(offset)
+    source = imread(sprintf('%s/source_%02d.jpg',data_dir,i));
+    mask   = imread(sprintf('%s/mask_%02d.jpg',  data_dir,i));
+    target = imread(sprintf('%s/target_%02d.jpg',data_dir,i));
+~~~
+
+Here is another coding block with Python code.
+
+~~~ python
+for i in range(10):
+    print('Hello, World!')
+~~~
+
+
+
+Image Example
+===============
+
+This is how to include images in your document.
+
+![A Placeholder Image](https://gfx.cse.taylor.edu/courses/cos351/assignments/placeholder.jpg)
+
+
+![Figure [placeholder]: A Labeled Placeholder Image](https://gfx.cse.taylor.edu/courses/cos351/assignments/placeholder.jpg)
+
+Here is a reference to Figure [placeholder].
+
+Below is a grid of images.
+
+![](https://gfx.cse.taylor.edu/courses/cos351/assignments/placeholder.jpg)  ![](https://gfx.cse.taylor.edu/courses/cos351/assignments/placeholder.jpg)
+![](https://gfx.cse.taylor.edu/courses/cos351/assignments/placeholder.jpg)  ![](https://gfx.cse.taylor.edu/courses/cos351/assignments/placeholder.jpg)
+
+
+![A Floating Image](https://gfx.cse.taylor.edu/courses/cos351/assignments/placeholder.jpg)
+When a figure is part of a paragraph, it is automatically floated to the right.
+This is similar to a newspaper layout, where text wraps around the image.
+
+<div style="clear:both"></div> <!-- adding a clearing div so that callout below doesn't overlap the floating image above -->
+!!! error: When including images...
+    You _must_ include the image files along with the HTML file.
+    Also, Linux and OSX machines are case-sensitive, but Windows machines are not.
+    Be sure to use the complete filename, including case, when including images in your document!
+
+
+
+
+
+<!--   Feel free to modify the following to fit a theme of your choosing   -->
+<link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet"> <!-- a sans-serif font -->
+<style>  /* A TAYLOR-INSPIRED THEME */
+body {font-family:'Open Sans',sans-serif;}
+.md a:link, .md a:visited {color:hsl(252,23.0%,44.3%); font-family:'Open Sans',sans-serif;}
+.md table.table th {background-color:hsl(252,23.0%,44.3%);}
+.md .noheader th {display:none;}
+.md .firstcol td:first-child {white-space:pre;color:white;vertical-align:top;font-weight:bold;border-color:black;background:hsl(252,23.0%,54.3%);}
+.md .firstcol tr:nth-child(even) td:first-child {background:hsl(252,23.0%,44.3%);}
+</style>
+
+
+<!-- ****************************** -->
+<!--    Leave the content below     -->
+<!-- ****************************** -->
+
+<!-- The script and style below are added for clarity and to workaround a bug -->
+<script>
+    // this is a hack to workaround a bug in Markdeep+Mathjax, where
+    // `&#36;`` is automatically converted to `\(`` and `\)`` too soon.
+    // the following code will replace the innerHTML of all elements
+    // with class "dollar" with a dollar sign.
+    setTimeout(function() {
+        var dollars = document.getElementsByClassName('dollar');
+        for(var i = 0; i < dollars.length; i++) {
+            dollars[i].innerHTML = '&#' + '36;'; // split to prevent conversion to $
+        }
+    }, 1000);
+</script>
+<style>
+    /* adding some styling to <code> tags (but not <pre><code> coding blocks!) */
+    :not(pre) > code {
+        background-color: rgba(0,0,0,0.05);
+        outline: 1px solid rgba(0,0,0,0.15);
+        margin-left: 0.25em;
+        margin-right: 0.25em;
+    }
+</style>
+
+<!--   Leave the following Markdeep formatting code, as this will format your text above to look nice in a wed browser   -->
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style>
+<script src="https://casual-effects.com/markdeep/latest/markdeep.min.js"></script>
+<script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible");</script>
