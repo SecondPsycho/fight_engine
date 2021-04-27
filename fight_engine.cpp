@@ -70,10 +70,21 @@ struct animation_data{
     int getSize(){
         return (int) this->animations.size();
     }
-    /* Do something */
+    
+    /**
+     * @brief Get the current frame being displayed in the animations vector.
+     * 
+     * @return Return the current frame being displayed in the animations vector.
+     */
     sprite_data* getCurrentFrame() {
         return this->animations.at(this->cur_frame);
     }
+    
+    /**
+     * @brief Get the frame after the current frame in the animations vector. If the current frame is the last, the first frame is returned.
+     * 
+     * @return Return the frame after the current frame in the animations vector.
+     */
     sprite_data* getNextFrame() {
         this->cur_frame += 1;
         if (this->cur_frame >= this->getSize()) {
@@ -81,12 +92,25 @@ struct animation_data{
         }
         return this->animations.at(cur_frame);
     }
+    
+    /**
+     * @brief Get the frame at the provided index. If index is larger than the size of the animations vector, return the first frame.
+     * 
+     * @param index The index into animations.
+     * @return Return a pointer to a sprite_data struct.
+     */
     sprite_data* getFrame(int index){
         if(index < this->getSize()){
             return this->animations.at(index);
         }
         return this->animations.front();
     }
+
+    /**
+     * @brief Move the current frame forward by one. If the frame is the last, wrap around back to the first frame.
+     * 
+     * @return sprite_data* A pointer to the new current frame
+     */
     sprite_data* frameTick() {
         if (this->frame_tick > 1) { 
             this->frame_tick--; 
@@ -100,6 +124,7 @@ struct animation_data{
 
 
 //FUNCTIONS
+
 //create a sprite
 /**
  * @brief Creates a sprite struct from a sprite path.
@@ -122,24 +147,6 @@ sprite_data* make_sprite(string sprite_path){
     return sprite;
 }
 
-// https://www.tutorialspoint.com/How-can-I-get-the-list-of-files-in-a-directory-using-C-Cplusplus
-/* print out all entries in a directory
-void list_dir(const char *path) {
-    struct dirent *entry;
-    DIR *dir = opendir(path);
-
-    
-    if (dir == NULL) {
-        return;                                                                         //WIP
-    }
-    while ((entry = readdir(dir)) != NULL) {
-        if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0){
-            cout << entry->d_name << endl;
-        }
-    }
-    closedir(dir);
-}
-//*/
 
 
 //CLASSES
@@ -170,40 +177,63 @@ class Framerate {
 };
 
 // SOUND AND MUSIC
+/**
+ * @class SFX
+ * @brief The SFX class that can play sounds.
+ */
 class SFX { //use this for quick clips, not running soundtracks, and .wav works best for these
     public:
+        /**
+         * @brief Construct a new SFX object
+         * @param soundEffectPath pass the folder path to your sound effect.
+         */
         SFX(string soundEffectPath) {
             if (!this->buffer.loadFromFile(soundEffectPath)) {
                 cerr << "ERROR: Invalid file path" << endl;
             }
             this->soundEffect.setBuffer(this->buffer);
         } 
-
+        /**
+         * @brief Starts your sound effect.
+         */
         void play() {
             this->soundEffect.play();
         }
-
+        /**
+         * @brief Pauses your sound effect.
+         */
         void pause() {
             this->soundEffect.pause();
         }
-
+        /**
+         * @brief Sets the time offset for when your sound effect should start.
+         * @param sec the time in seconds for how long to offset music.
+         */
         void setPlayingOffset(float sec) {
             Time t = sf::seconds(sec);
             this->soundEffect.setPlayingOffset(t);
         }
-
+        /**
+         * @brief Stops your sound effect.
+         */
         void stop() {
             this->soundEffect.stop();
         }
-
+        /**
+         * @brief Sets the pitch for your sound effect.
+         */
         void setPitch(float pitch) {
             this->soundEffect.setPitch(pitch); // 1 = normal pitch, 1.2 = higher pitch, 0.8 = lower pitch, etc
         }
-
+        /**
+         * @brief Sets the volume your sound effect.
+         */
         void setVolume(float vol) {
             this->soundEffect.setVolume(vol); //0 = mute, 100 = full volume
         }
-
+        /**
+         * @brief Sets your sound effect to loop.
+         */
         void setLoop(bool isLooping) {
             this->soundEffect.setLoop(isLooping);
         }
@@ -216,42 +246,60 @@ class SFX { //use this for quick clips, not running soundtracks, and .wav works 
 /**
  * @class Song
  * @brief The Song class that can play music.
- * 
  */
 class Song { //use this for running soundtracks, not for quick clips, and .ogg works best for these
     public:
+        /**
+         * @brief Construct a new Song object.
+         * @param musicPath pass the folder path to your music track.
+         */
         Song(string musicPath) {
             if (!this->music.openFromFile(musicPath)) {
                 cerr << "ERROR: Invalid file path" << endl;
             }
             this->music.setLoop(true);
         } 
-
+        /**
+         * @brief Starts your music track.
+         */
         void play() {
             this->music.play();
         }
-
+        /**
+         * @brief Pauses your music track.
+         */
         void pause() {
             this->music.pause();
         }
-
+        /**
+         * @brief Sets the offset for when music should start.
+         * @param sec the time in seconds for how long to offset music.
+         */
         void setPlayingOffset(float sec) {
             Time t = sf::seconds(sec);
             this->music.setPlayingOffset(t);
         }
-
+        /**
+         * @brief Stops your music track.
+         */
         void stop() {
             this->music.stop();
         }
-
+        /**
+         * @brief Sets the pitch of your music track.
+         */
         void setPitch(float pitch) {
             this->music.setPitch(pitch); // 1 = normal pitch, 1.2 = higher pitch, 0.8 = lower pitch, etc
         }
-
+        /**
+         * @brief Sets the volume of your music track.
+         */
         void setVolume(float vol) {
             this->music.setVolume(vol); //0 = mute, 100 = full volume
         }
-
+        /**
+         * @brief Sets whether or not your music track should loop.
+         */
         void setLoop(bool isLooping) {
             this->music.setLoop(isLooping);
         }
@@ -260,15 +308,31 @@ class Song { //use this for running soundtracks, not for quick clips, and .ogg w
         Music music;
 };
 
+/**
+ * @class Vector2D
+ * @brief Class storing x and y postiton data.
+ */
 class Vector2D {
     public:
         int x,y;
+        /**
+         * @brief Construct a new Vector2D object.
+         */
         Vector2D() {
             this->x = 0; this->y = 0;
         }
+        /**
+         * @brief Construct a new Vector2D object.
+         * @param px inital x value.
+         * @param py inital y value.
+         */
         Vector2D(int px, int py) {
             this->x = px; this->y = py;
         }
+        /**
+         * @brief Increment function to vector values.
+         * @param vector the vector you are altering.
+         */
         void inc(Vector2D vector) {
             this->x += vector.x;
             this->y += vector.y;
@@ -277,6 +341,12 @@ class Vector2D {
 
 class TextBox { //"Man I hope no one expects this to work" -Owen
     public:
+        /**
+         * @brief Construct a new TextBox object.
+         * @param newPosition Position for the textbox.
+         * @param newFontPath Font for your text in the box.
+         * @param newText The text to be in your text box.
+         */
         TextBox(Vector2D newPosition, string newFontPath, string newText="") {
             this->position = newPosition;
             this->text = newText;
@@ -288,21 +358,21 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
             self.setFont(font);
             self.setString(text);
         }
-
+        /**
+         * @brief Set new text for your text box.
+         * @param newText The new text for your text box.
+         */
         void setText (string newText) {
             this->text = newText;
             self.setString(text);
         }
-        
+        /**
+         * @brief Sets the position of the TextBox.
+         * @param newPosition The new position of the TextBox.
+         */
         void setPosition (Vector2D newPosition) {
             this->position = newPosition;
         }
-
-        /*// I've tried to pass the 'window' as a parameter before. It's never worked. -Cordell King
-        void draw(Window theWindow) {
-            theWindow.draw(self);
-        }
-        //*/
 
     private:
         Vector2D position;
@@ -312,6 +382,10 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
 };
 
 //PHYSICS
+/**
+ * @class Hitbox
+ * @brief Keeps track of a hitbox for collision.
+ */
 class Hitbox {
     public:
         int x,y,h,w;
@@ -404,6 +478,7 @@ class KinematicBody2D {
             this->spx = 0; this->spy = 0; //Allow the Sprite's position to be different from the KB2D -Cordell King
             this->hbset = false; this->spset = false;
         };
+        
         KinematicBody2D() {
             this->x = 0; this->y = 0; this->w = 0; this->h = 0;
             this->hbx = 0; this->hby = 0;
@@ -421,6 +496,7 @@ class KinematicBody2D {
             this->y = v.y;
             if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
         }
+        
         /**
         * @brief Move the KinematicBody2D relative to its current coordinates.
         * 
@@ -431,6 +507,7 @@ class KinematicBody2D {
             this->y += v.y;
             if (this->hbset) {(this->hitbox)->setPosition(this->x+this->hbx,this->y+this->hby); };
         };
+
         /**
         * @brief Update the Physics. Run every frame.
         */
@@ -451,6 +528,7 @@ class KinematicBody2D {
             //this->spset = true; Test This -Cordell King
             this->sprite = newsprite;
         };
+
         /**
         * @brief Get the sprite_data from the KinematicBody2D. Do NOT use for drawing. Use getSprite() instead.
         * @return A pointer to the sprite_data from the KinematicBody2D.
@@ -459,6 +537,7 @@ class KinematicBody2D {
         sprite_data* getSpriteData() {
             return (this->sprite);
         };
+
         /**
         * @brief Get the Sprite. Use for drawing.
         * @return The Sprite to be drawn.
@@ -483,6 +562,7 @@ class KinematicBody2D {
                 this->hflip = true;
             }
         }
+
         /**
         * @brief Set the horizontal flip direction for display purposes.
         * @param toFlip Whether we want it flipped from default or not.
@@ -492,6 +572,7 @@ class KinematicBody2D {
             this->hflip = toFlip;
         }
         //*/
+
         /**
         * @brief Determine if the KinematicBody2D is already flipped.
         */
@@ -506,6 +587,7 @@ class KinematicBody2D {
             this->hitbox = new Hitbox(this->x, this->y, this->w, this->h);
             this->hbset = true;
         };
+
         /**
         * @brief Set up the Hitbox to a pre-existing Hitbox. Can be used instead of initHitbox().
         * @param newhitbox A pointer to the new Hitbox.
@@ -515,6 +597,7 @@ class KinematicBody2D {
             this->hitbox = newhitbox;
             (this->hitbox)->setPosition(this->x+this->hbx,this->y+this->spx);
         };
+
         /**
         * @brief Adjust the location and size of the Hitbox. Doesn't work yet.
         * @param px The Hitbox's new x location, relative to the origin of the KinematicBody2D.
@@ -529,6 +612,7 @@ class KinematicBody2D {
             this->hby = py;
         };
         //*/
+
         /**
         * @brief The Hitbox.
         * @return A pointer to the Hitbox.
@@ -546,6 +630,7 @@ class KinematicBody2D {
         bool collides(KinematicBody2D *hostile) {
             return this->hitbox->collides(*(hostile->getHitbox()));
         };
+
         /**
         * @brief See if this KinematicBody2D collides with another.
         * 
@@ -555,6 +640,7 @@ class KinematicBody2D {
         int* collidesDir(KinematicBody2D *hostile) {
             return this->hitbox->collidesDir(*(hostile->getHitbox()));
         }
+
         /**
         * @brief See if this KinematicBody2D collides with another, and on which side.
         * 
@@ -652,6 +738,7 @@ class KinematicBody2D {
         int posX() { 
             return this->x;
         };
+
         /**
         * @brief Get the current y-position of the KinematicBody2D.
         * 
@@ -660,6 +747,7 @@ class KinematicBody2D {
         int posY() {
             return this->y;
         };
+
         /**
         * @brief Get the current position of the KinematicBody2D.
         * 
