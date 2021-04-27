@@ -181,7 +181,7 @@ int main(int argc, char* argv[]){
       wolf_on_ground = false;
       for (int i = 0; i < Game.getStaticsCount(); i++) {
         collide = Game.getStatic(i)->blocks(&wolf);
-        if (collide[2] && collide[1]==-1) {
+        if (collide[2] && collide[1] <= -1) {
           wolf_on_ground = true;
         };
       };

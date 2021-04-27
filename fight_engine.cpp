@@ -339,19 +339,33 @@ class Hitbox {
             side[0] = 0;
             side[1] = 0;
             side[2] = 0;
+            int xdist = 0;
+            int ydist = 0;
             if (this->collides(rect)) {
                 side[2] = 1;
                 if (this->y < rect.y){
                     side[1] += 1;
+                    ydist = (this->y + this->h) - rect.y;
                 }
                 if ((this->y + this->h) > (rect.y + rect.h)) {
                     side[1] -= 1;
+                    ydist = (rect.y + rect.h) - this->y;
                 }
                 if (this->x < rect.x) {
                     side[0] += 1;
+                    xdist = (this->x + this->w) - rect.x;
                 }
                 if ((this->x + this->w) > (rect.x + rect.w)) {
                     side[0] -= 1;
+                    xdist = (rect.x + rect.w) - this->x;
+                }
+                if (side[0] != 0 && side[1] != 0) {
+                    if (xdist >= ydist) {
+                        side[1] *= 2;
+                    } else{
+                        side[0] *= 2;
+                    }
+                    //cout << side[0] << ' ' << side[1] << endl;
                 }
             }
             return side;
@@ -550,19 +564,40 @@ class KinematicBody2D {
         int* blocks(KinematicBody2D *hostile) {
             int* side = this->collidesDir(hostile);
             if (side[2] == 1) {
-                if (side[1] == -1) {
+                if (abs(side[1]) >= 2) {
+                    if (side[1] <= -1) {
+                        hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
+                        hostile->v.y = this->v.y;
+                        hostile->p.x += this->v.x;
+                    } else{
+                        hostile->setPos(Vector2D(hostile->x,this->y+this->h));
+                        hostile->v.y = this->v.y;
+                        hostile->p.x += this->v.x;
+                    }
+                } else if (abs(side[0]) >= 2) {
+                    if (side[0] <= -1) {
+                        hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
+                        hostile->v.x = this->v.x;
+                        hostile->p.y += this->v.y;
+                    } else {
+                        hostile->setPos(Vector2D(this->x+this->w,hostile->y));
+                        hostile->v.x = this->v.x;
+                        hostile->p.y += this->v.y;
+                    }
+                }
+                else if (side[1] <= -1) {
                     hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
                     hostile->v.y = this->v.y;
                     hostile->p.x += this->v.x;
-                } else if (side[0] == -1) {
+                } else if (side[0] <= -1) {
                     hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
                     hostile->v.x = this->v.x;
                     hostile->p.y += this->v.y;
-                } else if (side[0] == 1) {
+                } else if (side[0] >= 1) {
                     hostile->setPos(Vector2D(this->x+this->w,hostile->y));
                     hostile->v.x = this->v.x;
                     hostile->p.y += this->v.y;
-                } else if (side[1] == 1) {
+                } else if (side[1] >= 1) {
                     hostile->setPos(Vector2D(hostile->x,this->y+this->h));
                     hostile->v.y = this->v.y;
                     hostile->p.x += this->v.x;
