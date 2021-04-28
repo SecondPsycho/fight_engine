@@ -47,10 +47,10 @@ int main(int argc, char* argv[]){
     animation_data leap;
 
     //Create Sprite Data
-    idle.addAnimationData(make_sprite("./images/monster_idle.png"));
-    walk.addAnimationData(make_sprite("./images/walk/monster_walk1.png"));
-    walk.addAnimationData(make_sprite("./images/walk/monster_walk2.png"));
-    leap.addAnimationData(make_sprite("./images/monster_leap.png"));
+    idle.addAnimationData(make_sprite("./images/wolf_idle.png"));
+    walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk1.png"));
+    walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk2.png"));
+    leap.addAnimationData(make_sprite("./images/wolf_leap.png"));
 
     KinematicBody2D wolf(50,100,64,64);
     wolf.setSprite(idle.getCurrentFrame());
