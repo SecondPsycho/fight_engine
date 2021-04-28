@@ -33,9 +33,7 @@ using namespace std;
 //STRUCTS:
 /**
  * @struct sprite_data
- *
  * @brief The struct which contains all of the data necessary for a single sprite.
- * 
  */
 struct sprite_data{
     Texture imageSource;
@@ -45,9 +43,7 @@ struct sprite_data{
 
 /**
  * @struct animation_data
- *
  * @brief The struct which contains all of the data and functions for an animation. 
- * 
  */
 struct animation_data{
     vector<sprite_data*> animations;
@@ -56,7 +52,6 @@ struct animation_data{
     int max_frame_tick = 10;
     /**
     * @brief Enqueues the provided sprite data into the 'animations' vector.
-    * 
     * @param frame The pointer to the sprite_data to add to the back of the animation.
     */
     void addAnimationData(sprite_data* frame){
@@ -64,7 +59,6 @@ struct animation_data{
     }
     /**
      * @brief Get the size of the animations vector.
-     * 
      * @return Return the size of the animations vector.
      */
     int getSize(){
@@ -73,7 +67,6 @@ struct animation_data{
     
     /**
      * @brief Get the current frame being displayed in the animations vector.
-     * 
      * @return Return the current frame being displayed in the animations vector.
      */
     sprite_data* getCurrentFrame() {
@@ -82,7 +75,6 @@ struct animation_data{
     
     /**
      * @brief Get the frame after the current frame in the animations vector. If the current frame is the last, the first frame is returned.
-     * 
      * @return Return the frame after the current frame in the animations vector.
      */
     sprite_data* getNextFrame() {
@@ -95,7 +87,6 @@ struct animation_data{
     
     /**
      * @brief Get the frame at the provided index. If index is larger than the size of the animations vector, return the first frame.
-     * 
      * @param index The index into animations.
      * @return Return a pointer to a sprite_data struct.
      */
@@ -108,7 +99,6 @@ struct animation_data{
 
     /**
      * @brief Move the current frame forward by one. If the frame is the last, wrap around back to the first frame.
-     * 
      * @return sprite_data* A pointer to the new current frame
      */
     sprite_data* frameTick() {
@@ -128,7 +118,6 @@ struct animation_data{
 //create a sprite
 /**
  * @brief Creates a sprite struct from a sprite path.
- * 
  * @param sprite_path Pass in a string of the path to the sprite image.
  * @return sprite_data* A pointer to the sprite_data struct that is created from the sprite_path that was passed in is returned.
  */
@@ -151,23 +140,37 @@ sprite_data* make_sprite(string sprite_path){
 
 //CLASSES
 
-//Framerate
+/**
+ * @class Framerate
+ * @brief A class for maintaining a set framerate. 
+ */
 class Framerate {
     private:
         clock_t last_time;
         clock_t current_time;
         int fps;
     public:
+        /**
+         * @brief Create a Framerate object.
+         * @param pfps The number of frames per second.
+         */
         Framerate(int pfps) {
             this->fps = pfps;
             this->last_time = clock()*this->fps;
             this->current_time = clock()*this->fps;
         };
+        /**
+         * @brief Change the current framerate.
+         * @param pfps The new framerate (frames per second).
+         */
         void setFPS(int pfps) {
             this->fps = pfps;
             this->last_time = (clock()*this->fps)-CLOCKS_PER_SEC;
             this->current_time = clock()*this->fps;
         };
+        /**
+         * @brief Call every frame. Stops the system until it's time for the next frame.
+         */
         void next_frame() {
             while ((this->current_time - this->last_time) <= CLOCKS_PER_SEC) {
                 this->current_time = clock()*this->fps;
@@ -337,8 +340,20 @@ class Vector2D {
             this->x += vector.x;
             this->y += vector.y;
         }
+        /**
+         * @brief Add two vectors together.
+         * @param vector Pass in a vector to add.
+         * @return A new vector with the sum of this vector and the parameter vector.
+         */
+        Vector2D add (Vector2D vector) {
+            return Vector2D(this->x+vector.x,this->y+vector.y);
+        }
 };
 
+/**
+ * @class Textbox
+ * @brief A class for creating and displaying a textbox.
+ */
 class TextBox { //"Man I hope no one expects this to work" -Owen
     public:
         /**
@@ -438,8 +453,11 @@ class Hitbox {
          * @brief Gives a collision detection that includes what side the collision is happening on.
          * @param rect The other hitbox to check collision against.
          * @return int* An array containing directional collision data.
+         *          The first indicates x collision (negative means collision on the left, positive is on the right).
+         *          The second indicates y collision (negative means collision on the bottom, positive is on the top).
+         *          If either of the previous two are -2 or 2, the system thinks that collision should be applied first.
+         *          The third integer indicates 1 for collision and 0 for no collision.
          */
-        //TODO Cordell I left this saying the above but if you could flesh that out with what direction each index has that would be awesome.
         int* collidesDir(Hitbox rect) {
             int* side = new int[3];
             side[0] = 0;
@@ -500,12 +518,14 @@ class Hitbox {
 };
 
 
-//An object that holds a Sprite and a Hitbox
+/**
+ * @class KinematicBody2D
+ * @brief A class that holds a Sprite and a Hitbox
+ */
 class KinematicBody2D {
     public:
         /**
         * @brief Initialize a KinematicBody2D. Parameters optional.
-        * 
         * @param px x-position (int)
         * @param py y-position (int)
         * @param pw width (int)
@@ -527,7 +547,6 @@ class KinematicBody2D {
         
         /**
         * @brief Set the Position of the KinematicBody2D.
-        * 
         * @param v A Vector2D holding the new coordinates.
         */
         void setPos(Vector2D v) {
@@ -538,7 +557,6 @@ class KinematicBody2D {
         
         /**
         * @brief Move the KinematicBody2D relative to its current coordinates.
-        * 
         * @param v A Vector2D holding the distances to move.
         */
         void move(Vector2D v) {
@@ -560,7 +578,6 @@ class KinematicBody2D {
         
         /**
         * @brief Change the Current Sprite. Useful for animations.
-        * 
         * @param newsprite A pointer to the sprite_data object which holds the sprite.
         */
         void setSprite(sprite_data* newsprite) {
@@ -662,7 +679,6 @@ class KinematicBody2D {
         
         /**
         * @brief See if this KinematicBody2D collides with another.
-        * 
         * @param hostile A pointer to the other KinematicBody2D
         * @return A boolean indicating whether or not they collide.
         */
@@ -671,10 +687,9 @@ class KinematicBody2D {
         };
 
         /**
-        * @brief See if this KinematicBody2D collides with another.
-        * 
+        * @brief See if this KinematicBody2D collides with another, and on which side.
         * @param hostile A pointer to the other KinematicBody2D
-        * @return A boolean indicating whether or not they collide.
+        * @return A list of three integers. The first indicates horizontal collision, the second is vertical collision, and the third is collision in general.
         */
         int* collidesDir(KinematicBody2D *hostile) {
             return this->hitbox->collidesDir(*(hostile->getHitbox()));
@@ -682,7 +697,6 @@ class KinematicBody2D {
 
         /**
         * @brief See if this KinematicBody2D collides with another, and on which side.
-        * 
         * @param hostile A pointer to the other KinematicBody2D
         * @return A pointer to an array of 3 integers. The first indicates collision on the left or right side. The second indicates collision on the top or bottom. The third indicates collision in general.
         */
@@ -733,7 +747,6 @@ class KinematicBody2D {
     
         /**
         * @brief Slow down the current velocity by a set amount.
-        * 
         * @param f a Vector2D indicating how much to slow.
         */
         void dampen(Vector2D f) {
@@ -761,7 +774,6 @@ class KinematicBody2D {
         
         /**
         * @brief Get the Rectangle for drawing purposes. Make sure you've called initRectangle() first.
-        * 
         * @return The Rectangle of the KinematicBody2D.
         */
         RectangleShape getRectangle(){
@@ -771,7 +783,6 @@ class KinematicBody2D {
 
         /**
         * @brief Get the current x-position of the KinematicBody2D.
-        * 
         * @return An integer with the current x-position.
         */
         int posX() { 
@@ -780,7 +791,6 @@ class KinematicBody2D {
 
         /**
         * @brief Get the current y-position of the KinematicBody2D.
-        * 
         * @return An integer with the current y-position.
         */
         int posY() {
@@ -789,7 +799,6 @@ class KinematicBody2D {
 
         /**
         * @brief Get the current position of the KinematicBody2D.
-        * 
         * @return A Vector2D with the current x and y-positions.
         */
         Vector2D pos() {
