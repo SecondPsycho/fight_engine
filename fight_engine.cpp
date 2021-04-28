@@ -364,22 +364,22 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          */
         TextBox(Vector2D newPosition, string newFontPath, string newText="") {
             this->position = newPosition;
-            this->text = newText;
+            this->msg = newText;
 
             if (!font.loadFromFile(newFontPath)) {
                 cerr << "Error: Invalid font path" << endl;
             }
 
-            self.setFont(font);
-            self.setString(text);
+            text.setFont(font);
+            text.setString(msg);
         }
         /**
          * @brief Set new text for your text box.
          * @param newText The new text for your text box.
          */
         void setText (string newText) {
-            this->text = newText;
-            self.setString(text);
+            this->msg = newText;
+            text.setString(msg);
         }
         /**
          * @brief Sets the position of the TextBox.
@@ -388,12 +388,29 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
         void setPosition (Vector2D newPosition) {
             this->position = newPosition;
         }
+        /**
+         * @brief Sets the font size of TextBox.
+         * @param newPosition The new font size of TextBox.
+         */
+        void setCharacterSize (int size) {
+            text.setCharacterSize(size);
+        }
+        /**
+         * @brief Sets the font size of TextBox.
+         * @param newPosition The new font size of TextBox.
+         */
+        void setColor (int r, int g, int b) {
+            text.setFillColor(Color(r,g,b));
+        }
+
+        Text text;
+
+        // To draw to screen, do window.draw(ObjectName.text);
 
     private:
         Vector2D position;
-        string text;
+        string msg;
         Font font;
-        Text self;
 };
 
 //PHYSICS

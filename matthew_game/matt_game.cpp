@@ -84,6 +84,9 @@ int main(){
     Game.getStatic(0)->initHitbox();
 
 
+    // Textbox attempt
+    //Textbox test_text((50, 50), "", "Hello!"); // TODO NEED FONT PATH
+
     Event event;
     int wolf_keys[5] = {0,0,0,0,0};
     int human_keys[5] = {0,0,0,0,0};
@@ -194,10 +197,10 @@ int main(){
 
         //Apply Physics
         // Wolf:
-        wolf.p.x += 10*(wolf_keys[1]-wolf_keys[0]);
+        wolf.p.x += 50*(wolf_keys[1]-wolf_keys[0]); // Speed multiplier was 10
         wolf.tick();
         // Human:
-        human.p.x += 10*(human_keys[1]-human_keys[0]);
+        human.p.x += 50*(human_keys[1]-human_keys[0]); // Speed multiplier was 10
         human.tick();
         // Statics:
         //Game.getStatic(2)->tick();
@@ -259,6 +262,9 @@ int main(){
         window.draw(wolf.getHitbox()->getRectangle());
         window.draw(human.getSprite());
         window.draw(human.getHitbox()->getRectangle());
+
+        // Text Test
+        //window.draw(test_text.txt);
 
         window.display();
     }

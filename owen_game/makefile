@@ -3,12 +3,11 @@ INCLUDE_SFML_EXTRAS = -lsfml-audio -lsfml-network
 #INCLUDE_GL = -lGL -lGLU -lglut -I/usr/include/GL/
 
 
-joey: ./src/joey.cpp ../fight_engine.cpp
-	g++ -o joey ./src/joey.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
-	./joey
-	rm -f joey
+test: owen_game.cpp ../fight_engine.cpp
+	g++ -o game owen_game.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
+	./game; rm game;
 
 clean:
-	rm -f joey
+	rm -f game
 
 .PHONY: test clean
