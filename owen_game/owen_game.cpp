@@ -40,6 +40,8 @@ int main(int argc, char* argv[]){
     create_window("Fighting Game", 800, 800);
     window.setKeyRepeatEnabled(false);
     
+    /*
+
     //Create an Animation
     animation_data idle;
     animation_data walk;
@@ -77,17 +79,17 @@ int main(int argc, char* argv[]){
     Game.getStatic(3)->initHitbox();
     Game.getStatic(3)->v.y = 5;
     
-    SFX pew_sound("sounds/pew.wav");
+    SFX pew_sound("assets/pew.wav");
     pew_sound.setVolume(100.0f);
-    //*/
+    
+    */
         
     Event event;
     int keys[5] = {0,0,0,0,0};
     int *collide;
-    bool wolf_on_ground = false;
     Vector2D f(1,0);
 
-    // Framerate Control -Cordell King
+    // Framerate Control
     Framerate ticker(30);
     while (window.isOpen()) {
       ticker.next_frame();
