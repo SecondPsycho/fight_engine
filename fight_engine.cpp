@@ -390,17 +390,24 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
         }
         /**
          * @brief Sets the font size of TextBox.
-         * @param newPosition The new font size of TextBox.
+         * @param size The new font size of TextBox.
          */
         void setCharacterSize (int size) {
             text.setCharacterSize(size);
         }
         /**
-         * @brief Sets the font size of TextBox.
-         * @param newPosition The new font size of TextBox.
+         * @brief Sets the color of TextBox.
+         * @param r The new font color of TextBox (red   should be 0 to 255)
+         * @param g The new font color of TextBox (green should be 0 to 255)
+         * @param b The new font color of TextBox (blue  should be 0 to 255)
          */
         void setColor (int r, int g, int b) {
-            text.setFillColor(Color(r,g,b));
+            if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+                text.setFillColor(Color(r,g,b));
+            }
+            else {
+                cerr << "ERROR: invalid color" << endl;
+            }
         }
 
         Text text;
