@@ -1,6 +1,17 @@
 #include "../fight_engine.cpp"
 
 
+class Player {
+  public:
+    //Attributes
+    bool on_ground = false;
+    //Body
+    KinematicBody2D* body;
+    animation_data idle;
+    animation_data walk;
+    animation_data leap;
+};
+
 class NewGame {
   public:
     NewGame(Player* player1, Player* player2, int n) {
@@ -29,8 +40,8 @@ class NewGame {
       return this->statics_count;
     }
     void runPhysics() {
-      P1->self->tick();
-      P2->self->tick();
+      P1->body->tick();
+      P2->body->tick();
       
       int* collide;
       this->P1->on_ground = false;
@@ -38,11 +49,11 @@ class NewGame {
       
       for (int i = 0; i < this->statics_count; i++) {
         this->statics[i].tick();
-        collide = this->statics[i].blocks(this->P1->self);
+        collide = this->statics[i].blocks(this->P1->body);
         if (collide[2] && collide[1] <= -1) {
           this->P1->on_ground = true;
         };
-        collide = this->statics[i].blocks(this->P2->self);
+        collide = this->statics[i].blocks(this->P2->body);
         if (collide[2] && collide[1] <= -1) {
           this->P2->on_ground = true;
         };
@@ -56,20 +67,6 @@ class NewGame {
     int statics_max;
 };
 
-class Player {
-  public:
-    Player() {
-
-    }
-    //Attributes
-    bool on_ground = false;
-    //Body
-    KinematicBody2D* self;
-    animation_data idle;
-    animation_data walk;
-    animation_data leap;
-};
-
 
 int main(int argc, char* argv[]){
     create_window("Up the Tree", 800, 800);
@@ -81,12 +78,12 @@ int main(int argc, char* argv[]){
     animation_data leap;
 
     Player* P1 = new Player;
-    P1->self = new KinematicBody2D(50,100,64,64);
-    P1->self.initHitbox();
+    P1->body = new KinematicBody2D(50,100,64,64);
+    P1->body->initHitbox();
 
     Player* P2 = new Player;
-    P2->self = new KinematicBody2D(450,100,64,64);
-    P2->self.initHitbox();
+    P2->body = new KinematicBody2D(450,100,64,64);
+    P2->body->initHitbox();
 
     /*
     KinematicBody2D wolf(50,100,64,64);
@@ -101,11 +98,13 @@ int main(int argc, char* argv[]){
     P1->walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk1.png"));
     P1->walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk2.png"));
     P1->leap.addAnimationData(make_sprite("./images/wolf_leap.png"));
+    P1->body->a.y = 1;
 
     P2->idle.addAnimationData(make_sprite("./images/wolf_idle.png"));
     P2->walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk1.png"));
     P2->walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk2.png"));
     P2->leap.addAnimationData(make_sprite("./images/wolf_leap.png"));
+    P2->body->a.y = 1;
 
     NewGame Game(P1, P2, 6);
     Game.addStatic(KinematicBody2D(0,600,800,200));
@@ -135,17 +134,19 @@ int main(int argc, char* argv[]){
     pew_sound.setVolume(100.0f);
         
     Event event;
-    bool keys[10] = {false,false,false,false,false,false,false,false,false,false};
-    //bool wolf_on_ground = false;
+    //Left, Right, Jump, Attack
+    bool P1keys[5] = {false,false,false,false};
+    bool P2keys[5] = {false,false,false,false};
     Vector2D f(1,0);
     int worldshifty = 0;
-    int frame, seconds = 0;
+    //int frame, seconds = 0;
 
     int t = 0;
     int falldelay = 5;
     Framerate ticker(30);
     while (window.isOpen()) {
       ticker.next_frame();
+      /*
       frame += 1;
       if (frame >= 30) {
         frame = 0;
@@ -158,6 +159,7 @@ int main(int argc, char* argv[]){
           falldelay = 2;
         }
       }
+      //*/
       t += 1;
       if (t >= falldelay) {
         t = 0;
@@ -177,34 +179,42 @@ int main(int argc, char* argv[]){
               case Keyboard::Escape:
                 window.close();
                 break;
-              case Keyboard::F:
-                //wolf.flipH();
-                break;
               case Keyboard::A:
-                /*
-                keys[2] = 1;
-                if (wolf.isFlippedH()) {
-                  wolf.flipH();
+                P1keys[0] = true;
+                if (P1->body->isFlippedH()) {
+                  P1->body->flipH();
                 }
-                //*/
                 break;
               case Keyboard::D:
-                /*
-                keys[3] = 1;
-                if (!wolf.isFlippedH()) {
-                  wolf.flipH();
+                P1keys[1] = true;
+                if (!P1->body->isFlippedH()) {
+                  P1->body->flipH();
                 }
                 break;
-                //*/
-              case Keyboard::Space:
-                /*
-                if (keys[4] == 0 && wolf_on_ground){
-                  //pew_sound.play();
-                  keys[4] = 1;
-                  wolf.v.y = -20;
+              case Keyboard::W:
+                if (!P1keys[2] && P1->on_ground) {
+                  P1->body->v.y = -20;
+                  P1keys[2] = true;
                 }
                 break;
-                //*/
+              case Keyboard::Left:
+                P2keys[0] = true;
+                if (P2->body->isFlippedH()) {
+                  P2->body->flipH();
+                }
+                break;
+              case Keyboard::Right:
+                P2keys[1] = true;
+                if (!P2->body->isFlippedH()) {
+                  P2->body->flipH();
+                }
+                break;
+              case Keyboard::Up:
+                if (!P2keys[2] && P2->on_ground) {
+                  P2->body->v.y = -20;
+                  P2keys[2] = true;
+                }
+                break;
               default:
                 break;
             }
@@ -212,13 +222,22 @@ int main(int argc, char* argv[]){
           case Event::KeyReleased:
             switch (event.key.code) {
               case Keyboard::A:
-                //keys[2] = 0;
+                P1keys[0] = false;
                 break;
               case Keyboard::D:
-                //keys[3] = 0;
+                P1keys[1] = false;
                 break;
-              case Keyboard::Space:
-                //keys[4] = 0;
+              case Keyboard::W:
+                P1keys[2] = false;
+                break;
+              case Keyboard::Left:
+                P2keys[0] = false;
+                break;
+              case Keyboard::Right:
+                P2keys[1] = false;
+                break;
+              case Keyboard::Up:
+                P2keys[2] = false;
                 break;
               default:
                 break;
@@ -241,37 +260,45 @@ int main(int argc, char* argv[]){
       }
 
       //Apply Physics
+      P1->body->p.x += (P1keys[1]-P1keys[0])*10;
+      P2->body->p.x += (P2keys[1]-P2keys[0])*10;
+      P1->body->p.y -= (P1keys[2])*3;
+      P2->body->p.y -= (P2keys[2])*3;
       Game.runPhysics();
+      P1->body->dampen(f);
+      P2->body->dampen(f);
 
+      //cout << P1->body->posX() << ' ' << P1->body->posY() << "   " << P2->body->posX() << ' ' << P2->body->posY() << endl;
       //Apply animation
       if (!P1->on_ground) {
-        P1->self->setSprite(P1.leap.getCurrentFrame()); // Do leap animation
+        P1->body->setSprite(P1->leap.getCurrentFrame()); // Do leap animation
       }
-      else if (keys[2]^keys[3]) {
-        P1->self->setSprite(P1.walk.frameTick()); // Do walking animations
+      else if (P1keys[1]^P1keys[0]) {
+        P1->body->setSprite(P1->walk.frameTick()); // Do walking animations
       }
       else {
-        P1->self->setSprite(P1.idle.getCurrentFrame()); // Do idle animation
+        P1->body->setSprite(P1->idle.getCurrentFrame()); // Do idle animation
       }
       
       if (!P2->on_ground) {
-        P2->self->setSprite(P2.leap.getCurrentFrame()); // Do leap animation
+        P2->body->setSprite(P2->leap.getCurrentFrame()); // Do leap animation
       }
-      else if (keys[2]^keys[3]) {
-        P2->self->setSprite(P2.walk.frameTick()); // Do walking animations
+      else if (P2keys[1]^P2keys[0]) {
+        P2->body->setSprite(P2->walk.frameTick()); // Do walking animations
       }
       else {
-        P2->self->setSprite(P2.idle.getCurrentFrame()); // Do idle animation
+        P2->body->setSprite(P2->idle.getCurrentFrame()); // Do idle animation
       }
       
 
       //Draw the Screen
-      window.draw(P1->self->getSprite());
-      window.draw(P2->self->getSprite());
-      
       window.clear(Color(42,42,42,255)); // Dark gray.
+
+      window.draw(P1->body->getSprite());
+      window.draw(P2->body->getSprite());
+
       for (int i = 0; i < Game.getStaticsCount(); i++) {
-        window.draw(Game.getStatic(i)->getRectangle())
+        window.draw(Game.getStatic(i)->getRectangle());
       }
       //window.draw(wolf.getHitbox()->getRectangle());
       window.display();
