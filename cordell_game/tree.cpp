@@ -28,6 +28,26 @@ class NewGame {
     int getStaticsCount() {
       return this->statics_count;
     }
+    void runPhysics() {
+      P1->self->tick();
+      P2->self->tick();
+      
+      int* collide;
+      this->P1->on_ground = false;
+      this->P2->on_ground = false;
+      
+      for (int i = 0; i < this->statics_count; i++) {
+        this->statics[i].tick();
+        collide = this->statics[i].blocks(this->P1->self);
+        if (collide[2] && collide[1] <= -1) {
+          this->P1->on_ground = true;
+        };
+        collide = this->statics[i].blocks(this->P2->self);
+        if (collide[2] && collide[1] <= -1) {
+          this->P2->on_ground = true;
+        };
+      };
+    }
   private:
     Player* P1;
     Player* P2;
@@ -44,7 +64,7 @@ class Player {
     //Attributes
     bool on_ground = false;
     //Body
-    KinematicBody2D self;
+    KinematicBody2D* self;
     animation_data idle;
     animation_data walk;
     animation_data leap;
@@ -61,11 +81,11 @@ int main(int argc, char* argv[]){
     animation_data leap;
 
     Player* P1 = new Player;
-    P1->self = KinematicBody2D(50,100,64,64);
+    P1->self = new KinematicBody2D(50,100,64,64);
     P1->self.initHitbox();
 
     Player* P2 = new Player;
-    P2->self = KinematicBody2D(450,100,64,64);
+    P2->self = new KinematicBody2D(450,100,64,64);
     P2->self.initHitbox();
 
     /*
@@ -116,7 +136,6 @@ int main(int argc, char* argv[]){
         
     Event event;
     bool keys[10] = {false,false,false,false,false,false,false,false,false,false};
-    int *collide;
     //bool wolf_on_ground = false;
     Vector2D f(1,0);
     int worldshifty = 0;
@@ -222,42 +241,39 @@ int main(int argc, char* argv[]){
       }
 
       //Apply Physics
-      //wolf.p.x += 10*(keys[3]-keys[2]);
-      P1->self.tick();
-      P2->self.tick();
-      P1->self.dampen(f);
-      P2->self.dampen(f);
-      
-      P1->on_ground = false;
-      for (int i = 0; i < Game.getStaticsCount(); i++) {
-        Game.getStatic(i)->tick();
-        collide = Game.getStatic(i)->blocks(&(P1->self));
-        if (collide[2] && collide[1] <= -1) {
-          P1->on_ground = true;
-        };
-      };
+      Game.runPhysics();
 
       //Apply animation
-      if (!wolf_on_ground) {
-        wolf.setSprite(leap.getCurrentFrame()); // Do leap animation
+      if (!P1->on_ground) {
+        P1->self->setSprite(P1.leap.getCurrentFrame()); // Do leap animation
       }
       else if (keys[2]^keys[3]) {
-        wolf.setSprite(walk.frameTick()); // Do walking animations
+        P1->self->setSprite(P1.walk.frameTick()); // Do walking animations
       }
       else {
-        wolf.setSprite(idle.getCurrentFrame()); // Do idle animation
+        P1->self->setSprite(P1.idle.getCurrentFrame()); // Do idle animation
+      }
+      
+      if (!P2->on_ground) {
+        P2->self->setSprite(P2.leap.getCurrentFrame()); // Do leap animation
+      }
+      else if (keys[2]^keys[3]) {
+        P2->self->setSprite(P2.walk.frameTick()); // Do walking animations
+      }
+      else {
+        P2->self->setSprite(P2.idle.getCurrentFrame()); // Do idle animation
       }
       
 
       //Draw the Screen
+      window.draw(P1->self->getSprite());
+      window.draw(P2->self->getSprite());
+      
       window.clear(Color(42,42,42,255)); // Dark gray.
-      window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
-      window.draw(Game.getStatic(1)->getRectangle());
-      window.draw(Game.getStatic(2)->getRectangle());
-      window.draw(Game.getStatic(3)->getRectangle());
-      window.draw(wolf.getSprite());
-      window.draw(wolf.getHitbox()->getRectangle());
-
+      for (int i = 0; i < Game.getStaticsCount(); i++) {
+        window.draw(Game.getStatic(i)->getRectangle())
+      }
+      //window.draw(wolf.getHitbox()->getRectangle());
       window.display();
     }
     return 0;
