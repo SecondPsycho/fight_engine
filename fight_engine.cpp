@@ -727,43 +727,22 @@ class KinematicBody2D {
         int* blocks(KinematicBody2D *hostile) {
             int* side = this->collidesDir(hostile);
             if (side[2] == 1) {
-                if (abs(side[1]) >= 2) {
-                    if (side[1] <= -1) {
-                        hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
-                        hostile->v.y = this->v.y;
-                        hostile->p.x += this->v.x;
-                    } else{
-                        hostile->setPos(Vector2D(hostile->x,this->y+this->h));
-                        hostile->v.y = this->v.y;
-                        hostile->p.x += this->v.x;
-                    }
-                } else if (abs(side[0]) >= 2) {
-                    if (side[0] <= -1) {
-                        hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
-                        hostile->v.x = this->v.x;
-                        hostile->p.y += this->v.y;
-                    } else {
-                        hostile->setPos(Vector2D(this->x+this->w,hostile->y));
-                        hostile->v.x = this->v.x;
-                        hostile->p.y += this->v.y;
-                    }
-                }
-                else if (side[1] <= -1) {
-                    hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
-                    hostile->v.y = this->v.y;
-                    hostile->p.x += this->v.x;
+                if (side[1] <= -2) {
+                    this->blockedUp(hostile);
+                } else if (side[1] >= 2){
+                    this->blockedDown(hostile);
+                } else if (side[0] <= -2) {
+                    this->blockedLeft(hostile);
+                } else if (side[0] >= 2) {
+                    this->blockedRight(hostile);
+                } else if (side[1] <= -1) {
+                    this->blockedUp(hostile);
                 } else if (side[0] <= -1) {
-                    hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
-                    hostile->v.x = this->v.x;
-                    hostile->p.y += this->v.y;
+                    this->blockedLeft(hostile);
                 } else if (side[0] >= 1) {
-                    hostile->setPos(Vector2D(this->x+this->w,hostile->y));
-                    hostile->v.x = this->v.x;
-                    hostile->p.y += this->v.y;
+                    this->blockedRight(hostile);
                 } else if (side[1] >= 1) {
-                    hostile->setPos(Vector2D(hostile->x,this->y+this->h));
-                    hostile->v.y = this->v.y;
-                    hostile->p.x += this->v.x;
+                    this->blockedDown(hostile);
                 }
             }
             return side;
@@ -834,6 +813,26 @@ class KinematicBody2D {
         Vector2D a; //Save an acceleration
         
     private:
+        void blockedLeft(KinematicBody2D *hostile) {
+            hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
+            hostile->v.x = this->v.x;
+            hostile->p.y += this->v.y;
+        }
+        void blockedRight(KinematicBody2D *hostile) {
+            hostile->setPos(Vector2D(this->x+this->w,hostile->y));
+            hostile->v.x = this->v.x;
+            hostile->p.y += this->v.y;
+        }
+        void blockedUp(KinematicBody2D *hostile) {
+            hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
+            hostile->v.y = this->v.y;
+            hostile->p.x += this->v.x;
+        }
+        void blockedDown(KinematicBody2D *hostile) {
+            hostile->setPos(Vector2D(hostile->x,this->y+this->h));
+            hostile->v.y = this->v.y;
+            hostile->p.x += this->v.x;
+        }
         int x, y, w, h, hbx, hby, spx, spy;
         bool hbset, spset, rcset;
         bool hflip = false;
