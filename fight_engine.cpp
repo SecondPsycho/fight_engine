@@ -537,7 +537,7 @@ class Hitbox {
             return this->rectangle;
         }
     private:
-    bool rcset;
+        bool rcset;
         RectangleShape rectangle;
 };
 
