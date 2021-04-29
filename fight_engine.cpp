@@ -373,7 +373,7 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          * @param newFontPath Font for your text in the box.
          * @param newText The text to be in your text box.
          */
-        TextBox(Vector2D newPosition, string newFontPath, string newText="") {
+        TextBox(Vector2f newPosition, string newFontPath, string newText="") {
             this->position = newPosition;
             this->msg = newText;
 
@@ -383,6 +383,7 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
 
             text.setFont(font);
             text.setString(msg);
+            text.setPosition(newPosition);
         }
         /**
          * @brief Set new text for your text box.
@@ -398,6 +399,13 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          */
         void setPosition (Vector2D newPosition) {
             this->position = newPosition;
+            text.setPosition(newPosition);
+        }
+        /**
+         * @brief Gets the position of the TextBox.
+         */
+        void getPosition () {
+            return this->text.getPosition();
         }
         /**
          * @brief Sets the font size of TextBox.
@@ -422,11 +430,11 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
         }
 
         Text text;
-        Vector2D position;
 
         // To draw to screen, do window.draw(ObjectName.text);
 
     private:
+        Vector2f position;
         string msg;
         Font font;
 };
