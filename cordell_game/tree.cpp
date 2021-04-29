@@ -23,11 +23,17 @@ class Player {
       return this->punchbox.collides(*(PN->body->getHitbox()));
     }
     void takeHit(Vector2D dir) {
-
+      this->flying = true;
+    }
+    void onGround() {
+      this->on_ground = true;
+      this->double_jump = true;
+      this->flying = false;
     }
     //Attributes
     bool on_ground = false;
     bool double_jump = false;
+    bool flying = false;
     //Body
     KinematicBody2D* body;
     Hitbox punchbox;
@@ -37,6 +43,7 @@ class Player {
   private:
     int w, h;
     int dmg = 0;
+
 };
 
 class NewGame {
@@ -76,15 +83,13 @@ class NewGame {
       
       for (int i = 0; i < this->statics_count; i++) {
         this->statics[i].tick();
-        collide = this->statics[i].blocks(this->P1->body);
+        collide = this->statics[i].blocks(this->P1->body, P1->flying);
         if (collide[2] && collide[1] <= -1) {
-          this->P1->on_ground = true;
-          this->P1->double_jump = true;
+          this->P1->onGround();
         };
-        collide = this->statics[i].blocks(this->P2->body);
+        collide = this->statics[i].blocks(this->P2->body, P2->flying);
         if (collide[2] && collide[1] <= -1) {
-          this->P2->on_ground = true;
-          this->P2->double_jump = true;
+          this->P2->onGround();
         };
       };
     }
@@ -231,6 +236,7 @@ int main(int argc, char* argv[]){
               case Keyboard::E:
                 P1keys[3] = true;
                 if (P1->punch(P2)) {
+                  P2->takeHit(Vector2D(0,0));
                   P2dmg += 1;
                   if (P1->body->isFlippedH()) {
                     P2->body->v.x += P2dmg;
@@ -270,6 +276,7 @@ int main(int argc, char* argv[]){
               case Keyboard::I:
                 P2keys[3] = true;
                 if (P2->punch(P1)) {
+                  P1->takeHit(Vector2D(0,0));
                   P1dmg += 1;
                   if (P2->body->isFlippedH()) {
                     P1->body->v.x += P1dmg;
