@@ -422,11 +422,11 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
         }
 
         Text text;
+        Vector2D position;
 
         // To draw to screen, do window.draw(ObjectName.text);
 
     private:
-        Vector2D position;
         string msg;
         Font font;
 };
