@@ -3,13 +3,35 @@
 
 class Player {
   public:
+    //Methods
+    Player(int px, int py) {
+      this->w = 64;
+      this->h = 64;
+      this->body = new KinematicBody2D(px,py,64,64);
+      this->body->initHitbox();
+      this->punchbox = Hitbox(px,py,32,32);
+      this->punchbox.initRectangle();
+    }
+    bool punch(Player* PN) {
+      //cout << this->punchbox.x << ' ' << this->punchbox.y << ' ' << this->punchbox.w << ' ' << this->punchbox.h << "   ";
+      //out << PN->body->getHitbox()->x << ' ' << PN->body->getHitbox()->y << ' ' << PN->body->getHitbox()->w << ' ' << PN->body->getHitbox()->h << "   ";
+      if (this->body->isFlippedH()) {
+        this->punchbox.setPosition(this->body->posX()+48, this->body->posY()+16);
+      } else {
+        this->punchbox.setPosition(this->body->posX()-16, this->body->posY()+16);
+      }
+      return this->punchbox.collides(*(PN->body->getHitbox()));
+    }
     //Attributes
     bool on_ground = false;
     //Body
     KinematicBody2D* body;
+    Hitbox punchbox;
     animation_data idle;
     animation_data walk;
     animation_data leap;
+  private:
+    int w, h;
 };
 
 class NewGame {
@@ -77,13 +99,8 @@ int main(int argc, char* argv[]){
     animation_data walk;
     animation_data leap;
 
-    Player* P1 = new Player;
-    P1->body = new KinematicBody2D(50,100,64,64);
-    P1->body->initHitbox();
-
-    Player* P2 = new Player;
-    P2->body = new KinematicBody2D(450,100,64,64);
-    P2->body->initHitbox();
+    Player* P1 = new Player(50,100);
+    Player* P2 = new Player(450,100);
 
     /*
     KinematicBody2D wolf(50,100,64,64);
@@ -197,23 +214,34 @@ int main(int argc, char* argv[]){
                   P1keys[2] = true;
                 }
                 break;
+              case Keyboard::E:
+                P1keys[3] = true;
+                cout << P1->punch(P2) << endl;
+                break;
+              case Keyboard::H:
               case Keyboard::Left:
                 P2keys[0] = true;
                 if (P2->body->isFlippedH()) {
                   P2->body->flipH();
                 }
                 break;
+              case Keyboard::K:
               case Keyboard::Right:
                 P2keys[1] = true;
                 if (!P2->body->isFlippedH()) {
                   P2->body->flipH();
                 }
                 break;
+              case Keyboard::U:
               case Keyboard::Up:
                 if (!P2keys[2] && P2->on_ground) {
                   P2->body->v.y = -20;
                   P2keys[2] = true;
                 }
+                break;
+              case Keyboard::I:
+                P2keys[3] = true;
+                cout << P2->punch(P1) << endl;
                 break;
               default:
                 break;
@@ -230,14 +258,23 @@ int main(int argc, char* argv[]){
               case Keyboard::W:
                 P1keys[2] = false;
                 break;
+              case Keyboard::E:
+                P1keys[3] = false;
+                break;
+              case Keyboard::H:
               case Keyboard::Left:
                 P2keys[0] = false;
                 break;
+              case Keyboard::K:
               case Keyboard::Right:
                 P2keys[1] = false;
                 break;
+              case Keyboard::U:
               case Keyboard::Up:
                 P2keys[2] = false;
+                break;
+              case Keyboard::I:
+                P2keys[3] = false;
                 break;
               default:
                 break;
@@ -301,6 +338,8 @@ int main(int argc, char* argv[]){
         window.draw(Game.getStatic(i)->getRectangle());
       }
       //window.draw(wolf.getHitbox()->getRectangle());
+      window.draw(P1->punchbox.getRectangle());
+      window.draw(P2->punchbox.getRectangle());
       window.display();
     }
     return 0;
