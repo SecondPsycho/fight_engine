@@ -1,100 +1,67 @@
 #include "../fight_engine.cpp"
+#include "./matt_classes.cpp"
 
-class NewGame {
-  public:
-    NewGame(KinematicBody2D player1, KinematicBody2D player2, int n) {
-      this->statics_count = 0;
-      this->statics_max = n;
-      this->statics = new KinematicBody2D[this->statics_max];
-      this->player1 = player1;
-      this->player2 = player2;
-    }
-    void addStatic(KinematicBody2D newstatic) {
-      if (this->statics_count < this->statics_max) {
-        this->statics[this->statics_count] = newstatic;
-        this->statics_count++;
-      } else {
-        cout << "Cannot add another static.\n";
-      }
-    }
-    KinematicBody2D* getStatic(int n) {
-      if (n < this->statics_max && n >= 0) {
-        return &(this->statics[n]);
-      }
-      cout << "Invalid Static Index.\n";
-      return nullptr;
-    }
-    int getStaticsCount() {
-      return this->statics_count;
-    }
-  private:
-    KinematicBody2D player1;
-    KinematicBody2D player2;
-    KinematicBody2D* statics;
-    int statics_count;
-    int statics_max;
-};
+void handle_controls(Event event);
+
+
+create_window("Matthew's Game", 2560, 1440); // Fullscreen but at cost of sprites looking small and needing to make stage bigger with adjusting speed and jump vals.
+//create_window("Matthew's Game", 800, 800); // Small window but works same as in out test.cpp
+//window.setKeyRepeatEnabled(false);
+
+
+// Globals:
+swordPlayer player1;
+
+KinematicBody2D human(550,100,64,64);
+
+int human_keys[5] = {0,0,0,0,0};
+bool human_on_ground = false;
+
+
 
 
 int main(){
-    //create_window("Matthew's Game", 2560, 1440); // Fullscreen but at cost of sprites looking small and needing to make stage bigger with adjusting speed and jump vals.
-    create_window("Matthew's Game", 800, 800); // Small window but works same as in out test.cpp
+    /*
+    create_window("Matthew's Game", 2560, 1440); // Fullscreen but at cost of sprites looking small and needing to make stage bigger with adjusting speed and jump vals.
+    //create_window("Matthew's Game", 800, 800); // Small window but works same as in out test.cpp
+    window.setKeyRepeatEnabled(false);
+    */
     window.setKeyRepeatEnabled(false);
 
-    //Create Animation Data
-    // For wolf:
-    animation_data wolf_idle;
-    animation_data wolf_walk;
-    animation_data wolf_leap;
-    // For human:
-    animation_data human_idle;
-    animation_data human_walk;
+    /*
+    swordPlayer player1;
+    */
 
-    //Create Sprite Data
-    // For wolf:
-    wolf_idle.addAnimationData(make_sprite("./images/wolf_idle.png"));
-    wolf_walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk1.png"));
-    wolf_walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk2.png"));
-    wolf_leap.addAnimationData(make_sprite("./images/wolf_leap.png"));
-    // For human:
-    human_idle.addAnimationData(make_sprite("./images/human_idle.png"));
-    human_walk.addAnimationData(make_sprite("./images/human_walk/human_walk1.png"));
-    human_walk.addAnimationData(make_sprite("./images/human_walk/human_walk2.png"));
-    human_walk.addAnimationData(make_sprite("./images/human_walk/human_walk3.png"));
-
-    // Create wolf object
-    KinematicBody2D wolf(50,100,64,64);
-    wolf.setSprite(wolf_idle.getCurrentFrame());
-    wolf.initHitbox();
-    wolf.getHitbox()->initRectangle(); //Testing
-    //wolf.adjustHitbox(2,4,52,50);
-    wolf.a.y = 1;
-    // Create human object
+    /*
     KinematicBody2D human(550,100,64,64);
-    human.setSprite(human_idle.getCurrentFrame());
-    human.initHitbox();
-    human.getHitbox()->initRectangle(); //Testing
+    */
+    //human.setSprite(human_idle.getCurrentFrame());
+    //human.initHitbox();
+    //human.getHitbox()->initRectangle(); //Testing
     //human.adjustHitbox(2,4,52,50);
-    human.a.y = 1;
+    //human.a.y = 1;
 
-    // Initialize game object and static bodies.
-    NewGame Game(wolf, human, 6);
+    player1.addAllAnimations();
+    player1.initializeAndReset();
+
+
+    NewGame Game(player1.sword_player, human, 6);
     Game.addStatic(KinematicBody2D(0,600,800,200));
     Game.getStatic(0)->initRectangle();
     Game.getStatic(0)->initHitbox();
 
-
     // Textbox attempt
-    //Textbox test_text((50, 50), "", "Hello!"); // TODO NEED FONT PATH
+    //Textbox test_text((50, 50), "./font/good-times-rg.ttf", "Hello!"); // TODO NEED FONT PATH
 
     Event event;
     int wolf_keys[5] = {0,0,0,0,0};
-    int human_keys[5] = {0,0,0,0,0};
+    //int human_keys[5] = {0,0,0,0,0};
     int *collide;
     bool wolf_on_ground = false;
-    bool human_on_ground = false;
+    //bool human_on_ground = false;
     Vector2D wolf_f(1,0);
     Vector2D human_f(1,0);
+
 
     // Framerate Control -Cordell King
     Framerate ticker(30);
@@ -102,84 +69,7 @@ int main(){
         ticker.next_frame();
         
         while(window.pollEvent(event)){
-        switch (event.type) {
-            case Event::Closed:
-            window.close();
-            break;
-            case Event::KeyPressed:
-            switch (event.key.code) {
-                case Keyboard::Escape:
-                window.close();
-                break;
-                case Keyboard::A:
-                wolf_keys[0] = 1;
-                if (wolf.isFlippedH()) {
-                    wolf.flipH();
-                }
-                break;
-                case Keyboard::D:
-                wolf_keys[1] = 1;
-                if (!wolf.isFlippedH()) {
-                    wolf.flipH();
-                }
-                break;
-                case Keyboard::W:
-                if (wolf_keys[2] == 0 && wolf_on_ground){
-                    //pew_sound.play();
-                    wolf_keys[2] = 1;
-                    wolf.v.y = -20;
-                }
-                break;
-                case Keyboard::Left:
-                human_keys[0] = 1;
-                if (human.isFlippedH()) {
-                    human.flipH();
-                }
-                break;
-                case Keyboard::Right:
-                human_keys[1] = 1;
-                if (!human.isFlippedH()) {
-                    human.flipH();
-                }
-                break;
-                case Keyboard::Up:
-                if (human_keys[2] == 0 && human_on_ground){
-                    //pew_sound.play();
-                    human_keys[2] = 1;
-                    human.v.y = -20;
-                }
-                break;
-                default:
-                break;
-            }
-            break;
-            case Event::KeyReleased:
-            switch (event.key.code) {
-                case Keyboard::A:
-                wolf_keys[0] = 0;
-                break;
-                case Keyboard::D:
-                wolf_keys[1] = 0;
-                break;
-                case Keyboard::W:
-                wolf_keys[2] = 0;
-                break;
-                case Keyboard::Left:
-                human_keys[0] = 0;
-                break;
-                case Keyboard::Right:
-                human_keys[1] = 0;
-                break;
-                case Keyboard::Up:
-                human_keys[2] = 0;
-                break;
-                default:
-                break;
-            }
-            break;
-            default:
-            break;
-        }
+            handle_controls(event);
         }
 
         /*
@@ -194,13 +84,21 @@ int main(){
         Game.getStatic(3)->v.y = -5;
         }
         */
-
         //Apply Physics
+        player1.physicsProcess();
+        player1.on_ground = false;
+        for (int i = 0; i < Game.getStaticsCount(); i++) {
+        collide = Game.getStatic(i)->blocks(&(player1.sword_player));
+            if (collide[2] && collide[1] <= -1) {
+                player1.on_ground = true;
+            };
+        };
+        /*
         // Wolf:
-        wolf.p.x += 50*(wolf_keys[1]-wolf_keys[0]); // Speed multiplier was 10
+        wolf.p.x += 10*(wolf_keys[1]-wolf_keys[0]); // Speed multiplier was 10
         wolf.tick();
         // Human:
-        human.p.x += 50*(human_keys[1]-human_keys[0]); // Speed multiplier was 10
+        human.p.x += 10*(human_keys[1]-human_keys[0]); // Speed multiplier was 10
         human.tick();
         // Statics:
         //Game.getStatic(2)->tick();
@@ -251,6 +149,7 @@ int main(){
         human.setSprite(human_idle.getCurrentFrame()); // Do idle animation
         }
         
+        */
 
         //Draw the Screen
         window.clear(Color(42,42,42,255)); // Dark gray.
@@ -258,16 +157,98 @@ int main(){
         //window.draw(Game.getStatic(1)->getRectangle());
         //window.draw(Game.getStatic(2)->getRectangle());
         //window.draw(Game.getStatic(3)->getRectangle());
-        window.draw(wolf.getSprite());
-        window.draw(wolf.getHitbox()->getRectangle());
-        window.draw(human.getSprite());
-        window.draw(human.getHitbox()->getRectangle());
+        window.draw(player1.sword_player.getSprite());
+        window.draw(player1.sword_player.getHitbox()->getRectangle());
+        //window.draw(human.getSprite());
+        //window.draw(human.getHitbox()->getRectangle());
 
         // Text Test
         //window.draw(test_text.txt);
 
         window.display();
     }
-    return 0;
 
+
+    return 0;
+}
+
+
+
+void handle_controls(Event event){
+    switch (event.type) {
+        case Event::Closed:
+        window.close();
+        break;
+        case Event::KeyPressed:
+        switch (event.key.code) {
+            case Keyboard::Escape:
+            window.close();
+            break;
+            case Keyboard::A:
+            player1.keys[0] = 1;
+            if (player1.sword_player.isFlippedH()) {
+                player1.sword_player.flipH();
+            }
+            break;
+            case Keyboard::D:
+            player1.keys[1] = 1;
+            if (!player1.sword_player.isFlippedH()) {
+                player1.sword_player.flipH();
+            }
+            break;
+            case Keyboard::W:
+            if (player1.keys[2] == 0 && player1.on_ground){
+                player1.keys[2] = 1;
+                player1.sword_player.v.y = -20;
+            }
+            break;
+            case Keyboard::Left:
+            human_keys[0] = 1;
+            if (human.isFlippedH()) {
+                human.flipH();
+            }
+            break;
+            case Keyboard::Right:
+            human_keys[1] = 1;
+            if (!human.isFlippedH()) {
+                human.flipH();
+            }
+            break;
+            case Keyboard::Up:
+            if (human_keys[2] == 0 && human_on_ground){
+                human_keys[2] = 1;
+                human.v.y = -20;
+            }
+            break;
+            default:
+            break;
+        }
+        break;
+        case Event::KeyReleased:
+        switch (event.key.code) {
+            case Keyboard::A:
+            player1.keys[0] = 0;
+            break;
+            case Keyboard::D:
+            player1.keys[1] = 0;
+            break;
+            case Keyboard::W:
+            player1.keys[2] = 0;
+            break;
+            case Keyboard::Left:
+            human_keys[0] = 0;
+            break;
+            case Keyboard::Right:
+            human_keys[1] = 0;
+            break;
+            case Keyboard::Up:
+            human_keys[2] = 0;
+            break;
+            default:
+            break;
+        }
+        break;
+        default:
+        break;
+    }
 }
