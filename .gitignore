@@ -2,3 +2,7 @@
 .vscode/
 matthew_game/images/*
 !matthew_game/images/.gitkeep
+SFML-2.5.1
+SFML
+Audio
+Graphics
