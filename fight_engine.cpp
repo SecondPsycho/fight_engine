@@ -109,6 +109,17 @@ struct animation_data{
         this->frame_tick = this->max_frame_tick;
         return this->getNextFrame();
     }
+
+    /**
+     * @brief Set the max_frame_tick to a new integer.
+     * 
+     * @param new_tick The new integer which max_frame_tick is set to.
+     */
+    void setMaxFrameTick(int new_tick){
+        if(new_tick>0){
+            this->max_frame_tick = new_tick;
+        }
+    }
 };
 
 

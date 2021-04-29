@@ -57,23 +57,33 @@ int main(){
 
     //Create Sprite Data
     // For orange:
-    orange_idle.addAnimationData(make_sprite("./images/orange/idle/idle1.png"));
-    orange_idle.addAnimationData(make_sprite("./images/orange/idle/idle2.png"));
-    orange_idle.addAnimationData(make_sprite("./images/orange/idle/idle3.png"));
-    orange_walk.addAnimationData(make_sprite("./images/orange/walk/walk1.png"));
-    orange_walk.addAnimationData(make_sprite("./images/orange/walk/walk2.png"));
-    orange_leap.addAnimationData(make_sprite("./images/orange/leap.png"));
-    orange_kick.addAnimationData(make_sprite("./images/orange/kick.png"));
-    orange_punch.addAnimationData(make_sprite("./images/orange/punch.png"));
+    orange_idle.addAnimationData(make_sprite("./images/orange/idle/idle_large1.png"));
+    orange_idle.addAnimationData(make_sprite("./images/orange/idle/idle_large2.png"));
+    orange_idle.addAnimationData(make_sprite("./images/orange/idle/idle_large3.png"));
+    orange_idle.addAnimationData(make_sprite("./images/orange/idle/idle_large2.png"));
+    orange_idle.setMaxFrameTick(8);
+    orange_walk.addAnimationData(make_sprite("./images/orange/walk/walk_large1.png"));
+    orange_walk.addAnimationData(make_sprite("./images/orange/walk/walk_large2.png"));
+    orange_walk.addAnimationData(make_sprite("./images/orange/walk/walk_large3.png"));
+    orange_walk.addAnimationData(make_sprite("./images/orange/walk/walk_large4.png"));
+    orange_walk.setMaxFrameTick(4);
+    orange_leap.addAnimationData(make_sprite("./images/orange/leap_large.png"));
+    orange_kick.addAnimationData(make_sprite("./images/orange/kick_large.png"));
+    orange_punch.addAnimationData(make_sprite("./images/orange/punch_large.png"));
     // For blue:
-    blue_idle.addAnimationData(make_sprite("./images/blue/idle/idle1.png"));
-    blue_idle.addAnimationData(make_sprite("./images/blue/idle/idle2.png"));
-    blue_idle.addAnimationData(make_sprite("./images/blue/idle/idle3.png"));
-    blue_walk.addAnimationData(make_sprite("./images/blue/walk/walk1.png"));
-    blue_walk.addAnimationData(make_sprite("./images/blue/walk/walk2.png"));
-    blue_leap.addAnimationData(make_sprite("./images/blue/leap.png"));
-    blue_kick.addAnimationData(make_sprite("./images/blue/kick.png"));
-    blue_punch.addAnimationData(make_sprite("./images/blue/punch.png"));
+    blue_idle.addAnimationData(make_sprite("./images/blue/idle/idle_large1.png"));
+    blue_idle.addAnimationData(make_sprite("./images/blue/idle/idle_large2.png"));
+    blue_idle.addAnimationData(make_sprite("./images/blue/idle/idle_large3.png"));
+    blue_idle.addAnimationData(make_sprite("./images/blue/idle/idle_large2.png"));
+    blue_idle.setMaxFrameTick(8);
+    blue_walk.addAnimationData(make_sprite("./images/blue/walk/walk_large1.png"));
+    blue_walk.addAnimationData(make_sprite("./images/blue/walk/walk_large2.png"));
+    blue_walk.addAnimationData(make_sprite("./images/blue/walk/walk_large3.png"));
+    blue_walk.addAnimationData(make_sprite("./images/blue/walk/walk_large4.png"));
+    blue_walk.setMaxFrameTick(4);
+    blue_leap.addAnimationData(make_sprite("./images/blue/leap_large.png"));
+    blue_kick.addAnimationData(make_sprite("./images/blue/kick_large.png"));
+    blue_punch.addAnimationData(make_sprite("./images/blue/punch_large.png"));
 
     // Create orange object
     KinematicBody2D orange(50,100,64,64);
@@ -103,6 +113,8 @@ int main(){
     Event event;
     int orange_keys[5] = {0,0,0,0,0};
     int blue_keys[5] = {0,0,0,0,0};
+    int orange_punch_counter=0;
+    int blue_punch_counter=0;
     int *collide;
     bool orange_on_ground = false;
     bool blue_on_ground = false;
@@ -126,13 +138,13 @@ int main(){
                         break;
                     case Keyboard::A:
                         orange_keys[0] = 1;
-                        if (orange.isFlippedH()) {
+                        if (!orange.isFlippedH() && orange_punch_counter==0) {
                             orange.flipH();
                         }
                         break;
                     case Keyboard::D:
                         orange_keys[1] = 1;
-                        if (!orange.isFlippedH()) {
+                        if (orange.isFlippedH() && orange_punch_counter==0) {
                             orange.flipH();
                         }
                     break;
@@ -143,15 +155,22 @@ int main(){
                             orange.v.y = -20;
                         }
                         break;
+                    case Keyboard::S:
+                        if (orange_keys[3] == 0 && !orange_on_ground){
+                            orange_keys[3] = 1;
+                        }else if (orange_keys[3] == 0){
+                            orange_keys[3] = 2;
+                        }
+                        break;
                     case Keyboard::Left:
                         blue_keys[0] = 1;
-                        if (blue.isFlippedH()) {
+                        if (!blue.isFlippedH()) {
                             blue.flipH();
                         }
                         break;
                     case Keyboard::Right:
                         blue_keys[1] = 1;
-                        if (!blue.isFlippedH()) {
+                        if (blue.isFlippedH()) {
                             blue.flipH();
                         }
                         break;
@@ -160,6 +179,13 @@ int main(){
                             //pew_sound.play();
                             blue_keys[2] = 1;
                             blue.v.y = -20;
+                        }
+                        break;
+                    case Keyboard::Down:
+                        if (blue_keys[3] == 0 && !blue_on_ground){
+                            blue_keys[3] = 1;
+                        }else if (blue_keys[3] == 0){
+                            blue_keys[3] = 2;
                         }
                         break;
                     default:
@@ -197,10 +223,14 @@ int main(){
 
         //Apply Physics
         // orange:
-        orange.p.x += 50*(orange_keys[1]-orange_keys[0]); // Speed multiplier was 10
+        if(orange_punch_counter==0){
+            orange.p.x += 10*(orange_keys[1]-orange_keys[0]);
+        }
         orange.tick();
         // blue:
-        blue.p.x += 50*(blue_keys[1]-blue_keys[0]); // Speed multiplier was 10
+        if(blue_punch_counter==0){
+            blue.p.x += 10*(blue_keys[1]-blue_keys[0]);
+        }
         blue.tick();
         // Statics:
 
@@ -229,23 +259,64 @@ int main(){
             };
         };
 
+        // //blue and orange touch?
+        // collide = blue.blocks(&orange);
+        // // if(){
 
+        // // }
+        // cout << "collide[0]: " << collide[0] << endl
+        //      << "collide[1]: " << collide[1] << endl
+        //      << "collide[2]: " << collide[2] << endl;
+
+        //remove kick animation if on ground
+        if(orange_on_ground && orange_keys[3]==1){
+            orange_keys[3]=0;
+        }
+        if(blue_on_ground && blue_keys[3]==1){
+            blue_keys[3]=0;
+        }
+        
         //Apply animation
         // orange:
         if (!orange_on_ground) {
-            orange.setSprite(orange_leap.getCurrentFrame()); // Do leap animation
+            if(orange_keys[3]==0){
+                orange.setSprite(orange_leap.getCurrentFrame()); // Do leap animation
+            }else{
+                orange.setSprite(orange_kick.getCurrentFrame()); // Do kick animation
+            }
+        }else if (orange_punch_counter!=0 || orange_keys[3]==2) {
+            orange.setSprite(orange_punch.getCurrentFrame()); // Do punch animation
+            orange_punch_counter++;
+            if(orange_punch_counter>=10){
+                orange_punch_counter=0;
+                orange_keys[3]=0;
+            }
         }else if (orange_keys[0]^orange_keys[1]) {
             orange.setSprite(orange_walk.frameTick()); // Do walking animations
         }else {
-            orange.setSprite(orange_idle.getCurrentFrame()); // Do idle animation
+            orange.setSprite(orange_idle.frameTick()); // Do idle animation
         }
 
         // blue:
-        if (blue_keys[0]^blue_keys[1]) {
+        if (!blue_on_ground) {
+            if(blue_keys[3]==0){
+                blue.setSprite(blue_leap.getCurrentFrame()); // Do leap animation
+            }else{
+                blue.setSprite(blue_kick.getCurrentFrame()); // Do kick animation
+            }
+        }else if (blue_punch_counter!=0 || blue_keys[3]==2) {
+            blue.setSprite(blue_punch.getCurrentFrame()); // Do punch animation
+            blue_punch_counter++;
+            if(blue_punch_counter>=10){
+                blue_punch_counter=0;
+                blue_keys[3]=0;
+            }
+        }else if (blue_keys[0]^blue_keys[1]) {
             blue.setSprite(blue_walk.frameTick()); // Do walking animations
         }else {
-            blue.setSprite(blue_idle.getCurrentFrame()); // Do idle animation
+            blue.setSprite(blue_idle.frameTick()); // Do idle animation
         }
+        
         
 
         //Draw the Screen
