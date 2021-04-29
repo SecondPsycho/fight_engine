@@ -22,8 +22,12 @@ class Player {
       }
       return this->punchbox.collides(*(PN->body->getHitbox()));
     }
+    void takeHit(Vector2D dir) {
+
+    }
     //Attributes
     bool on_ground = false;
+    bool double_jump = false;
     //Body
     KinematicBody2D* body;
     Hitbox punchbox;
@@ -32,6 +36,7 @@ class Player {
     animation_data leap;
   private:
     int w, h;
+    int dmg = 0;
 };
 
 class NewGame {
@@ -74,10 +79,12 @@ class NewGame {
         collide = this->statics[i].blocks(this->P1->body);
         if (collide[2] && collide[1] <= -1) {
           this->P1->on_ground = true;
+          this->P1->double_jump = true;
         };
         collide = this->statics[i].blocks(this->P2->body);
         if (collide[2] && collide[1] <= -1) {
           this->P2->on_ground = true;
+          this->P2->double_jump = true;
         };
       };
     }
@@ -154,6 +161,7 @@ int main(int argc, char* argv[]){
     //Left, Right, Jump, Attack
     bool P1keys[5] = {false,false,false,false};
     bool P2keys[5] = {false,false,false,false};
+    int P1dmg = 0, P2dmg = 0;
     Vector2D f(1,0);
     int worldshifty = 0;
     //int frame, seconds = 0;
@@ -209,14 +217,28 @@ int main(int argc, char* argv[]){
                 }
                 break;
               case Keyboard::W:
-                if (!P1keys[2] && P1->on_ground) {
-                  P1->body->v.y = -20;
-                  P1keys[2] = true;
+                if (!P1keys[2]) {
+                  if (P1->on_ground) {
+                    P1->body->v.y = -15;
+                    P1keys[2] = true;
+                  } else if (P1->double_jump) {
+                    P1->body->v.y = -15;
+                    P1keys[2] = true;
+                    P1->double_jump = false;
+                  }
                 }
                 break;
               case Keyboard::E:
                 P1keys[3] = true;
-                cout << P1->punch(P2) << endl;
+                if (P1->punch(P2)) {
+                  P2dmg += 1;
+                  if (P1->body->isFlippedH()) {
+                    P2->body->v.x += P2dmg;
+                  } else {
+                    P2->body->v.x -= P2dmg;
+                  }
+                  P2->body->v.y -= P2dmg;
+                }
                 break;
               case Keyboard::H:
               case Keyboard::Left:
@@ -234,14 +256,28 @@ int main(int argc, char* argv[]){
                 break;
               case Keyboard::U:
               case Keyboard::Up:
-                if (!P2keys[2] && P2->on_ground) {
-                  P2->body->v.y = -20;
-                  P2keys[2] = true;
+                if (!P2keys[2]) {
+                  if (P2->on_ground) {
+                    P2->body->v.y = -15;
+                    P2keys[2] = true;
+                  } else if (P2->double_jump) {
+                    P2->body->v.y = -15;
+                    P2keys[2] = true;
+                    P2->double_jump = false;
+                  }
                 }
                 break;
               case Keyboard::I:
                 P2keys[3] = true;
-                cout << P2->punch(P1) << endl;
+                if (P2->punch(P1)) {
+                  P1dmg += 1;
+                  if (P2->body->isFlippedH()) {
+                    P1->body->v.x += P1dmg;
+                  } else {
+                    P1->body->v.x -= P1dmg;
+                  }
+                  P1->body->v.y -= P1dmg;
+                }
                 break;
               default:
                 break;
