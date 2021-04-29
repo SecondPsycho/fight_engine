@@ -259,14 +259,18 @@ int main(){
             };
         };
 
-        // //blue and orange touch?
-        // collide = blue.blocks(&orange);
-        // // if(){
-
-        // // }
-        // cout << "collide[0]: " << collide[0] << endl
-        //      << "collide[1]: " << collide[1] << endl
-        //      << "collide[2]: " << collide[2] << endl;
+        //blue and orange touch?
+        if(orange.collides(&blue)){
+            orange_on_ground = true;
+            //switch screens?
+        }
+        if(orange.collides(&blue)){
+            blue_on_ground = true;
+            //switch screens?
+        }
+        cout << "collide[0]: " << collide[0] << endl
+             << "collide[1]: " << collide[1] << endl
+             << "collide[2]: " << collide[2] << endl;
 
         //remove kick animation if on ground
         if(orange_on_ground && orange_keys[3]==1){
