@@ -406,7 +406,6 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
             if (this->centered) {
                 x -= this->width/2;
             }
-            cout << this-> width << ' ' << x << endl;
             text.setPosition(Vector2f(x,y));
         }
         /**
