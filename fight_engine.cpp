@@ -788,6 +788,17 @@ class KinematicBody2D {
             this->rectangle.setFillColor(Color(0,0,0,255));
             this->rcset = true;
         };
+
+        /**
+        * @brief Set the color for the KinematicBody2D's rectangle.
+        * @param r The Red   (0-255)
+        * @param g The Green (0-255)
+        * @param b The Blue  (0-255)
+        * @param a The Transparency (0-255)
+        */
+        void setRectColor(int r, int g, int b, int a) {
+            if (this->rcset) {this->rectangle.setFillColor(Color(r,g,b,a)); }
+        }
         
         /**
         * @brief Get the Rectangle for drawing purposes. Make sure you've called initRectangle() first.
