@@ -10,7 +10,7 @@ class Player {
         this->h = 64;
         this->body = new KinematicBody2D(px,py,64*scale,64*scale);
         this->body->initHitbox();
-        this->punchbox = Hitbox(px,py,32,32);
+        this->punchbox = Hitbox(px,py,32*scale,48*scale);
         this->punchbox.initRectangle();
 
         this->idle.addAnimationData(make_sprite("./images/wolf_idle.png", scale));
@@ -20,14 +20,15 @@ class Player {
         this->body->a.y = 1;
     }
     bool punch(Player* PN) {
-      //cout << this->punchbox.x << ' ' << this->punchbox.y << ' ' << this->punchbox.w << ' ' << this->punchbox.h << "   ";
-      //out << PN->body->getHitbox()->x << ' ' << PN->body->getHitbox()->y << ' ' << PN->body->getHitbox()->w << ' ' << PN->body->getHitbox()->h << "   ";
-      if (this->body->isFlippedH()) {
-        this->punchbox.setPosition(this->body->posX()+48, this->body->posY()+16);
-      } else {
-        this->punchbox.setPosition(this->body->posX()-16, this->body->posY()+16);
-      }
-      return this->punchbox.collides(*(PN->body->getHitbox()));
+        float scale = 2;
+        //cout << this->punchbox.x << ' ' << this->punchbox.y << ' ' << this->punchbox.w << ' ' << this->punchbox.h << "   ";
+        //out << PN->body->getHitbox()->x << ' ' << PN->body->getHitbox()->y << ' ' << PN->body->getHitbox()->w << ' ' << PN->body->getHitbox()->h << "   ";
+        if (this->body->isFlippedH()) {
+            this->punchbox.setPosition(this->body->posX()+(48*scale), this->body->posY()+(8*scale));
+        } else {
+            this->punchbox.setPosition(this->body->posX()-(16*scale), this->body->posY()+(8*scale));
+        }
+        return this->punchbox.collides(*(PN->body->getHitbox()));
     }
     void takeHit(Vector2D dir, bool flipped) {
       this->flying = true;
@@ -108,20 +109,20 @@ class NewGame {
       };
     }
     void buildLevel() {
-      this->addStatic(KinematicBody2D(0,600,800,200));
+      this->addStatic(KinematicBody2D(200,900,1200,200));
       this->getStatic(0)->initRectangle();
       this->getStatic(0)->initHitbox();
 
-      this->addStatic(KinematicBody2D(0,400,200,200));
+      this->addStatic(KinematicBody2D(200,600,300,300));
       this->getStatic(1)->initRectangle();
       this->getStatic(1)->initHitbox();
 
-      this->addStatic(KinematicBody2D(0,200,200,50));
+      this->addStatic(KinematicBody2D(200,300,300,50));
       this->getStatic(2)->initRectangle();
       this->getStatic(2)->initHitbox();
       this->getStatic(2)->v.x = 5;
 
-      this->addStatic(KinematicBody2D(600,200,200,50));
+      this->addStatic(KinematicBody2D(1100,200,300,50));
       this->getStatic(3)->initRectangle();
       this->getStatic(3)->initHitbox();
       this->getStatic(3)->v.y = 5;

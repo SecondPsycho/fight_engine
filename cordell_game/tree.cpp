@@ -11,8 +11,8 @@ int main(int argc, char* argv[]){
     animation_data walk;
     animation_data leap;
 
-    Player* P1 = new Player(50,80);
-    Player* P2 = new Player(450,80);
+    Player* P1 = new Player(250,450);
+    Player* P2 = new Player(1200,750);
 
     //Create Sprite Data
     NewGame Game(P1, P2, 6);
@@ -23,14 +23,15 @@ int main(int argc, char* argv[]){
     P1->body->flipH();
     P1->body->setSprite(P1->idle.getCurrentFrame());
     P2->body->setSprite(P2->idle.getCurrentFrame());
-    TextBox title(0, 0, "./text/good-time-rg.ttf", "Up the Tree");
+    TextBox title(20, 200, "./text/good-times-rg.ttf", "Up the Tree");
+    title.setColor(255,255,255);
+    title.setCharacterSize(200);
     
     Song my_music("sounds/Restoring the Light, Facing the Dark.wav");
     //my_music.setPitch(1.2f);
     //my_music.setVolume(10.0f);
-    my_music.play();
     SFX pew_sound("sounds/pew.wav");
-    pew_sound.setVolume(100.0f);
+    //pew_sound.setVolume(100.0f);
             
     Event event;
     //Left, Right, Jump, Attack
@@ -38,10 +39,13 @@ int main(int argc, char* argv[]){
     bool P2keys[5] = {false,false,false,false};
     Vector2D f(1,0);
     int worldshifty = 0;
+    int seconds = 0;
+    int st = 0;
+    int fps = 60;
 
     int t = 0;
     int falldelay = 5;
-    Framerate ticker(60);
+    Framerate ticker(fps);
     while (window.isOpen()) {
         while (!Game.ON && window.isOpen()) {
             while(window.pollEvent(event)) {
@@ -53,6 +57,13 @@ int main(int argc, char* argv[]){
                         switch(event.key.code) {
                             case Keyboard::Escape:
                                 window.close();
+                                break;
+                            case Keyboard::Space:
+                                Game.ON = true;
+                                ticker = Framerate(60);
+                                seconds = 0;
+                                my_music.setPlayingOffset(0); //117
+                                my_music.play();
                                 break;
                             default:
                                 break;
@@ -69,7 +80,8 @@ int main(int argc, char* argv[]){
             for (int i = 0; i < Game.getStaticsCount(); i++) {
                 window.draw(Game.getStatic(i)->getRectangle());
             }
-
+            
+            window.draw(title.text);
             window.display();
         }
         while (Game.ON && window.isOpen()) {
@@ -81,6 +93,15 @@ int main(int argc, char* argv[]){
                     Game.getStatic(i)->p.y += 1;
                 }
                 worldshifty += 1;
+            }
+            st += 1;
+            if (st >= fps) {
+                st = 0;
+                seconds += 1;
+                if (seconds >= 77) {
+                    my_music.setPlayingOffset(29);
+                    seconds = 29;
+                }
             }
             while(window.pollEvent(event)){
                 switch (event.type) {
@@ -107,10 +128,10 @@ int main(int argc, char* argv[]){
                             case Keyboard::W:
                                 if (!P1keys[2]) {
                                     if (P1->on_ground) {
-                                        P1->body->v.y = -15;
+                                        P1->body->v.y = -20;
                                         P1keys[2] = true;
                                     } else if (P1->double_jump) {
-                                        P1->body->v.y = -15;
+                                        P1->body->v.y = -20;
                                         P1keys[2] = true;
                                         P1->double_jump = false;
                                     }
@@ -140,10 +161,10 @@ int main(int argc, char* argv[]){
                             case Keyboard::Up:
                                 if (!P2keys[2]) {
                                     if (P2->on_ground) {
-                                        P2->body->v.y = -15;
+                                        P2->body->v.y = -20;
                                         P2keys[2] = true;
                                     } else if (P2->double_jump) {
-                                        P2->body->v.y = -15;
+                                        P2->body->v.y = -20;
                                         P2keys[2] = true;
                                         P2->double_jump = false;
                                     }
@@ -197,14 +218,14 @@ int main(int argc, char* argv[]){
                 }
             }
 
-            if (Game.getStatic(2)->posX() <= 0) {
+            if (Game.getStatic(2)->posX() <= 200) {
                 Game.getStatic(2)->v.x = 5;
-            } else if (Game.getStatic(2)->posX() >= 400) {
+            } else if (Game.getStatic(2)->posX() >= 800) {
                 Game.getStatic(2)->v.x = -5;
             }
             if (Game.getStatic(3)->posY() <= worldshifty+200) {
                 Game.getStatic(3)->v.y = 5;
-            } else if (Game.getStatic(3)->posY() >= worldshifty+500) {
+            } else if (Game.getStatic(3)->posY() >= worldshifty+700) {
                 Game.getStatic(3)->v.y = -5;
             }
 
@@ -238,6 +259,16 @@ int main(int argc, char* argv[]){
             else {
                 P2->body->setSprite(P2->idle.getCurrentFrame()); // Do idle animation
             }
+
+            //Process death
+            //*
+            if (P1->body->posY() >= 1300 || P2->body->posY() >= 1300) {
+                Game.ON = false;
+                my_music.setPlayingOffset(78);
+                seconds = 78;
+                cout << "Game Over";
+            }
+            //*/
             
 
             //Draw the Screen
@@ -256,6 +287,52 @@ int main(int argc, char* argv[]){
 
             window.display();
         }
+        while (!Game.ON && window.isOpen()) {
+            ticker.next_frame();
+            st += 1;
+            if (st >= fps) {
+                st = 0;
+                seconds += 1;
+                if (seconds >= 100) {
+                    my_music.stop();
+                }
+            }
+            while(window.pollEvent(event)) {
+                switch (event.type) {
+                    case Event::Closed:
+                        window.close();
+                        break;
+                    case Event::KeyPressed:
+                        switch(event.key.code) {
+                            case Keyboard::Escape:
+                                window.close();
+                                break;
+                            case Keyboard::Space:
+                                Game.ON = true;
+                                ticker = Framerate(60);
+                                //my_music.setPlayingOffset(seconds); //117
+                                my_music.play();
+                                break;
+                            default:
+                                break;
+                        }
+                    default:
+                        break;
+                }
+            }
+            window.clear(Color(42,42,42,255)); // Dark gray.
+
+            window.draw(P1->body->getSprite());
+            window.draw(P2->body->getSprite());
+
+            for (int i = 0; i < Game.getStaticsCount(); i++) {
+                window.draw(Game.getStatic(i)->getRectangle());
+            }
+            
+            window.draw(title.text);
+            window.display();
+        }
+        break;
     }
     return 0;
 }
