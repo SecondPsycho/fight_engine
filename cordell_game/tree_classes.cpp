@@ -4,7 +4,7 @@ class Player {
   public:
     //Methods
     Player(int px, int py) {
-        float scale = 4;
+        float scale = 2;
 
         this->w = 64;
         this->h = 64;

@@ -3,7 +3,7 @@
 
 
 int main(int argc, char* argv[]){
-    create_window("Up the Tree", 1200, 1000);
+    create_window("Up the Tree", 1600, 1200);
     window.setKeyRepeatEnabled(false);
     
     //Create an Animation
@@ -11,12 +11,19 @@ int main(int argc, char* argv[]){
     animation_data walk;
     animation_data leap;
 
-    Player* P1 = new Player(50,100);
-    Player* P2 = new Player(450,100);
+    Player* P1 = new Player(50,80);
+    Player* P2 = new Player(450,80);
 
     //Create Sprite Data
     NewGame Game(P1, P2, 6);
     Game.buildLevel();
+    Game.ON = false;
+
+    //Main Menu Stuff
+    P1->body->flipH();
+    P1->body->setSprite(P1->idle.getCurrentFrame());
+    P2->body->setSprite(P2->idle.getCurrentFrame());
+    TextBox title(0, 0, "./text/good-time-rg.ttf", "Up the Tree");
     
     Song my_music("sounds/Restoring the Light, Facing the Dark.wav");
     //my_music.setPitch(1.2f);
@@ -37,7 +44,33 @@ int main(int argc, char* argv[]){
     Framerate ticker(60);
     while (window.isOpen()) {
         while (!Game.ON && window.isOpen()) {
-            cout << "WHY" << endl;
+            while(window.pollEvent(event)) {
+                switch (event.type) {
+                    case Event::Closed:
+                        window.close();
+                        break;
+                    case Event::KeyPressed:
+                        switch(event.key.code) {
+                            case Keyboard::Escape:
+                                window.close();
+                                break;
+                            default:
+                                break;
+                        }
+                    default:
+                        break;
+                }
+            }
+            window.clear(Color(42,42,42,255)); // Dark gray.
+
+            window.draw(P1->body->getSprite());
+            window.draw(P2->body->getSprite());
+
+            for (int i = 0; i < Game.getStaticsCount(); i++) {
+                window.draw(Game.getStatic(i)->getRectangle());
+            }
+
+            window.display();
         }
         while (Game.ON && window.isOpen()) {
             ticker.next_frame();

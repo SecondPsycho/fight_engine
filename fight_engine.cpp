@@ -151,10 +151,7 @@ sprite_data* make_sprite(string sprite_path, float scale = 1){
     return sprite;
 }
 
-
-
 //CLASSES
-
 /**
  * @class Framerate
  * @brief A class for maintaining a set framerate. 
