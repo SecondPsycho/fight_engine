@@ -4,7 +4,7 @@ INCLUDE_SFML_EXTRAS = -lsfml-audio -lsfml-network
 
 
 test: fighting_game.cpp fight_engine.cpp
-	g++ -o game fighting_game.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
+	g++ -o game ../fighting_game.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
 	./game; rm game;
 
 clean:
