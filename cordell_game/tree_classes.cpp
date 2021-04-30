@@ -22,7 +22,7 @@ class Player {
     bool punch(Player* PN) {
         float scale = 2;
         //cout << this->punchbox.x << ' ' << this->punchbox.y << ' ' << this->punchbox.w << ' ' << this->punchbox.h << "   ";
-        //out << PN->body->getHitbox()->x << ' ' << PN->body->getHitbox()->y << ' ' << PN->body->getHitbox()->w << ' ' << PN->body->getHitbox()->h << "   ";
+        //cout << PN->body->getHitbox()->x << ' ' << PN->body->getHitbox()->y << ' ' << PN->body->getHitbox()->w << ' ' << PN->body->getHitbox()->h << "   ";
         if (this->body->isFlippedH()) {
             this->punchbox.setPosition(this->body->posX()+(48*scale), this->body->posY()+(8*scale));
         } else {
@@ -30,25 +30,57 @@ class Player {
         }
         return this->punchbox.collides(*(PN->body->getHitbox()));
     }
+    bool jump(KinematicBody2D* Flowers, int flowercount, Player* PN) {
+        if (!this->keys[2]) {
+            if (this->on_ground) {
+                this->body->v.y = -20;
+                this->keys[2] = true;
+                return true;
+            } else if (this->body->collides(PN->body)) {
+                this->body->v.y = -20;
+                this->keys[2] = true;
+                PN->body->v.y = 20;
+                PN->flying = true;
+                this->double_jump = true;
+                return true;
+            } 
+            for (int i = 0; i < flowercount; i++) {
+                if (this->body->collides(&(Flowers[i]))) {
+                    this->body->v.y = -20;
+                    this->keys[2] = true;
+                    this->double_jump = true;
+                    return true;
+                }
+            }
+            if (this->double_jump) {
+                this->body->v.y = -20;
+                this->keys[2] = true;
+                this->double_jump = false;
+                return true;
+            }
+        }
+        return false;
+    }
     void takeHit(Vector2D dir, bool flipped) {
-      this->flying = true;
-      this->dmg += 1;
-      if (flipped) {
-        this->body->v.x += this->dmg;
-      } else {
-        this->body->v.x -= this->dmg;
-      }
-      this->body->v.y -= this->dmg;
+        this->flying = true;
+        this->dmg += 1;
+        if (flipped) {
+            this->body->v.x += this->dmg;
+        } else {
+            this->body->v.x -= this->dmg;
+        }
+        this->body->v.y -= this->dmg;
     }
     void onGround() {
-      this->on_ground = true;
-      this->double_jump = true;
-      this->flying = false;
+        this->on_ground = true;
+        this->double_jump = true;
+        this->flying = false;
     }
     //Attributes
     bool on_ground = false;
     bool double_jump = false;
     bool flying = false;
+    bool keys[5] = {false,false,false,false,false};
     //Body
     KinematicBody2D* body;
     Hitbox punchbox;
@@ -87,6 +119,9 @@ class NewGame {
     }
     int getStaticsCount() {
       return this->statics_count;
+    }
+    KinematicBody2D* getFlowers() {
+        return this->flowers;
     }
     void runPhysics() {
       P1->body->tick();
@@ -132,6 +167,7 @@ class NewGame {
     Player* P1;
     Player* P2;
     KinematicBody2D* statics;
+    KinematicBody2D* flowers;
     int statics_count;
     int statics_max;
 };

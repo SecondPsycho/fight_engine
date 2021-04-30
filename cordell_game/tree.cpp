@@ -35,8 +35,6 @@ int main(int argc, char* argv[]){
             
     Event event;
     //Left, Right, Jump, Attack
-    bool P1keys[5] = {false,false,false,false};
-    bool P2keys[5] = {false,false,false,false};
     Vector2D f(1,0);
     int worldshifty = 0;
     int seconds = 0;
@@ -114,64 +112,46 @@ int main(int argc, char* argv[]){
                                 window.close();
                                 break;
                             case Keyboard::A:
-                                P1keys[0] = true;
+                                P1->keys[0] = true;
                                 if (P1->body->isFlippedH()) {
                                     P1->body->flipH();
                                 }
                                 break;
                             case Keyboard::D:
-                                P1keys[1] = true;
+                                P1->keys[1] = true;
                                 if (!P1->body->isFlippedH()) {
                                     P1->body->flipH();
                                 }
                                 break;
                             case Keyboard::W:
-                                if (!P1keys[2]) {
-                                    if (P1->on_ground) {
-                                        P1->body->v.y = -20;
-                                        P1keys[2] = true;
-                                    } else if (P1->double_jump) {
-                                        P1->body->v.y = -20;
-                                        P1keys[2] = true;
-                                        P1->double_jump = false;
-                                    }
-                                }
+                                P1->jump(Game.getFlowers(), 0, P2);
                                 break;
                             case Keyboard::E:
-                                P1keys[3] = true;
+                                P1->keys[3] = true;
                                 if (P1->punch(P2)) {
                                     P2->takeHit(Vector2D(0,0), P1->body->isFlippedH());
                                 }
                                 break;
                             case Keyboard::H:
                             case Keyboard::Left:
-                                P2keys[0] = true;
+                                P2->keys[0] = true;
                                 if (P2->body->isFlippedH()) {
                                     P2->body->flipH();
                                 }
                                 break;
                             case Keyboard::K:
                             case Keyboard::Right:
-                                P2keys[1] = true;
+                                P2->keys[1] = true;
                                 if (!P2->body->isFlippedH()) {
                                     P2->body->flipH();
                                 }
                                 break;
                             case Keyboard::U:
                             case Keyboard::Up:
-                                if (!P2keys[2]) {
-                                    if (P2->on_ground) {
-                                        P2->body->v.y = -20;
-                                        P2keys[2] = true;
-                                    } else if (P2->double_jump) {
-                                        P2->body->v.y = -20;
-                                        P2keys[2] = true;
-                                        P2->double_jump = false;
-                                    }
-                                }
+                                P2->jump(Game.getFlowers(), 0, P1);
                                 break;
                             case Keyboard::I:
-                                P2keys[3] = true;
+                                P2->keys[3] = true;
                                 if (P2->punch(P1)) {
                                     P1->takeHit(Vector2D(0,0), P2->body->isFlippedH());
                                 }
@@ -183,31 +163,31 @@ int main(int argc, char* argv[]){
                     case Event::KeyReleased:
                         switch (event.key.code) {
                             case Keyboard::A:
-                                P1keys[0] = false;
+                                P1->keys[0] = false;
                                 break;
                             case Keyboard::D:
-                                P1keys[1] = false;
+                                P1->keys[1] = false;
                                 break;
                             case Keyboard::W:
-                                P1keys[2] = false;
+                                P1->keys[2] = false;
                                 break;
                             case Keyboard::E:
-                                P1keys[3] = false;
+                                P1->keys[3] = false;
                                 break;
                             case Keyboard::H:
                             case Keyboard::Left:
-                                P2keys[0] = false;
+                                P2->keys[0] = false;
                                 break;
                             case Keyboard::K:
                             case Keyboard::Right:
-                                P2keys[1] = false;
+                                P2->keys[1] = false;
                                 break;
                             case Keyboard::U:
                             case Keyboard::Up:
-                                P2keys[2] = false;
+                                P2->keys[2] = false;
                                 break;
                             case Keyboard::I:
-                                P2keys[3] = false;
+                                P2->keys[3] = false;
                                 break;
                             default:
                                 break;
@@ -230,20 +210,19 @@ int main(int argc, char* argv[]){
             }
 
             //Apply Physics
-            P1->body->p.x += (P1keys[1]-P1keys[0])*10;
-            P2->body->p.x += (P2keys[1]-P2keys[0])*10;
-            P1->body->p.y -= (P1keys[2])*3;
-            P2->body->p.y -= (P2keys[2])*3;
+            P1->body->p.x += (P1->keys[1]-P1->keys[0])*10;
+            P2->body->p.x += (P2->keys[1]-P2->keys[0])*10;
+            P1->body->p.y -= (P1->keys[2])*3;
+            P2->body->p.y -= (P2->keys[2])*3;
             Game.runPhysics();
             P1->body->dampen(f);
             P2->body->dampen(f);
 
-            //cout << P1->body->posX() << ' ' << P1->body->posY() << "     " << P2->body->posX() << ' ' << P2->body->posY() << endl;
             //Apply animation
             if (!P1->on_ground) {
                 P1->body->setSprite(P1->leap.getCurrentFrame()); // Do leap animation
             }
-            else if (P1keys[1]^P1keys[0]) {
+            else if (P1->keys[1]^P1->keys[0]) {
                 P1->body->setSprite(P1->walk.frameTick()); // Do walking animations
             }
             else {
@@ -253,7 +232,7 @@ int main(int argc, char* argv[]){
             if (!P2->on_ground) {
                 P2->body->setSprite(P2->leap.getCurrentFrame()); // Do leap animation
             }
-            else if (P2keys[1]^P2keys[0]) {
+            else if (P2->keys[1]^P2->keys[0]) {
                 P2->body->setSprite(P2->walk.frameTick()); // Do walking animations
             }
             else {
@@ -261,14 +240,12 @@ int main(int argc, char* argv[]){
             }
 
             //Process death
-            //*
             if (P1->body->posY() >= 1300 || P2->body->posY() >= 1300) {
                 Game.ON = false;
                 my_music.setPlayingOffset(78);
                 seconds = 78;
                 cout << "Game Over";
             }
-            //*/
             
 
             //Draw the Screen
@@ -280,7 +257,6 @@ int main(int argc, char* argv[]){
             for (int i = 0; i < Game.getStaticsCount(); i++) {
                 window.draw(Game.getStatic(i)->getRectangle());
             }
-            //window.draw(wolf.getHitbox()->getRectangle());
 
             window.draw(P1->punchbox.getRectangle());
             window.draw(P2->punchbox.getRectangle());
