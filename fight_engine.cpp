@@ -373,6 +373,7 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          * @param newPosition Position for the textbox.
          * @param newFontPath Font for your text in the box.
          * @param newText The text to be in your text box.
+         * @param pcentered An optional boolean allowing the text box to be centered.
          */
         TextBox(int x, int y, string newFontPath, string newText="", bool pcentered = false) {
             this->msg = newText;
@@ -385,7 +386,6 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
             text.setFont(font);
             text.setString(msg);
             this->width = text.getGlobalBounds().width;
-            //text.setPosition(Vector2f(x,y));
             this->setPosition(x, y);
             
         }
