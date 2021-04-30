@@ -132,7 +132,7 @@ struct animation_data{
  * @param sprite_path Pass in a string of the path to the sprite image.
  * @return sprite_data* A pointer to the sprite_data struct that is created from the sprite_path that was passed in is returned.
  */
-sprite_data* make_sprite(string sprite_path){
+sprite_data* make_sprite(string sprite_path, float scale = 1){
     sprite_data* sprite = new sprite_data;
     if(!sprite->imageSource.loadFromFile(sprite_path)){
         cerr << "ERROR: Sprite creation failed" << endl;
@@ -142,15 +142,16 @@ sprite_data* make_sprite(string sprite_path){
 
     //Store the flipped sprite
     sprite->flippedSprite.setTexture(sprite->imageSource); 
-    sprite->flippedSprite.setScale(-1,1);
     sprite->flippedSprite.setOrigin(sprite->imageSprite.getTexture()->getSize().x,0);
+
+    //Apply Scaling
+    sprite->imageSprite.setScale(scale,scale);
+    sprite->flippedSprite.setScale(-1*scale,1*scale);
+
     return sprite;
 }
 
-
-
 //CLASSES
-
 /**
  * @class Framerate
  * @brief A class for maintaining a set framerate. 
@@ -373,8 +374,8 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          * @param newFontPath Font for your text in the box.
          * @param newText The text to be in your text box.
          */
-        TextBox(Vector2D newPosition, string newFontPath, string newText="") {
-            this->position = newPosition;
+        TextBox(int x, int y, string newFontPath, string newText="") {
+            this->position = Vector2f(x,y);
             this->msg = newText;
 
             if (!font.loadFromFile(newFontPath)) {
@@ -383,6 +384,7 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
 
             text.setFont(font);
             text.setString(msg);
+            text.setPosition(this->position);
         }
         /**
          * @brief Set new text for your text box.
@@ -396,8 +398,9 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          * @brief Sets the position of the TextBox.
          * @param newPosition The new position of the TextBox.
          */
-        void setPosition (Vector2D newPosition) {
-            this->position = newPosition;
+        void setPosition (int x, int y) {
+            this->position = Vector2f(x, y);
+            text.setPosition(this->position);
         }
         /**
          * @brief Sets the font size of TextBox.
@@ -422,11 +425,11 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
         }
 
         Text text;
+        Vector2f position;
 
         // To draw to screen, do window.draw(ObjectName.text);
 
     private:
-        Vector2D position;
         string msg;
         Font font;
 };
@@ -735,25 +738,25 @@ class KinematicBody2D {
         * @param hostile A pointer to the other KinematicBody2D
         * @return A pointer to an array of 3 integers. The first indicates collision on the left or right side. The second indicates collision on the top or bottom. The third indicates collision in general.
         */
-        int* blocks(KinematicBody2D *hostile) {
+        int* blocks(KinematicBody2D *hostile, bool bounce = false) {
             int* side = this->collidesDir(hostile);
             if (side[2] == 1) {
                 if (side[1] <= -2) {
-                    this->blockedUp(hostile);
+                    this->blockedUp(hostile, bounce);
                 } else if (side[1] >= 2){
-                    this->blockedDown(hostile);
+                    this->blockedDown(hostile, bounce);
                 } else if (side[0] <= -2) {
-                    this->blockedLeft(hostile);
+                    this->blockedLeft(hostile, bounce);
                 } else if (side[0] >= 2) {
-                    this->blockedRight(hostile);
+                    this->blockedRight(hostile, bounce);
                 } else if (side[1] <= -1) {
-                    this->blockedUp(hostile);
+                    this->blockedUp(hostile, bounce);
                 } else if (side[0] <= -1) {
-                    this->blockedLeft(hostile);
+                    this->blockedLeft(hostile, bounce);
                 } else if (side[0] >= 1) {
-                    this->blockedRight(hostile);
+                    this->blockedRight(hostile, bounce);
                 } else if (side[1] >= 1) {
-                    this->blockedDown(hostile);
+                    this->blockedDown(hostile, bounce);
                 }
             }
             return side;
@@ -824,24 +827,24 @@ class KinematicBody2D {
         Vector2D a; //Save an acceleration
         
     private:
-        void blockedLeft(KinematicBody2D *hostile) {
+        void blockedLeft(KinematicBody2D *hostile, bool bounce) {
             hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
-            hostile->v.x = this->v.x;
+            hostile->v.x = this->v.x - (hostile->v.x*bounce);
             hostile->p.y += this->v.y;
         }
-        void blockedRight(KinematicBody2D *hostile) {
+        void blockedRight(KinematicBody2D *hostile, bool bounce) {
             hostile->setPos(Vector2D(this->x+this->w,hostile->y));
-            hostile->v.x = this->v.x;
+            hostile->v.x = this->v.x - (hostile->v.x*bounce);
             hostile->p.y += this->v.y;
         }
-        void blockedUp(KinematicBody2D *hostile) {
+        void blockedUp(KinematicBody2D *hostile, bool bounce) {
             hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
-            hostile->v.y = this->v.y;
+            hostile->v.y = this->v.y;// - (hostile->v.y*bounce);
             hostile->p.x += this->v.x;
         }
-        void blockedDown(KinematicBody2D *hostile) {
+        void blockedDown(KinematicBody2D *hostile, bool bounce) {
             hostile->setPos(Vector2D(hostile->x,this->y+this->h));
-            hostile->v.y = this->v.y;
+            hostile->v.y = this->v.y - (hostile->v.y*bounce);
             hostile->p.x += this->v.x;
         }
         int x, y, w, h, hbx, hby, spx, spy;
