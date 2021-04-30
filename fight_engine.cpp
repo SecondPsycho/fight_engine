@@ -374,9 +374,9 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          * @param newFontPath Font for your text in the box.
          * @param newText The text to be in your text box.
          */
-        TextBox(int x, int y, string newFontPath, string newText="") {
-            this->position = Vector2f(x,y);
+        TextBox(int x, int y, string newFontPath, string newText="", bool pcentered = false) {
             this->msg = newText;
+            this->centered = pcentered;
 
             if (!font.loadFromFile(newFontPath)) {
                 cerr << "Error: Invalid font path" << endl;
@@ -384,7 +384,10 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
 
             text.setFont(font);
             text.setString(msg);
-            text.setPosition(this->position);
+            this->width = text.getGlobalBounds().width;
+            //text.setPosition(Vector2f(x,y));
+            this->setPosition(x, y);
+            
         }
         /**
          * @brief Set new text for your text box.
@@ -400,7 +403,11 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          */
         void setPosition (int x, int y) {
             this->position = Vector2f(x, y);
-            text.setPosition(this->position);
+            if (this->centered) {
+                x -= this->width/2;
+            }
+            cout << this-> width << ' ' << x << endl;
+            text.setPosition(Vector2f(x,y));
         }
         /**
          * @brief Sets the font size of TextBox.
@@ -408,6 +415,8 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          */
         void setCharacterSize (int size) {
             text.setCharacterSize(size);
+            this->width = text.getGlobalBounds().width;
+            this->setPosition(this->position.x,this->position.y);
         }
         /**
          * @brief Sets the color of TextBox.
@@ -426,12 +435,15 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
 
         Text text;
         Vector2f position;
+        bool centered;
 
         // To draw to screen, do window.draw(ObjectName.text);
 
     private:
         string msg;
         Font font;
+        int width = 0;
+
 };
 
 //PHYSICS
