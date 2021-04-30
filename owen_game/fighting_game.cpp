@@ -1,4 +1,4 @@
-#include "fight_engine.cpp"
+#include "../fight_engine.cpp"
 
 // fighting game
 // by owen
