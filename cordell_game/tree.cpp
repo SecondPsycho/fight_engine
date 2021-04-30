@@ -20,12 +20,33 @@ int main(int argc, char* argv[]){
     Game.ON = false;
 
     //Main Menu Stuff
-    P1->body->flipH();
+    P2->body->flipH();
     P1->body->setSprite(P1->idle.getCurrentFrame());
     P2->body->setSprite(P2->idle.getCurrentFrame());
-    TextBox title(20, 200, "./text/good-times-rg.ttf", "Up the Tree");
+
+    //Title Screen
+    TextBox title(800, 200, "./text/good-times-rg.ttf", "Up the Tree", true);
     title.setColor(255,255,255);
     title.setCharacterSize(200);
+    TextBox creator(800,400, "./text/good-times-rg.ttf", "Made by Cordell King", true);
+    creator.setColor(255,255,255);
+    creator.setCharacterSize(25);
+    TextBox artist(800,425, "./text/good-times-rg.ttf", "Art by Diego Arroyo", true);
+    artist.setColor(255,255,255);
+    artist.setCharacterSize(25);
+    TextBox music(800,450, "./text/good-times-rg.ttf", "Music from Ori and the Blind Forest", true);
+    music.setColor(255,255,255);
+    music.setCharacterSize(25);
+
+    TextBox P1controls(800,700, "./text/good-times-rg.ttf", "P1: WASD & E", true);
+    P1controls.setColor(255,255,255);
+    P1controls.setCharacterSize(100);
+    TextBox P2controls(800,800, "./text/good-times-rg.ttf", "P2: UHJK & I", true);
+    P2controls.setColor(255,255,255);
+    P2controls.setCharacterSize(100);
+    TextBox controls(800,900, "./text/good-times-rg.ttf", "SPACE to Start", true);
+    controls.setColor(255,255,255);
+    controls.setCharacterSize(150);
     
     Song my_music("sounds/Restoring the Light, Facing the Dark.wav");
     //my_music.setPitch(1.2f);
@@ -83,6 +104,12 @@ int main(int argc, char* argv[]){
             }
             
             window.draw(title.text);
+            window.draw(creator.text);
+            window.draw(artist.text);
+            window.draw(music.text);
+            window.draw(P1controls.text);
+            window.draw(P2controls.text);
+            window.draw(controls.text);
             window.display();
         }
         while (Game.ON && window.isOpen()) {
@@ -119,13 +146,13 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::A:
                                 P1->keys[0] = true;
-                                if (P1->body->isFlippedH()) {
+                                if (!P1->body->isFlippedH()) {
                                     P1->body->flipH();
                                 }
                                 break;
                             case Keyboard::D:
                                 P1->keys[1] = true;
-                                if (!P1->body->isFlippedH()) {
+                                if (P1->body->isFlippedH()) {
                                     P1->body->flipH();
                                 }
                                 break;
@@ -141,14 +168,14 @@ int main(int argc, char* argv[]){
                             case Keyboard::H:
                             case Keyboard::Left:
                                 P2->keys[0] = true;
-                                if (P2->body->isFlippedH()) {
+                                if (!P2->body->isFlippedH()) {
                                     P2->body->flipH();
                                 }
                                 break;
                             case Keyboard::K:
                             case Keyboard::Right:
                                 P2->keys[1] = true;
-                                if (!P2->body->isFlippedH()) {
+                                if (P2->body->isFlippedH()) {
                                     P2->body->flipH();
                                 }
                                 break;
@@ -225,24 +252,29 @@ int main(int argc, char* argv[]){
             P2->body->dampen(f);
 
             //Apply animation
+            /*
             if (!P1->on_ground) {
                 P1->body->setSprite(P1->leap.getCurrentFrame()); // Do leap animation
             }
-            else if (P1->keys[1]^P1->keys[0]) {
+            else 
+            //*/
+            if (P1->keys[1]^P1->keys[0]) {
                 P1->body->setSprite(P1->walk.frameTick()); // Do walking animations
             }
             else {
-                P1->body->setSprite(P1->idle.getCurrentFrame()); // Do idle animation
+                P1->body->setSprite(P1->idle.frameTick()); // Do idle animation
             }
-            
+            /*
             if (!P2->on_ground) {
                 P2->body->setSprite(P2->leap.getCurrentFrame()); // Do leap animation
             }
-            else if (P2->keys[1]^P2->keys[0]) {
+            else 
+            //*/
+            if (P2->keys[1]^P2->keys[0]) {
                 P2->body->setSprite(P2->walk.frameTick()); // Do walking animations
             }
             else {
-                P2->body->setSprite(P2->idle.getCurrentFrame()); // Do idle animation
+                P2->body->setSprite(P2->idle.frameTick()); // Do idle animation
             }
 
             //Process death
@@ -318,6 +350,14 @@ int main(int argc, char* argv[]){
             }
             
             window.draw(title.text);
+            window.draw(creator.text);
+            window.draw(artist.text);
+            window.draw(music.text);
+            /*
+            window.draw(P1controls.text);
+            window.draw(P2controls.text);
+            window.draw(controls.text);
+            //*/
             window.display();
         }
         break;

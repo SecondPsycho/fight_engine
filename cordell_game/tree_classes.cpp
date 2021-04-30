@@ -13,10 +13,23 @@ class Player {
         this->punchbox = Hitbox(px,py,32*scale,48*scale);
         this->punchbox.initRectangle();
 
+        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_1.png"));
+        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_2.png"));
+        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_3.png"));
+        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_2.png"));
+        //this->idle.setMaxFrameTick(15);
+
+        this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_1.png"));
+        this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_2.png"));
+        this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_3.png"));
+        this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_2.png"));
+        this->walk.setMaxFrameTick(8);
+        /*
         this->idle.addAnimationData(make_sprite("./images/wolf_idle.png", scale));
         this->walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk1.png", scale));
         this->walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk2.png", scale));
         this->leap.addAnimationData(make_sprite("./images/wolf_leap.png", scale));
+        //*/
         this->body->a.y = 1;
     }
     bool punch(Player* PN) {
@@ -24,9 +37,9 @@ class Player {
         //cout << this->punchbox.x << ' ' << this->punchbox.y << ' ' << this->punchbox.w << ' ' << this->punchbox.h << "   ";
         //cout << PN->body->getHitbox()->x << ' ' << PN->body->getHitbox()->y << ' ' << PN->body->getHitbox()->w << ' ' << PN->body->getHitbox()->h << "   ";
         if (this->body->isFlippedH()) {
-            this->punchbox.setPosition(this->body->posX()+(48*scale), this->body->posY()+(8*scale));
-        } else {
             this->punchbox.setPosition(this->body->posX()-(16*scale), this->body->posY()+(8*scale));
+        } else {
+            this->punchbox.setPosition(this->body->posX()+(48*scale), this->body->posY()+(8*scale));
         }
         return this->punchbox.collides(*(PN->body->getHitbox()));
     }
@@ -65,9 +78,9 @@ class Player {
         this->flying = true;
         this->dmg += 1;
         if (flipped) {
-            this->body->v.x += this->dmg;
-        } else {
             this->body->v.x -= this->dmg;
+        } else {
+            this->body->v.x += this->dmg;
         }
         this->body->v.y -= this->dmg;
     }
