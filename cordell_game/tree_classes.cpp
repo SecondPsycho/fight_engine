@@ -95,12 +95,26 @@ class Player {
 
 class NewGame {
   public:
-    NewGame(Player* player1, Player* player2, int n) {
+    NewGame(Player* player1, Player* player2, int n = 10, int f = 10) {
       this->statics_count = 0;
       this->statics_max = n;
+      this->flowers_count = 0;
+      this->flowers_max = n;
       this->statics = new KinematicBody2D[this->statics_max];
+      this->flowers = new KinematicBody2D[this->flowers_max];
       this->P1 = player1;
       this->P2 = player2;
+    }
+    
+    KinematicBody2D* getStatics() {
+        return this->statics;
+    }
+    KinematicBody2D* getStatic(int n) {
+      if (n < this->statics_max && n >= 0) {
+        return &(this->statics[n]);
+      }
+      cout << "Invalid Static Index.\n";
+      return nullptr;
     }
     void addStatic(KinematicBody2D newstatic) {
       if (this->statics_count < this->statics_max) {
@@ -110,18 +124,29 @@ class NewGame {
         cout << "Cannot add another static.\n";
       }
     }
-    KinematicBody2D* getStatic(int n) {
-      if (n < this->statics_max && n >= 0) {
-        return &(this->statics[n]);
-      }
-      cout << "Invalid Static Index.\n";
-      return nullptr;
-    }
     int getStaticsCount() {
       return this->statics_count;
     }
     KinematicBody2D* getFlowers() {
         return this->flowers;
+    }
+    KinematicBody2D* getFlower(int n) {
+      if (n < this->flowers_max && n >= 0) {
+        return &(this->flowers[n]);
+      }
+      cout << "Invalid Flower Index.\n";
+      return nullptr;
+    }
+    void addFlower(KinematicBody2D newflower) {
+      if (this->flowers_count < this->flowers_max) {
+        this->flowers[this->flowers_count] = newflower;
+        this->flowers_count++;
+      } else {
+        cout << "Cannot add another flower.\n";
+      }
+    }
+    int getFlowersCount() {
+      return this->flowers_count;
     }
     void runPhysics() {
       P1->body->tick();
@@ -131,6 +156,9 @@ class NewGame {
       this->P1->on_ground = false;
       this->P2->on_ground = false;
       
+      for (int i = 0; i < this->flowers_count; i++) {
+        this->flowers[i].tick();
+      }
       for (int i = 0; i < this->statics_count; i++) {
         this->statics[i].tick();
         collide = this->statics[i].blocks(this->P1->body, P1->flying);
@@ -161,13 +189,25 @@ class NewGame {
       this->getStatic(3)->initRectangle();
       this->getStatic(3)->initHitbox();
       this->getStatic(3)->v.y = 5;
+
+      this->addFlower(KinematicBody2D(75,500,50,50));
+      this->getFlower(0)->initRectangle();
+      this->getFlower(0)->setRectColor(255,255,0,255);
+      this->getFlower(0)->initHitbox();
+
+      this->addFlower(KinematicBody2D(1475,500,50,50));
+      this->getFlower(1)->initRectangle();
+      this->getFlower(1)->setRectColor(255,255,0,255);
+      this->getFlower(1)->initHitbox();
     }
     bool ON = true;
   private:
     Player* P1;
     Player* P2;
     KinematicBody2D* statics;
-    KinematicBody2D* flowers;
     int statics_count;
     int statics_max;
+    KinematicBody2D* flowers;
+    int flowers_count;
+    int flowers_max;
 };

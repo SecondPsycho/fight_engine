@@ -78,6 +78,9 @@ int main(int argc, char* argv[]){
             for (int i = 0; i < Game.getStaticsCount(); i++) {
                 window.draw(Game.getStatic(i)->getRectangle());
             }
+            for (int i = 0; i < Game.getFlowersCount(); i++) {
+                window.draw(Game.getFlower(i)->getRectangle());
+            }
             
             window.draw(title.text);
             window.display();
@@ -89,6 +92,9 @@ int main(int argc, char* argv[]){
                 t = 0;
                 for (int i = 0; i < Game.getStaticsCount(); i++) {
                     Game.getStatic(i)->p.y += 1;
+                }
+                for (int i = 0; i < Game.getFlowersCount(); i++) {
+                    Game.getFlower(i)->p.y += 1;
                 }
                 worldshifty += 1;
             }
@@ -124,7 +130,7 @@ int main(int argc, char* argv[]){
                                 }
                                 break;
                             case Keyboard::W:
-                                P1->jump(Game.getFlowers(), 0, P2);
+                                P1->jump(Game.getFlowers(), Game.getFlowersCount(), P2);
                                 break;
                             case Keyboard::E:
                                 P1->keys[3] = true;
@@ -148,7 +154,7 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::U:
                             case Keyboard::Up:
-                                P2->jump(Game.getFlowers(), 0, P1);
+                                P2->jump(Game.getFlowers(), Game.getFlowersCount(), P1);
                                 break;
                             case Keyboard::I:
                                 P2->keys[3] = true;
@@ -257,6 +263,9 @@ int main(int argc, char* argv[]){
             for (int i = 0; i < Game.getStaticsCount(); i++) {
                 window.draw(Game.getStatic(i)->getRectangle());
             }
+            for (int i = 0; i < Game.getFlowersCount(); i++) {
+                window.draw(Game.getFlower(i)->getRectangle());
+            }
 
             window.draw(P1->punchbox.getRectangle());
             window.draw(P2->punchbox.getRectangle());
@@ -303,6 +312,9 @@ int main(int argc, char* argv[]){
 
             for (int i = 0; i < Game.getStaticsCount(); i++) {
                 window.draw(Game.getStatic(i)->getRectangle());
+            }
+            for (int i = 0; i < Game.getFlowersCount(); i++) {
+                window.draw(Game.getFlower(i)->getRectangle());
             }
             
             window.draw(title.text);
