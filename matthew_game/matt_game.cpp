@@ -11,7 +11,15 @@ void playing_game();
 void death_screen();
 
 
-create_window("Matthew's Game", 2560, 1440); // Fullscreen but at cost of sprites looking small and needing to make stage bigger with adjusting speed and jump vals.
+#define GAME_START 1
+#define PLAYING_GAME 2
+#define DEATH_SCREEN 3
+#define QUIT_GAME 4
+
+
+const int window_h = 1920; // For big screen 2560 for small 1920
+const int window_w = 1200; // For big screen 1440 for small 1200
+create_window("Matthew's Game", window_h, window_w);
 
 
 // Globals:
@@ -19,7 +27,8 @@ swordPlayer player1;
 scythePlayer player2;
 NewGame Game(player1.sword_player, player2.scythe_player, 6);
 Event event;
-int gameState = 1;
+int gameState = GAME_START;
+
 
 int main(){
     // Turn key repeat off:
@@ -29,15 +38,15 @@ int main(){
     song.play();
     song.setLoop(true);
 
-    while(gameState != 4 && window.isOpen()){
-        if (gameState == 1) {
+    while(gameState != QUIT_GAME && window.isOpen()){
+        if (gameState == GAME_START) {
             resetGame();
-            gameState = 2;
+            gameState = PLAYING_GAME;
         }
-        if (gameState == 2) {
+        if (gameState == PLAYING_GAME) {
             playing_game();
         }
-        if (gameState == 3){
+        if (gameState == DEATH_SCREEN){
             death_screen();
         }
     }
@@ -55,7 +64,7 @@ void initializeGame(){
     player2.initialize();
 
     // Initialize the floor:
-    Game.addStatic(KinematicBody2D(0,1140,2560,200));
+    Game.addStatic(KinematicBody2D(0,(window_w - 300),window_h,200));
     Game.getStatic(0)->initRectangle();
     Game.getStatic(0)->initHitbox();
 }
@@ -70,7 +79,7 @@ void resetGame(){
 void playing_game(){
     // Framerate Control -Cordell King
     Framerate ticker(60);
-    while (gameState == 2 && window.isOpen()) {
+    while (gameState == PLAYING_GAME && window.isOpen()) {
         ticker.next_frame();
         
         // Do Controls:
@@ -95,7 +104,7 @@ void playing_game(){
         if (player1.sword_player.collides(&(player2.scythe_player))){
             player1.die();
             player2.die();
-            gameState = 3;
+            gameState = DEATH_SCREEN;
         }
 
 
@@ -114,7 +123,7 @@ void playing_game(){
 void death_screen(){
     // Framerate Control -Cordell King
     Framerate ticker(60);
-    while (gameState == 3 && window.isOpen()) {
+    while (gameState == DEATH_SCREEN && window.isOpen()) {
         ticker.next_frame();
         
         // Do Controls:
@@ -239,10 +248,10 @@ void handle_death_controls(Event event){
             window.close();
             break;
             case Keyboard::R:
-            gameState = 1;
+            gameState = GAME_START;
             break;
             case Keyboard::Q:
-            gameState = 4;
+            gameState = QUIT_GAME;
             break;
             default:
             break;
