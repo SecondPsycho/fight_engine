@@ -132,7 +132,7 @@ struct animation_data{
  * @param sprite_path Pass in a string of the path to the sprite image.
  * @return sprite_data* A pointer to the sprite_data struct that is created from the sprite_path that was passed in is returned.
  */
-sprite_data* make_sprite(string sprite_path){
+sprite_data* make_sprite(string sprite_path, float scale = 1){
     sprite_data* sprite = new sprite_data;
     if(!sprite->imageSource.loadFromFile(sprite_path)){
         cerr << "ERROR: Sprite creation failed" << endl;
@@ -142,8 +142,12 @@ sprite_data* make_sprite(string sprite_path){
 
     //Store the flipped sprite
     sprite->flippedSprite.setTexture(sprite->imageSource); 
-    sprite->flippedSprite.setScale(-1,1);
     sprite->flippedSprite.setOrigin(sprite->imageSprite.getTexture()->getSize().x,0);
+
+    //Apply Scaling
+    sprite->imageSprite.setScale(scale,scale);
+    sprite->flippedSprite.setScale(-1*scale,1*scale);
+
     return sprite;
 }
 
