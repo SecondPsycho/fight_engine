@@ -60,10 +60,10 @@ int main(int argc, char* argv[]){
     int worldshifty = 0;
     int seconds = 0;
     int st = 0;
-    int fps = 2;
+    int fps = 60;
 
-    //int t = 0;
-    //int falldelay = 5;
+    int t = 0;
+    int falldelay = 5;
     Framerate ticker(fps);
     while (window.isOpen()) {
         while (!Game.ON && window.isOpen()) {
@@ -114,11 +114,11 @@ int main(int argc, char* argv[]){
         }
         while (Game.ON && window.isOpen()) {
             ticker.next_frame();
-            cout << "Tick: ";
-            cout << Game.getStatic(0)->getHitbox()->x << ' ' << Game.getStatic(0)->getHitbox()->y << ' ' << Game.getStatic(0)->getHitbox()->w << ' ' << Game.getStatic(0)->getHitbox()->h << "   ";
-            cout << P2->body->getHitbox()->x << ' ' << P2->body->getHitbox()->y << ' ' << P2->body->getHitbox()->w << ' ' << P2->body->getHitbox()->h << endl;
+            //cout << "Tick: ";
+            //cout << Game.getStatic(0)->getHitbox()->x << ' ' << Game.getStatic(0)->getHitbox()->y << ' ' << Game.getStatic(0)->getHitbox()->w << ' ' << Game.getStatic(0)->getHitbox()->h << "   ";
+            //cout << P2->body->getHitbox()->x << ' ' << P2->body->getHitbox()->y << ' ' << P2->body->getHitbox()->w << ' ' << P2->body->getHitbox()->h << endl;
             
-            /*
+            //*
             t += 1;
             if (t >= falldelay) {
                 t = 0;

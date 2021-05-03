@@ -495,14 +495,8 @@ class Hitbox {
          * @return false When the two objects aren't colliding.
          */
         bool collides(Hitbox rect) {
-            if (this->x <= (rect.x + rect.w) && (this->x + this->w) >= rect.x && this->y <= (rect.y + rect.h) && (this->y + this->h) >= rect.y) {
-                if (rect.x > 1000) {
-                    cout << "Hits: ";
-                    cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
-                }
-                return true;
-            }
-            return false;
+            //cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
+            return (this->x <= (rect.x + rect.w) && (this->x + this->w) >= rect.x && this->y <= (rect.y + rect.h) && (this->y + this->h) >= rect.y);
         }
         // Directional Collision
         /**
@@ -861,6 +855,9 @@ class KinematicBody2D {
         int getHitboxOffsetY() {
             return this->hby;
         }
+        int getHitboxOffsetX() {
+            return this->hbx;
+        }
 
         Vector2D p; //Save movement to apply next frame
         Vector2D v; //Save a velocity
@@ -868,24 +865,26 @@ class KinematicBody2D {
         
     private:
         void blockedLeft(KinematicBody2D *hostile, bool bounce) {
-            hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
+            //hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
+            hostile->setPos(Vector2D(this->hitbox->x - (hostile->getHitboxOffsetX() + hostile->getHitbox()->w), hostile->y));
             hostile->v.x = this->v.x - (hostile->v.x*bounce);
             hostile->p.y += this->v.y;
         }
         void blockedRight(KinematicBody2D *hostile, bool bounce) {
-            hostile->setPos(Vector2D(this->x+this->w,hostile->y));
+            //hostile->setPos(Vector2D(this->x+this->w,hostile->y));
+            hostile->setPos(Vector2D(this->hitbox->w + this->hitbox->x - hostile->getHitboxOffsetX(), hostile->y));
             hostile->v.x = this->v.x - (hostile->v.x*bounce);
             hostile->p.y += this->v.y;
         }
         void blockedUp(KinematicBody2D *hostile, bool bounce) {
             //hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
             hostile->setPos(Vector2D(hostile->x,this->hitbox->y - (hostile->getHitboxOffsetY() + hostile->getHitbox()->h)));
-            //hostile->setHitboxY(this->hitbox->y);
             hostile->v.y = this->v.y;// - (hostile->v.y*bounce);
             hostile->p.x += this->v.x;
         }
         void blockedDown(KinematicBody2D *hostile, bool bounce) {
-            hostile->setPos(Vector2D(hostile->x,this->y+this->h));
+            //hostile->setPos(Vector2D(hostile->x,this->y+this->h));
+            hostile->setPos(Vector2D(hostile->x, this->hitbox->h + this->hitbox->y - hostile->getHitboxOffsetY()));
             hostile->v.y = this->v.y - (hostile->v.y*bounce);
             hostile->p.x += this->v.x;
         }
