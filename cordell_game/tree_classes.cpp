@@ -10,6 +10,10 @@ class Player {
         this->h = 64;
         this->body = new KinematicBody2D(px,py,64*scale,64*scale);
         this->body->initHitbox();
+
+        this->body->getHitbox()->initRectangle();
+        this->body->adjustHitbox(30,10,68,108);
+
         this->punchbox = Hitbox(px,py,32*scale,48*scale);
         this->punchbox.initRectangle();
 
