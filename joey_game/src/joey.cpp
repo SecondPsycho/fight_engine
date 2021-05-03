@@ -148,12 +148,16 @@ int main(){
             int *collide;
             bool orange_on_ground = false;
             bool blue_on_ground = false;
+            bool orange_touching = false;
+            bool blue_touching = false;
+            string orange_frame;
+            string blue_frame;
             Vector2D orange_f(1,0);
             Vector2D blue_f(1,0);
 
             // Framerate Control -Cordell King
             Framerate ticker(30);
-            while (window.isOpen() && state==GAME) {
+            while (window.isOpen()) {
                 ticker.next_frame();
                 
                 while(window.pollEvent(event)){
@@ -289,18 +293,18 @@ int main(){
                     };
                 };
 
+                
+                orange_frame = "";
+                blue_frame = "";
+                orange_touching = false;
+                blue_touching = false;
+
                 //blue and orange touch?
                 if(orange.collides(&blue)){
-                    cout << "collided" << endl;
-                    orange_on_ground = true;
-                    //switch screens? temporarily.
-                    state=POST_GAME;
+                    orange_touching = true;
                 }
-                if(orange.collides(&blue)){
-                    cout << "collided" << endl;
-                    blue_on_ground = true;
-                    //switch screens? temporarily.
-                    state=POST_GAME;
+                if(blue.collides(&orange)){
+                    blue_touching = true;
                 }
 
                 //remove kick animation if on ground
@@ -316,11 +320,14 @@ int main(){
                 if (!orange_on_ground) {
                     if(orange_keys[3]==0){
                         orange.setSprite(orange_leap.getCurrentFrame()); // Do leap animation
+                        orange_frame = "leap";
                     }else{
                         orange.setSprite(orange_kick.getCurrentFrame()); // Do kick animation
+                        orange_frame = "kick";
                     }
                 }else if (orange_punch_counter!=0 || orange_keys[3]==2) {
                     orange.setSprite(orange_punch.getCurrentFrame()); // Do punch animation
+                    orange_frame = "punch";
                     orange_punch_counter++;
                     if(orange_punch_counter>=10){
                         orange_punch_counter=0;
@@ -328,19 +335,24 @@ int main(){
                     }
                 }else if (orange_keys[0]^orange_keys[1]) {
                     orange.setSprite(orange_walk.frameTick()); // Do walking animations
+                    orange_frame = "walk";
                 }else {
                     orange.setSprite(orange_idle.frameTick()); // Do idle animation
+                    orange_frame = "idle";
                 }
 
                 // blue:
                 if (!blue_on_ground) {
                     if(blue_keys[3]==0){
                         blue.setSprite(blue_leap.getCurrentFrame()); // Do leap animation
+                        blue_frame = "leap";
                     }else{
                         blue.setSprite(blue_kick.getCurrentFrame()); // Do kick animation
+                        blue_frame = "kick";
                     }
                 }else if (blue_punch_counter!=0 || blue_keys[3]==2) {
                     blue.setSprite(blue_punch.getCurrentFrame()); // Do punch animation
+                    blue_frame = "punch";
                     blue_punch_counter++;
                     if(blue_punch_counter>=10){
                         blue_punch_counter=0;
@@ -348,10 +360,20 @@ int main(){
                     }
                 }else if (blue_keys[0]^blue_keys[1]) {
                     blue.setSprite(blue_walk.frameTick()); // Do walking animations
+                    blue_frame = "walk";
                 }else {
                     blue.setSprite(blue_idle.frameTick()); // Do idle animation
+                    blue_frame = "idle";
                 }
                 
+                //handle attacks
+                if((orange_frame=="punch" || orange_frame=="kick") && (orange_touching && blue_touching) && (blue_frame=="punch" || blue_frame=="kick")){
+                    cout << "They collided" << endl;
+                }else if((orange_frame=="punch" || orange_frame=="kick") && (orange_touching && blue_touching) && (blue_frame!="punch" && blue_frame!="kick")){
+                    cout << "ORANGE HIT BLUE" << endl;
+                }else if((blue_frame=="punch" || blue_frame=="kick") && (orange_touching && blue_touching) && (orange_frame!="punch" && orange_frame!="kick")){
+                    cout << "BLUE HIT ORANGE" << endl;
+                }
                 
 
                 //Draw the Screen
@@ -380,7 +402,7 @@ int main(){
                         case Event::Closed:
                             window.close();
                             break;
-                        case Event::KeyPressed:
+                        case Event::KeyReleased:
                             state=TITLE;
                             break;
                         default:
