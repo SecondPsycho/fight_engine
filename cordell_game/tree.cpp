@@ -59,11 +59,10 @@ int main(int argc, char* argv[]){
     Vector2D f(1,0);
     int worldshifty = 0;
     int seconds = 0;
-    int st = 0;
+    int t = 0;
+    int risespeed = 2;
     int fps = 60;
 
-    int t = 0;
-    int falldelay = 5;
     Framerate ticker(fps);
     while (window.isOpen()) {
         while (!Game.ON && window.isOpen()) {
@@ -102,7 +101,9 @@ int main(int argc, char* argv[]){
             for (int i = 0; i < Game.getFlowersCount(); i++) {
                 window.draw(Game.getFlower(i)->getRectangle());
             }
-            
+            for (int i = 0; i < Game.getWatersCount(); i++) {
+                window.draw(Game.getWater(i)->getRectangle());
+            }
             window.draw(title.text);
             window.draw(creator.text);
             window.draw(artist.text);
@@ -118,21 +119,19 @@ int main(int argc, char* argv[]){
             //cout << Game.getStatic(0)->getHitbox()->x << ' ' << Game.getStatic(0)->getHitbox()->y << ' ' << Game.getStatic(0)->getHitbox()->w << ' ' << Game.getStatic(0)->getHitbox()->h << "   ";
             //cout << P2->body->getHitbox()->x << ' ' << P2->body->getHitbox()->y << ' ' << P2->body->getHitbox()->w << ' ' << P2->body->getHitbox()->h << endl;
             
-            //*
-            t += 1;
-            if (t >= falldelay) {
-                t = 0;
+            if (P1->body->pos().y < 400 || P2->body->pos().y < 400) {
+                //t = 0;
                 for (int i = 0; i < Game.getStaticsCount(); i++) {
-                    Game.getStatic(i)->p.y += 1;
+                    Game.getStatic(i)->p.y += risespeed;
                 }
                 for (int i = 0; i < Game.getFlowersCount(); i++) {
-                    Game.getFlower(i)->p.y += 1;
+                    Game.getFlower(i)->p.y += risespeed;
                 }
-                worldshifty += 1;
-            }//*/
-            st += 1;
-            if (st >= fps) {
-                st = 0;
+                worldshifty += risespeed;
+            }
+            t += 1;
+            if (t >= fps) {
+                t = 0;
                 seconds += 1;
                 if (seconds >= 77) {
                     my_music.setPlayingOffset(29);
@@ -283,7 +282,7 @@ int main(int argc, char* argv[]){
             }
 
             //Process death
-            if (P1->body->posY() >= 1300 || P2->body->posY() >= 1300) {
+            if (P1->body->posY() >= Game.getWater(1)->pos().y || P2->body->posY() >= Game.getWater(1)->pos().y) {
                 Game.ON = false;
                 my_music.setPlayingOffset(78);
                 seconds = 78;
@@ -303,6 +302,9 @@ int main(int argc, char* argv[]){
             for (int i = 0; i < Game.getFlowersCount(); i++) {
                 window.draw(Game.getFlower(i)->getRectangle());
             }
+            for (int i = 0; i < Game.getWatersCount(); i++) {
+                window.draw(Game.getWater(i)->getRectangle());
+            }
 
             //*
             window.draw(P1->punchbox.getRectangle());
@@ -315,9 +317,9 @@ int main(int argc, char* argv[]){
         }
         while (!Game.ON && window.isOpen()) {
             ticker.next_frame();
-            st += 1;
-            if (st >= fps) {
-                st = 0;
+            t += 1;
+            if (t >= fps) {
+                t = 0;
                 seconds += 1;
                 if (seconds >= 100) {
                     my_music.stop();
@@ -356,6 +358,9 @@ int main(int argc, char* argv[]){
             }
             for (int i = 0; i < Game.getFlowersCount(); i++) {
                 window.draw(Game.getFlower(i)->getRectangle());
+            }
+            for (int i = 0; i < Game.getWatersCount(); i++) {
+                window.draw(Game.getWater(i)->getRectangle());
             }
             
             window.draw(title.text);
