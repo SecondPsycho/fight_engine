@@ -486,6 +486,7 @@ class Hitbox {
         void setSize(int pw, int ph) {
             this->w = pw;
             this->h = ph;
+            if (this->rcset) {this->rectangle.setSize(Vector2f(this->w,this->h));}
         }
         /**
          * @brief Boolean function to tell you if this hitbox is colliding with another.
@@ -494,8 +495,14 @@ class Hitbox {
          * @return false When the two objects aren't colliding.
          */
         bool collides(Hitbox rect) {
-            //cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
-            return (this->x <= (rect.x + rect.w) && (this->x + this->w) >= rect.x && this->y <= (rect.y + rect.h) && (this->y + this->h) >= rect.y);
+            if (this->x <= (rect.x + rect.w) && (this->x + this->w) >= rect.x && this->y <= (rect.y + rect.h) && (this->y + this->h) >= rect.y) {
+                if (rect.x > 1000) {
+                    cout << "Hits: ";
+                    cout << this->x << ' ' << this->y << ' ' << this->w << ' ' << this->h << "   " << rect.x << ' ' << rect.y << ' ' << rect.w << ' ' << rect.h << '\n';
+                }
+                return true;
+            }
+            return false;
         }
         // Directional Collision
         /**
@@ -710,7 +717,7 @@ class KinematicBody2D {
         * @param pw The Hitbox's new width.
         * @param ph The Hitbox's new height.
         */
-        /*
+        //*
         void adjustHitbox(int px, int py, int pw, int ph) {
             this->hitbox->setSize(pw,ph);
             this->hbx = px;
@@ -844,6 +851,17 @@ class KinematicBody2D {
             return Vector2D(this->x,this->y);
         };
 
+        /**
+         * @brief Do NOT use this.
+         */
+        void setHitboxY(int py) {
+            this->setPos(Vector2D(this->x, py - (this->hby + this->hitbox->h)));
+        }
+
+        int getHitboxOffsetY() {
+            return this->hby;
+        }
+
         Vector2D p; //Save movement to apply next frame
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
@@ -860,7 +878,9 @@ class KinematicBody2D {
             hostile->p.y += this->v.y;
         }
         void blockedUp(KinematicBody2D *hostile, bool bounce) {
-            hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
+            //hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
+            hostile->setPos(Vector2D(hostile->x,this->hitbox->y - (hostile->getHitboxOffsetY() + hostile->getHitbox()->h)));
+            //hostile->setHitboxY(this->hitbox->y);
             hostile->v.y = this->v.y;// - (hostile->v.y*bounce);
             hostile->p.x += this->v.x;
         }
