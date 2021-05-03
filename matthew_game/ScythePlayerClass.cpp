@@ -2,7 +2,6 @@ class scythePlayer {
     public:
         animation_data attack;
         animation_data idle;
-        animation_data jump;
         animation_data death;
         KinematicBody2D scythe_player;
         Vector2D f;
@@ -11,11 +10,19 @@ class scythePlayer {
         int keys[5] = {0,0,0,0,0};
         bool on_ground = false;
         bool dead = false;
+        int dash_timer = 0;
+        int attack_timer = 0;
+        int window_w;
+        int window_h;
+        //int healthBar = 100;
 
-        scythePlayer(){
+        scythePlayer(int window_W, int window_H){
             this->scythe_player = *(new KinematicBody2D(1500,100,64,64));
             this->f = *(new Vector2D(1,0));
             this->startingPos = *(new Vector2D(1500, 100));
+            //this->attack.max_frame_tick = 5; Might not want for this char.
+            this->window_w = window_W;
+            this->window_h = window_H;
         }
 
         void initialize(){
@@ -35,19 +42,42 @@ class scythePlayer {
             this->dead = false;
             this->idle.cur_frame = 0;
             this->death.cur_frame = 0;
+            this->attack.cur_frame = 0;
         }
 
-        void die(){
-            this->dead = true;
+        void endGame(){
             for (int i=0; i<5; i++){
                 keys[i] = 0;
             }
+            this->dash_timer = 0;
+            this->attack_timer = 0;
         }
 
         void physicsProcess(){
-            this->scythe_player.p.x += 10*((this->keys[1])-(this->keys[0])); // Speed multiplier was 10
+            if (this->dash_timer > 0){
+                if (!(this->scythe_player.isFlippedH())){
+                    this->scythe_player.p.x += 60;
+                }
+                else if (this->scythe_player.isFlippedH()){
+                    this->scythe_player.p.x -= 60;
+                }
+            }
+            else {
+                this->scythe_player.p.x += 10*((this->keys[1])-(this->keys[0])); // Speed multiplier was 10
+            }
+
             this->scythe_player.tick();
             this->scythe_player.dampen(this->f);
+            Vector2D current_pos(this->scythe_player.posX(), this->scythe_player.posY());
+            //cout << "X: " << current_pos.x << " Y: " << current_pos.y << endl;
+            // "Walls":
+            if (current_pos.x <= 0){
+                current_pos.x = 0;
+            }
+            else if (current_pos.x >= window_w - 60){
+                current_pos.x = window_w - 60;
+            }
+            this->scythe_player.setPos(current_pos);
         }
 
         void collision(NewGame Game){
@@ -60,6 +90,22 @@ class scythePlayer {
             };
         }
 
+        void startAttack(){
+            this->dash_timer = 10;
+            this->attack_timer = 40;
+        }
+
+        void timers(){
+            if (this->dash_timer > 0){
+                this->dash_timer -= 1;
+            }
+            if (this->attack_timer > 0){
+                this->attack_timer -= 1;
+            }
+            else {
+                this->attack.cur_frame = 0;
+            }
+        }
 
         void animate(){
             if (dead){
@@ -70,10 +116,18 @@ class scythePlayer {
                     scythe_player.setSprite(death.frameTick()); // Do death animation
                 }
             }
+            else if (this->attack_timer > 0){
+                scythe_player.setSprite(attack.frameTick()); // Do attack animation
+            }
             else {
                 scythe_player.setSprite(idle.frameTick()); // Do idle animation
             }
         }
+
+        void updateHealthBar(){
+
+        }
+
 
         void addAllAnimations(){
             // Idle Animations:
@@ -104,5 +158,19 @@ class scythePlayer {
             death.addAnimationData(make_sprite("./images/Scythe_Player/Death/death15.png", 2));
             death.addAnimationData(make_sprite("./images/Scythe_Player/Death/death16.png", 2));
             death.addAnimationData(make_sprite("./images/Scythe_Player/Death/death17.png", 2));
+            // Attack Animations:
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack0.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack1.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack2.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack3.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack4.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack5.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack6.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack7.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack8.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack9.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack10.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack11.png"));
+            attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack12.png"));
         }
 };

@@ -14,12 +14,20 @@ class swordPlayer {
         bool dead = false;
         int dash_timer = 0;
         int attack_timer = 0;
+        int window_w;
+        int window_h;
+        KinematicBody2D healthBody;
+        animation_data healthSprite;
+        //int healthBar = 100;
 
-        swordPlayer(){
+        swordPlayer(int window_W, int window_H){
             this->sword_player = *(new KinematicBody2D(50,100,64,64));
             this->f = *(new Vector2D(1,0));
             this->startingPos = *(new Vector2D(50, 100));
             this->attack.max_frame_tick = 5;
+            this->window_w = window_W;
+            this->window_h = window_H;
+            this->healthBody = *(new KinematicBody2D(50, 100, 500, 64));
         }
 
         void initialize(){
@@ -28,6 +36,7 @@ class swordPlayer {
             this->sword_player.initHitbox();
             this->sword_player.getHitbox()->initRectangle(); //Testing
             this->sword_player.a.y = 1;
+            this->healthBody.setSprite(this->healthSprite.getCurrentFrame());
         }
 
         void reset(){
@@ -43,8 +52,8 @@ class swordPlayer {
             this->attack.cur_frame = 0;
         }
 
-        void die(){
-            this->dead = true;
+
+        void endGame(){
             for (int i=0; i<5; i++){
                 keys[i] = 0;
             }
@@ -60,13 +69,23 @@ class swordPlayer {
                 else if (this->sword_player.isFlippedH()){
                     this->sword_player.p.x -= 60;
                 }
-
             }
             else {
                 this->sword_player.p.x += 10*((this->keys[1])-(this->keys[0])); // Speed multiplier default: 10
             }
+
             this->sword_player.tick();
             this->sword_player.dampen(this->f);
+            Vector2D current_pos(this->sword_player.posX(), this->sword_player.posY());
+            //cout << "X: " << current_pos.x << " Y: " << current_pos.y << endl;
+            // "Walls":
+            if (current_pos.x <= 0){
+                current_pos.x = 0;
+            }
+            else if (current_pos.x >= window_w - 60){
+                current_pos.x = window_w - 60;
+            }
+            this->sword_player.setPos(current_pos);
         }
 
         void collision(NewGame Game){
@@ -119,6 +138,10 @@ class swordPlayer {
             }
         }
 
+        void updateHealthBar(){
+            
+        }
+
 
         void addAllAnimations(){
             // Idle Animations:
@@ -161,5 +184,17 @@ class swordPlayer {
             attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack7.png", 2));
             attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack8.png", 2));
             attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack9.png", 2));
+            // Health Sprite:
+            healthSprite.addAnimationData(make_sprite("./images/healthbar0.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar1.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar2.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar3.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar4.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar5.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar6.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar7.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar8.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar9.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar10.png"));
         }
 };

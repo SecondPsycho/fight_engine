@@ -17,14 +17,14 @@ void death_screen();
 #define QUIT_GAME 4
 
 // Try and stick to the current Res but if nessecary switch to larger and that will be ok.
-const int window_h = 1920; // For big screen 2560 for small 1920
-const int window_w = 1200; // For big screen 1440 for small 1200
-create_window("Matthew's Game", window_h, window_w);
+const int window_w = 2560; // For big screen 2560 for small 1920
+const int window_h = 1440; // For big screen 1440 for small 1080
+create_window("Matthew's Game", window_w, window_h);
 
 
 // Globals:
-swordPlayer player1;
-scythePlayer player2;
+swordPlayer player1(window_w, window_h);
+scythePlayer player2(window_w, window_h);
 NewGame Game(player1.sword_player, player2.scythe_player, 6);
 Event event;
 int gameState = GAME_START;
@@ -64,7 +64,7 @@ void initializeGame(){
     player2.initialize();
 
     // Initialize the floor:
-    Game.addStatic(KinematicBody2D(0,(window_w - 300),window_h,200));
+    Game.addStatic(KinematicBody2D(0,(window_h - 200),window_w,200));
     Game.getStatic(0)->initRectangle();
     Game.getStatic(0)->initHitbox();
 }
@@ -103,12 +103,31 @@ void playing_game(){
 
         // Apply Timers:
         player1.timers();
+        player2.timers();
 
 
         // Current Death Condition
+        /*
         if (player1.sword_player.collides(&(player2.scythe_player))){
-            player1.die();
-            player2.die();
+            player1.dead = true;
+            player1.endGame();
+            player2.dead = true;
+            player2.endGame();
+            gameState = DEATH_SCREEN;
+        }/*/
+        if (player1.attack_timer > 0 && player2.attack_timer > 0){
+            
+        }
+        else if (player1.sword_player.collides(&(player2.scythe_player)) && player1.attack_timer > 0){
+            player1.endGame();
+            player2.dead = true;
+            player2.endGame();
+            gameState = DEATH_SCREEN;
+        }
+        else if (player2.scythe_player.collides(&(player1.sword_player)) && player2.attack_timer > 0){
+            player2.endGame();
+            player1.dead = true;
+            player1.endGame();
             gameState = DEATH_SCREEN;
         }
 
@@ -118,6 +137,7 @@ void playing_game(){
         window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
         window.draw(player1.sword_player.getSprite());
         window.draw(player1.sword_player.getHitbox()->getRectangle());
+        window.draw(player1.healthBody.getSprite());
         window.draw(player2.scythe_player.getSprite());
         window.draw(player2.scythe_player.getHitbox()->getRectangle());
 
@@ -153,6 +173,7 @@ void death_screen(){
         //Draw to the Screen
         window.clear(Color(42,42,42,255)); // Dark gray.
         window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
+        window.draw(Game.getStatic(1)->getRectangle()); //Draw Wall
         window.draw(player1.sword_player.getSprite());
         window.draw(player1.sword_player.getHitbox()->getRectangle());
         window.draw(player2.scythe_player.getSprite());
@@ -212,6 +233,11 @@ void handle_game_controls(Event event){
             if (player2.keys[2] == 0 && player2.on_ground){
                 player2.keys[2] = 1;
                 player2.scythe_player.v.y = -20;
+            }
+            break;
+            case Keyboard::Numpad2:
+            if (player2.attack_timer == 0 && player2.dash_timer == 0){
+                player2.startAttack();
             }
             break;
             default:
