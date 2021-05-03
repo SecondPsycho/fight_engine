@@ -67,6 +67,13 @@ void initializeGame(){
     Game.addStatic(KinematicBody2D(0,(window_h - 200),window_w,200));
     Game.getStatic(0)->initRectangle();
     Game.getStatic(0)->initHitbox();
+
+    // Make some platforms:
+    Game.addStatic(KinematicBody2D((0*(window_w/1920)), (window_h - (400*(window_h/1080))), (300*(window_w/1920)), (15*(window_h/1080))));
+    //Game.addStatic(KinematicBody2D(400,(window_h - 600),300,100));
+    Game.getStatic(1)->initRectangle();
+    Game.getStatic(1)->initHitbox();
+
 }
 
 
@@ -106,28 +113,28 @@ void playing_game(){
         player2.timers();
 
 
-        // Current Death Condition
-        /*
-        if (player1.sword_player.collides(&(player2.scythe_player))){
-            player1.dead = true;
-            player1.endGame();
-            player2.dead = true;
-            player2.endGame();
-            gameState = DEATH_SCREEN;
-        }/*/
         if (player1.attack_timer > 0 && player2.attack_timer > 0){
             
         }
-        else if (player1.sword_player.collides(&(player2.scythe_player)) && player1.attack_timer > 0){
-            player1.endGame();
-            player2.dead = true;
-            player2.endGame();
-            gameState = DEATH_SCREEN;
+        else if (player1.sword_player.collides(&(player2.scythe_player)) && player1.attack_timer > 0 && player2.invicibility_timer == 0){
+            player2.updateHealthBar();
+            player2.onHit();
         }
-        else if (player2.scythe_player.collides(&(player1.sword_player)) && player2.attack_timer > 0){
+        else if (player2.scythe_player.collides(&(player1.sword_player)) && player2.attack_timer > 0 && player1.invicibility_timer == 0){
+            player1.updateHealthBar();
+            player1.onHit();
+        }
+
+        if (player1.healthBar == 0){
             player2.endGame();
             player1.dead = true;
             player1.endGame();
+            gameState = DEATH_SCREEN;
+        }
+        else if (player2.healthBar == 0){
+            player1.endGame();
+            player2.dead = true;
+            player2.endGame();
             gameState = DEATH_SCREEN;
         }
 
@@ -135,11 +142,13 @@ void playing_game(){
         //Draw to the Screen
         window.clear(Color(42,42,42,255)); // Dark gray.
         window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
+        window.draw(Game.getStatic(1)->getRectangle()); // Draw Platforms
         window.draw(player1.sword_player.getSprite());
         window.draw(player1.sword_player.getHitbox()->getRectangle());
         window.draw(player1.healthBody.getSprite());
         window.draw(player2.scythe_player.getSprite());
         window.draw(player2.scythe_player.getHitbox()->getRectangle());
+        window.draw(player2.healthBody.getSprite());
 
         window.display();
     }
@@ -173,11 +182,13 @@ void death_screen(){
         //Draw to the Screen
         window.clear(Color(42,42,42,255)); // Dark gray.
         window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
-        window.draw(Game.getStatic(1)->getRectangle()); //Draw Wall
+        window.draw(Game.getStatic(1)->getRectangle()); // Draw Platforms
         window.draw(player1.sword_player.getSprite());
         window.draw(player1.sword_player.getHitbox()->getRectangle());
+        window.draw(player1.healthBody.getSprite());
         window.draw(player2.scythe_player.getSprite());
         window.draw(player2.scythe_player.getHitbox()->getRectangle());
+        window.draw(player2.healthBody.getSprite());
 
         window.display();
     }
@@ -209,7 +220,7 @@ void handle_game_controls(Event event){
             case Keyboard::W:
             if (player1.keys[2] == 0 && player1.on_ground){
                 player1.keys[2] = 1;
-                player1.sword_player.v.y = -20;
+                player1.sword_player.v.y = -22;
             }
             break;
             case Keyboard::G:
@@ -232,7 +243,7 @@ void handle_game_controls(Event event){
             case Keyboard::Up:
             if (player2.keys[2] == 0 && player2.on_ground){
                 player2.keys[2] = 1;
-                player2.scythe_player.v.y = -20;
+                player2.scythe_player.v.y = -22;
             }
             break;
             case Keyboard::Numpad2:

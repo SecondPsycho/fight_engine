@@ -12,17 +12,21 @@ class scythePlayer {
         bool dead = false;
         int dash_timer = 0;
         int attack_timer = 0;
+        int invicibility_timer = 0;
         int window_w;
         int window_h;
-        //int healthBar = 100;
+        KinematicBody2D healthBody;
+        animation_data healthSprite;
+        int healthBar = 10;
 
         scythePlayer(int window_W, int window_H){
-            this->scythe_player = *(new KinematicBody2D(1500,100,64,64));
+            this->scythe_player = *(new KinematicBody2D((window_W - 200),100,64,64));
             this->f = *(new Vector2D(1,0));
-            this->startingPos = *(new Vector2D(1500, 100));
+            this->startingPos = *(new Vector2D((window_W - 200), 100));
             //this->attack.max_frame_tick = 5; Might not want for this char.
             this->window_w = window_W;
             this->window_h = window_H;
+            this->healthBody = *(new KinematicBody2D((window_W - 525), 10, 500, 64));
         }
 
         void initialize(){
@@ -32,6 +36,8 @@ class scythePlayer {
             scythe_player.getHitbox()->initRectangle(); //Testing
             scythe_player.a.y = 1;
             this->scythe_player.flipH();
+            this->healthSprite.cur_frame = 10;
+            this->healthBody.setSprite(this->healthSprite.getCurrentFrame());
         }
 
         void reset(){
@@ -43,6 +49,9 @@ class scythePlayer {
             this->idle.cur_frame = 0;
             this->death.cur_frame = 0;
             this->attack.cur_frame = 0;
+            this->healthBar = 10;
+            this->healthSprite.cur_frame = 10;
+            this->healthBody.setSprite(this->healthSprite.getCurrentFrame());
         }
 
         void endGame(){
@@ -51,6 +60,7 @@ class scythePlayer {
             }
             this->dash_timer = 0;
             this->attack_timer = 0;
+            this->invicibility_timer = 0;
         }
 
         void physicsProcess(){
@@ -83,7 +93,7 @@ class scythePlayer {
         void collision(NewGame Game){
             this->on_ground = false;
             for (int i = 0; i < Game.getStaticsCount(); i++) {
-            collide = Game.getStatic(i)->blocks(&(this->scythe_player));
+            collide = Game.getStatic(i)->blocks(&(this->scythe_player), false, 'D');
                 if (collide[2] && collide[1] <= -1) {
                     this->on_ground = true;
                 };
@@ -95,6 +105,10 @@ class scythePlayer {
             this->attack_timer = 40;
         }
 
+        void onHit(){
+            this->invicibility_timer = 40;
+        }
+
         void timers(){
             if (this->dash_timer > 0){
                 this->dash_timer -= 1;
@@ -104,6 +118,9 @@ class scythePlayer {
             }
             else {
                 this->attack.cur_frame = 0;
+            }
+            if (this->invicibility_timer > 0){
+                this->invicibility_timer -= 1;
             }
         }
 
@@ -125,7 +142,8 @@ class scythePlayer {
         }
 
         void updateHealthBar(){
-
+            this->healthBar--;
+            this->healthBody.setSprite(healthSprite.getFrame(healthBar));
         }
 
 
@@ -172,5 +190,17 @@ class scythePlayer {
             attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack10.png"));
             attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack11.png"));
             attack.addAnimationData(make_sprite("./images/Scythe_Player/Attack/attack12.png"));
+            // Health Sprites:
+            healthSprite.addAnimationData(make_sprite("./images/healthbar0.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar1.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar2.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar3.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar4.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar5.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar6.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar7.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar8.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar9.png"));
+            healthSprite.addAnimationData(make_sprite("./images/healthbar10.png"));
         }
 };

@@ -14,20 +14,21 @@ class swordPlayer {
         bool dead = false;
         int dash_timer = 0;
         int attack_timer = 0;
+        int invicibility_timer = 0;
         int window_w;
         int window_h;
         KinematicBody2D healthBody;
         animation_data healthSprite;
-        //int healthBar = 100;
+        int healthBar = 10;
 
         swordPlayer(int window_W, int window_H){
-            this->sword_player = *(new KinematicBody2D(50,100,64,64));
+            this->sword_player = *(new KinematicBody2D(100,100,64,64));
             this->f = *(new Vector2D(1,0));
-            this->startingPos = *(new Vector2D(50, 100));
+            this->startingPos = *(new Vector2D(100, 100));
             this->attack.max_frame_tick = 5;
             this->window_w = window_W;
             this->window_h = window_H;
-            this->healthBody = *(new KinematicBody2D(50, 100, 500, 64));
+            this->healthBody = *(new KinematicBody2D(25, 10, 500, 64));
         }
 
         void initialize(){
@@ -36,6 +37,7 @@ class swordPlayer {
             this->sword_player.initHitbox();
             this->sword_player.getHitbox()->initRectangle(); //Testing
             this->sword_player.a.y = 1;
+            this->healthSprite.cur_frame = 10;
             this->healthBody.setSprite(this->healthSprite.getCurrentFrame());
         }
 
@@ -50,6 +52,9 @@ class swordPlayer {
             this->death.cur_frame = 0;
             this->jump.cur_frame = 0;
             this->attack.cur_frame = 0;
+            this->healthBar = 10;
+            this->healthSprite.cur_frame = 10;
+            this->healthBody.setSprite(this->healthSprite.getCurrentFrame());
         }
 
 
@@ -59,6 +64,7 @@ class swordPlayer {
             }
             this->dash_timer = 0;
             this->attack_timer = 0;
+            this->invicibility_timer = 0;
         }
 
         void physicsProcess(){
@@ -91,7 +97,7 @@ class swordPlayer {
         void collision(NewGame Game){
             this->on_ground = false;
             for (int i = 0; i < Game.getStaticsCount(); i++) {
-            collide = Game.getStatic(i)->blocks(&(this->sword_player));
+            collide = Game.getStatic(i)->blocks(&(this->sword_player), false, 'D');
                 if (collide[2] && collide[1] <= -1) {
                     this->on_ground = true;
                 };
@@ -103,6 +109,10 @@ class swordPlayer {
             this->attack_timer = 40;
         }
 
+        void onHit(){
+            this->invicibility_timer = 40;
+        }
+
         void timers(){
             if (this->dash_timer > 0){
                 this->dash_timer -= 1;
@@ -112,6 +122,9 @@ class swordPlayer {
             }
             else {
                 this->attack.cur_frame = 0;
+            }
+            if (this->invicibility_timer > 0){
+                this->invicibility_timer -= 1;
             }
         }
 
@@ -139,7 +152,8 @@ class swordPlayer {
         }
 
         void updateHealthBar(){
-            
+            this->healthBar--;
+            this->healthBody.setSprite(healthSprite.getFrame(healthBar));
         }
 
 
@@ -184,7 +198,7 @@ class swordPlayer {
             attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack7.png", 2));
             attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack8.png", 2));
             attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack9.png", 2));
-            // Health Sprite:
+            // Health Sprites:
             healthSprite.addAnimationData(make_sprite("./images/healthbar0.png"));
             healthSprite.addAnimationData(make_sprite("./images/healthbar1.png"));
             healthSprite.addAnimationData(make_sprite("./images/healthbar2.png"));

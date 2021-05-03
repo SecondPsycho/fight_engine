@@ -748,26 +748,28 @@ class KinematicBody2D {
         /**
         * @brief See if this KinematicBody2D collides with another, and on which side.
         * @param hostile A pointer to the other KinematicBody2D
+        * @param bounce Optional parameter for bouncing off collidables.
+        * @param ignore Optional parameter to pick a side to ignore collision for objects. Options are ['U', 'D', 'L', 'R'] anything else will do nothing.
         * @return A pointer to an array of 3 integers. The first indicates collision on the left or right side. The second indicates collision on the top or bottom. The third indicates collision in general.
         */
-        int* blocks(KinematicBody2D *hostile, bool bounce = false) {
+        int* blocks(KinematicBody2D *hostile, bool bounce = false, char ignore = ' ') {
             int* side = this->collidesDir(hostile);
             if (side[2] == 1) {
-                if (side[1] <= -2) {
+                if (side[1] <= -2 && ignore != 'U') {
                     this->blockedUp(hostile, bounce);
-                } else if (side[1] >= 2){
+                } else if (side[1] >= 2 && ignore != 'D'){
                     this->blockedDown(hostile, bounce);
-                } else if (side[0] <= -2) {
+                } else if (side[0] <= -2 && ignore != 'L') {
                     this->blockedLeft(hostile, bounce);
-                } else if (side[0] >= 2) {
+                } else if (side[0] >= 2 && ignore != 'R') {
                     this->blockedRight(hostile, bounce);
-                } else if (side[1] <= -1) {
+                } else if (side[1] <= -1 && ignore != 'U') {
                     this->blockedUp(hostile, bounce);
-                } else if (side[0] <= -1) {
+                } else if (side[0] <= -1 && ignore != 'L') {
                     this->blockedLeft(hostile, bounce);
-                } else if (side[0] >= 1) {
+                } else if (side[0] >= 1 && ignore != 'R') {
                     this->blockedRight(hostile, bounce);
-                } else if (side[1] >= 1) {
+                } else if (side[1] >= 1 && ignore != 'D') {
                     this->blockedDown(hostile, bounce);
                 }
             }
