@@ -17,8 +17,8 @@ void death_screen();
 #define QUIT_GAME 4
 
 // Try and stick to the current Res but if nessecary switch to larger and that will be ok.
-const int window_w = 2560; // For big screen 2560 for small 1920
-const int window_h = 1440; // For big screen 1440 for small 1080
+const int window_w = 1920; // For big screen 2560 for small 1920
+const int window_h = 1080; // For big screen 1440 for small 1080
 create_window("Matthew's Game", window_w, window_h);
 
 
@@ -69,10 +69,13 @@ void initializeGame(){
     Game.getStatic(0)->initHitbox();
 
     // Make some platforms:
-    Game.addStatic(KinematicBody2D((0*(window_w/1920)), (window_h - (400*(window_h/1080))), (300*(window_w/1920)), (15*(window_h/1080))));
-    //Game.addStatic(KinematicBody2D(400,(window_h - 600),300,100));
+    Game.addStatic(KinematicBody2D((0*(window_w/1920)), (window_h - (400*(window_h/1080))), (300*(window_w/1920)), (10*(window_h/1080))));
     Game.getStatic(1)->initRectangle();
     Game.getStatic(1)->initHitbox();
+
+    Game.addStatic(KinematicBody2D(((window_w - (300*(window_w/1920)))*(window_w/1920)), (window_h - (400*(window_h/1080))), (300*(window_w/1920)), (10*(window_h/1080))));
+    Game.getStatic(2)->initRectangle();
+    Game.getStatic(2)->initHitbox();
 
 }
 
@@ -142,7 +145,9 @@ void playing_game(){
         //Draw to the Screen
         window.clear(Color(42,42,42,255)); // Dark gray.
         window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
-        window.draw(Game.getStatic(1)->getRectangle()); // Draw Platforms
+        // Draw Platforms:
+        window.draw(Game.getStatic(1)->getRectangle());
+        window.draw(Game.getStatic(2)->getRectangle()); 
         window.draw(player1.sword_player.getSprite());
         window.draw(player1.sword_player.getHitbox()->getRectangle());
         window.draw(player1.healthBody.getSprite());
@@ -182,7 +187,9 @@ void death_screen(){
         //Draw to the Screen
         window.clear(Color(42,42,42,255)); // Dark gray.
         window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
+        // Draw Platforms: 
         window.draw(Game.getStatic(1)->getRectangle()); // Draw Platforms
+        window.draw(Game.getStatic(2)->getRectangle());
         window.draw(player1.sword_player.getSprite());
         window.draw(player1.sword_player.getHitbox()->getRectangle());
         window.draw(player1.healthBody.getSprite());
