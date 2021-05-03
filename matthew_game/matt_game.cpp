@@ -16,7 +16,7 @@ void death_screen();
 #define DEATH_SCREEN 3
 #define QUIT_GAME 4
 
-
+// Try and stick to the current Res but if nessecary switch to larger and that will be ok.
 const int window_h = 1920; // For big screen 2560 for small 1920
 const int window_w = 1200; // For big screen 1440 for small 1200
 create_window("Matthew's Game", window_h, window_w);
@@ -99,6 +99,11 @@ void playing_game(){
         // Apply Animations:
         player1.animate();
         player2.animate();
+
+
+        // Apply Timers:
+        player1.timers();
+
 
         // Current Death Condition
         if (player1.sword_player.collides(&(player2.scythe_player))){
@@ -184,6 +189,11 @@ void handle_game_controls(Event event){
             if (player1.keys[2] == 0 && player1.on_ground){
                 player1.keys[2] = 1;
                 player1.sword_player.v.y = -20;
+            }
+            break;
+            case Keyboard::G:
+            if (player1.attack_timer == 0 && player1.dash_timer == 0){
+                player1.startAttack();
             }
             break;
             case Keyboard::Left:

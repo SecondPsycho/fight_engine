@@ -12,11 +12,14 @@ class swordPlayer {
         int keys[5] = {0,0,0,0,0};
         bool on_ground = false;
         bool dead = false;
+        int dash_timer = 0;
+        int attack_timer = 0;
 
         swordPlayer(){
             this->sword_player = *(new KinematicBody2D(50,100,64,64));
             this->f = *(new Vector2D(1,0));
             this->startingPos = *(new Vector2D(50, 100));
+            this->attack.max_frame_tick = 5;
         }
 
         void initialize(){
@@ -37,6 +40,7 @@ class swordPlayer {
             this->idle.cur_frame = 0;
             this->death.cur_frame = 0;
             this->jump.cur_frame = 0;
+            this->attack.cur_frame = 0;
         }
 
         void die(){
@@ -44,10 +48,23 @@ class swordPlayer {
             for (int i=0; i<5; i++){
                 keys[i] = 0;
             }
+            this->dash_timer = 0;
+            this->attack_timer = 0;
         }
 
         void physicsProcess(){
-            this->sword_player.p.x += 10*((this->keys[1])-(this->keys[0])); // Speed multiplier was 10
+            if (this->dash_timer > 0){
+                if (!(this->sword_player.isFlippedH())){
+                    this->sword_player.p.x += 60;
+                }
+                else if (this->sword_player.isFlippedH()){
+                    this->sword_player.p.x -= 60;
+                }
+
+            }
+            else {
+                this->sword_player.p.x += 10*((this->keys[1])-(this->keys[0])); // Speed multiplier default: 10
+            }
             this->sword_player.tick();
             this->sword_player.dampen(this->f);
         }
@@ -62,6 +79,22 @@ class swordPlayer {
             };
         }
 
+        void startAttack(){
+            this->dash_timer = 10;
+            this->attack_timer = 40;
+        }
+
+        void timers(){
+            if (this->dash_timer > 0){
+                this->dash_timer -= 1;
+            }
+            if (this->attack_timer > 0){
+                this->attack_timer -= 1;
+            }
+            else {
+                this->attack.cur_frame = 0;
+            }
+        }
 
         void animate(){
             if (dead){
@@ -71,6 +104,9 @@ class swordPlayer {
                 else {
                     sword_player.setSprite(death.frameTick()); // Do death animation
                 }
+            }
+            else if (this->attack_timer > 0){
+                sword_player.setSprite(attack.frameTick()); // Do attack animation
             }
             else if (!on_ground) {
                 sword_player.setSprite(jump.frameTick()); // Do jump animation
@@ -114,5 +150,16 @@ class swordPlayer {
             death.addAnimationData(make_sprite("./images/Sword_Player/Death/death2.png", 2));
             death.addAnimationData(make_sprite("./images/Sword_Player/Death/death3.png", 2));
             death.addAnimationData(make_sprite("./images/Sword_Player/Death/death4.png", 2));
+            // Attack Animations:
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack0.png", 2));
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack1.png", 2));
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack2.png", 2));
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack3.png", 2));
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack4.png", 2));
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack5.png", 2));
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack6.png", 2));
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack7.png", 2));
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack8.png", 2));
+            attack.addAnimationData(make_sprite("./images/Sword_Player/Attack/attack9.png", 2));
         }
 };
