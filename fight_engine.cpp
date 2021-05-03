@@ -846,15 +846,18 @@ class KinematicBody2D {
         };
 
         /**
-         * @brief Do NOT use this.
+         * @brief Get the Hitbox Y Offset
+         * 
+         * @return int 
          */
-        void setHitboxY(int py) {
-            this->setPos(Vector2D(this->x, py - (this->hby + this->hitbox->h)));
-        }
-
         int getHitboxOffsetY() {
             return this->hby;
         }
+        /**
+         * @brief Get the Hitbox X Offset
+         * 
+         * @return int 
+         */
         int getHitboxOffsetX() {
             return this->hbx;
         }
