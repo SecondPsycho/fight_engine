@@ -9,25 +9,31 @@ void initializeGame();
 void resetGame();
 void playing_game();
 void death_screen();
+void title_screen();
 
 
+#define TITLE_SCREEN 0
 #define GAME_START 1
 #define PLAYING_GAME 2
 #define DEATH_SCREEN 3
 #define QUIT_GAME 4
 
-// Try and stick to the current Res but if nessecary switch to larger and that will be ok.
-const int window_w = 1920; // For big screen 2560 for small 1920
-const int window_h = 1080; // For big screen 1440 for small 1080
+
+
+const int window_w = 1920;
+const int window_h = 1080;
+
+
 create_window("Matthew's Game", window_w, window_h);
 
 
 // Globals:
-swordPlayer player1(window_w, window_h);
-scythePlayer player2(window_w, window_h);
+swordPlayer player1;
+scythePlayer player2;
 NewGame Game(player1.sword_player, player2.scythe_player, 6);
 Event event;
 int gameState = GAME_START;
+SFX hitSound("./sounds/Hit_Hurt6.wav");
 
 
 int main(){
@@ -35,8 +41,8 @@ int main(){
     window.setKeyRepeatEnabled(false);
     initializeGame();
     Song song("./music/The_Last_Encounter_Original_Version (online-audio-converter.com).wav");
+    song.setVolume(75.0f);
     song.play();
-    song.setLoop(true);
 
     while(gameState != QUIT_GAME && window.isOpen()){
         if (gameState == GAME_START) {
@@ -69,13 +75,17 @@ void initializeGame(){
     Game.getStatic(0)->initHitbox();
 
     // Make some platforms:
-    Game.addStatic(KinematicBody2D((0*(window_w/1920)), (window_h - (400*(window_h/1080))), (300*(window_w/1920)), (10*(window_h/1080))));
+    Game.addStatic(KinematicBody2D(0, (window_h - 400), 300, 10));
     Game.getStatic(1)->initRectangle();
     Game.getStatic(1)->initHitbox();
 
-    Game.addStatic(KinematicBody2D(((window_w - (300*(window_w/1920)))*(window_w/1920)), (window_h - (400*(window_h/1080))), (300*(window_w/1920)), (10*(window_h/1080))));
+    Game.addStatic(KinematicBody2D((window_w - 300), (window_h - 400), 300, 10));
     Game.getStatic(2)->initRectangle();
     Game.getStatic(2)->initHitbox();
+
+    Game.addStatic(KinematicBody2D(((window_w/2)-400), (window_h - 550), 800, 15));
+    Game.getStatic(3)->initRectangle();
+    Game.getStatic(3)->initHitbox();
 
 }
 
@@ -122,10 +132,12 @@ void playing_game(){
         else if (player1.sword_player.collides(&(player2.scythe_player)) && player1.attack_timer > 0 && player2.invicibility_timer == 0){
             player2.updateHealthBar();
             player2.onHit();
+            hitSound.play();
         }
         else if (player2.scythe_player.collides(&(player1.sword_player)) && player2.attack_timer > 0 && player1.invicibility_timer == 0){
             player1.updateHealthBar();
             player1.onHit();
+            hitSound.play();
         }
 
         if (player1.healthBar == 0){
@@ -147,10 +159,13 @@ void playing_game(){
         window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
         // Draw Platforms:
         window.draw(Game.getStatic(1)->getRectangle());
-        window.draw(Game.getStatic(2)->getRectangle()); 
+        window.draw(Game.getStatic(2)->getRectangle());
+        window.draw(Game.getStatic(3)->getRectangle()); 
+        // Draw Player1:
         window.draw(player1.sword_player.getSprite());
         window.draw(player1.sword_player.getHitbox()->getRectangle());
         window.draw(player1.healthBody.getSprite());
+        // Draw Player2:
         window.draw(player2.scythe_player.getSprite());
         window.draw(player2.scythe_player.getHitbox()->getRectangle());
         window.draw(player2.healthBody.getSprite());
@@ -158,6 +173,53 @@ void playing_game(){
         window.display();
     }
 }
+
+
+void title_screen(){
+    // Framerate Control -Cordell King
+    Framerate ticker(60);
+    while (gameState == DEATH_SCREEN && window.isOpen()) {
+        ticker.next_frame();
+        
+        // Do Controls:
+        while(window.pollEvent(event)){
+            handle_death_controls(event);
+        }
+
+        
+        // Apply Physics:
+        player1.physicsProcess();
+        player1.collision(Game);
+        player2.physicsProcess();
+        player2.collision(Game);
+
+
+
+        // Apply Animations:
+        player1.animate();
+        player2.animate();
+
+
+        //Draw to the Screen
+        window.clear(Color(42,42,42,255)); // Dark gray.
+        window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
+        // Draw Platforms:
+        window.draw(Game.getStatic(1)->getRectangle());
+        window.draw(Game.getStatic(2)->getRectangle());
+        window.draw(Game.getStatic(3)->getRectangle()); 
+        // Draw Player1:
+        window.draw(player1.sword_player.getSprite());
+        window.draw(player1.sword_player.getHitbox()->getRectangle());
+        window.draw(player1.healthBody.getSprite());
+        // Draw Player2:
+        window.draw(player2.scythe_player.getSprite());
+        window.draw(player2.scythe_player.getHitbox()->getRectangle());
+        window.draw(player2.healthBody.getSprite());
+
+        window.display();
+    }
+}
+
 
 void death_screen(){
     // Framerate Control -Cordell King
@@ -187,12 +249,15 @@ void death_screen(){
         //Draw to the Screen
         window.clear(Color(42,42,42,255)); // Dark gray.
         window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
-        // Draw Platforms: 
-        window.draw(Game.getStatic(1)->getRectangle()); // Draw Platforms
+        // Draw Platforms:
+        window.draw(Game.getStatic(1)->getRectangle());
         window.draw(Game.getStatic(2)->getRectangle());
+        window.draw(Game.getStatic(3)->getRectangle()); 
+        // Draw Player1:
         window.draw(player1.sword_player.getSprite());
         window.draw(player1.sword_player.getHitbox()->getRectangle());
         window.draw(player1.healthBody.getSprite());
+        // Draw Player2:
         window.draw(player2.scythe_player.getSprite());
         window.draw(player2.scythe_player.getHitbox()->getRectangle());
         window.draw(player2.healthBody.getSprite());

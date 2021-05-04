@@ -15,19 +15,17 @@ class swordPlayer {
         int dash_timer = 0;
         int attack_timer = 0;
         int invicibility_timer = 0;
-        int window_w;
-        int window_h;
+        int window_w = 1920;
+        int window_h = 1080;
         KinematicBody2D healthBody;
         animation_data healthSprite;
         int healthBar = 10;
 
-        swordPlayer(int window_W, int window_H){
+        swordPlayer(){
             this->sword_player = *(new KinematicBody2D(100,100,64,64));
             this->f = *(new Vector2D(1,0));
             this->startingPos = *(new Vector2D(100, 100));
             this->attack.max_frame_tick = 5;
-            this->window_w = window_W;
-            this->window_h = window_H;
             this->healthBody = *(new KinematicBody2D(25, 10, 500, 64));
         }
 
@@ -88,8 +86,8 @@ class swordPlayer {
             if (current_pos.x <= 0){
                 current_pos.x = 0;
             }
-            else if (current_pos.x >= window_w - 60){
-                current_pos.x = window_w - 60;
+            else if (current_pos.x >= this->window_w - 60){
+                current_pos.x = this->window_w - 60;
             }
             this->sword_player.setPos(current_pos);
         }

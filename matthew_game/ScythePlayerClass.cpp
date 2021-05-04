@@ -13,20 +13,18 @@ class scythePlayer {
         int dash_timer = 0;
         int attack_timer = 0;
         int invicibility_timer = 0;
-        int window_w;
-        int window_h;
+        int window_w = 1920;
+        int window_h = 1080;
         KinematicBody2D healthBody;
         animation_data healthSprite;
         int healthBar = 10;
 
-        scythePlayer(int window_W, int window_H){
-            this->scythe_player = *(new KinematicBody2D((window_W - 200),100,64,64));
+        scythePlayer(){
+            this->scythe_player = *(new KinematicBody2D((this->window_w - 200),100,64,64));
             this->f = *(new Vector2D(1,0));
-            this->startingPos = *(new Vector2D((window_W - 200), 100));
+            this->startingPos = *(new Vector2D((this->window_w - 200), 100));
             //this->attack.max_frame_tick = 5; Might not want for this char.
-            this->window_w = window_W;
-            this->window_h = window_H;
-            this->healthBody = *(new KinematicBody2D((window_W - 525), 10, 500, 64));
+            this->healthBody = *(new KinematicBody2D((this->window_w - 525), 10, 500, 64));
         }
 
         void initialize(){
@@ -84,8 +82,8 @@ class scythePlayer {
             if (current_pos.x <= 0){
                 current_pos.x = 0;
             }
-            else if (current_pos.x >= window_w - 60){
-                current_pos.x = window_w - 60;
+            else if (current_pos.x >= this->window_w - 60){
+                current_pos.x = this->window_w - 60;
             }
             this->scythe_player.setPos(current_pos);
         }
