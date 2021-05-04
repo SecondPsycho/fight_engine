@@ -1,4 +1,4 @@
-#include "../fight_engine.cpp"
+#include "fight_engine.cpp"
 
 // fighting game
 // by owen
@@ -21,17 +21,16 @@ int main(int argc, char* argv[]) {
     animation_data p1_idle;
     animation_data p1_dead;
 
-    sprite_data* idle = make_sprite("assets/p1_idle.png");
-    idle->imageSprite.setScale(2,2);
-    idle->flippedSprite.setScale(2,2);
 
     p1_dead.addAnimationData(make_sprite("assets/p1_dead.png"));
-    p1_idle.addAnimationData(idle);
 
-    p1_idle.setMaxFrameTick(1);
+    p1_idle.addAnimationData(make_sprite("assets/p1_idle0.png"));
+    p1_idle.addAnimationData(make_sprite("assets/p1_idle1.png"));
+
+    p1_idle.setMaxFrameTick(25);
     p1_dead.setMaxFrameTick(1);
 
-    KinematicBody2D p1(100,100,128,128);
+    KinematicBody2D p1(100,100,256,512);
     p1.setSprite(p1_idle.getCurrentFrame());
     p1.initHitbox();
     p1.getHitbox()->initRectangle();
@@ -80,7 +79,7 @@ int main(int argc, char* argv[]) {
                             case Keyboard::W:
                                 if (p1keys[2] == 0 && p1_grounded){
                                     p1keys[2] = 1;
-                                    p1.v.y = -20;
+                                    p1.v.y = -8;
                                 }
                                 break;
                             case Keyboard::BackSpace:
@@ -114,7 +113,7 @@ int main(int argc, char* argv[]) {
 
             // handle inputs
 
-            p1.p.x += 10*(p1keys[1]-p1keys[0]);
+            p1.p.x += 2*(p1keys[1]-p1keys[0]);
 
             // physics
 
@@ -126,6 +125,8 @@ int main(int argc, char* argv[]) {
                 p1_grounded = true;
             }
             
+            // animation
+            p1.setSprite(p1_idle.frameTick());
 
             /*
             if (p1_grounded) {
