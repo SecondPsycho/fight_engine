@@ -373,10 +373,11 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          * @param newPosition Position for the textbox.
          * @param newFontPath Font for your text in the box.
          * @param newText The text to be in your text box.
+         * @param pcentered An optional boolean allowing the text box to be centered.
          */
-        TextBox(int x, int y, string newFontPath, string newText="") {
-            this->position = Vector2f(x,y);
+        TextBox(int x, int y, string newFontPath, string newText="", bool pcentered = false) {
             this->msg = newText;
+            this->centered = pcentered;
 
             if (!font.loadFromFile(newFontPath)) {
                 cerr << "Error: Invalid font path" << endl;
@@ -384,7 +385,9 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
 
             text.setFont(font);
             text.setString(msg);
-            text.setPosition(this->position);
+            this->width = text.getGlobalBounds().width;
+            this->setPosition(x, y);
+            
         }
         /**
          * @brief Set new text for your text box.
@@ -400,7 +403,10 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          */
         void setPosition (int x, int y) {
             this->position = Vector2f(x, y);
-            text.setPosition(this->position);
+            if (this->centered) {
+                x -= this->width/2;
+            }
+            text.setPosition(Vector2f(x,y));
         }
         /**
          * @brief Sets the font size of TextBox.
@@ -408,6 +414,8 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
          */
         void setCharacterSize (int size) {
             text.setCharacterSize(size);
+            this->width = text.getGlobalBounds().width;
+            this->setPosition(this->position.x,this->position.y);
         }
         /**
          * @brief Sets the color of TextBox.
@@ -426,12 +434,15 @@ class TextBox { //"Man I hope no one expects this to work" -Owen
 
         Text text;
         Vector2f position;
+        bool centered;
 
         // To draw to screen, do window.draw(ObjectName.text);
 
     private:
         string msg;
         Font font;
+        int width = 0;
+
 };
 
 //PHYSICS
@@ -475,6 +486,7 @@ class Hitbox {
         void setSize(int pw, int ph) {
             this->w = pw;
             this->h = ph;
+            if (this->rcset) {this->rectangle.setSize(Vector2f(this->w,this->h));}
         }
         /**
          * @brief Boolean function to tell you if this hitbox is colliding with another.
@@ -699,7 +711,7 @@ class KinematicBody2D {
         * @param pw The Hitbox's new width.
         * @param ph The Hitbox's new height.
         */
-        /*
+        //*
         void adjustHitbox(int px, int py, int pw, int ph) {
             this->hitbox->setSize(pw,ph);
             this->hbx = px;
@@ -736,26 +748,28 @@ class KinematicBody2D {
         /**
         * @brief See if this KinematicBody2D collides with another, and on which side.
         * @param hostile A pointer to the other KinematicBody2D
+        * @param bounce Optional parameter for bouncing off collidables.
+        * @param ignore Optional parameter to pick a side to ignore collision for objects. Options are ['U', 'D', 'L', 'R'] anything else will do nothing.
         * @return A pointer to an array of 3 integers. The first indicates collision on the left or right side. The second indicates collision on the top or bottom. The third indicates collision in general.
         */
-        int* blocks(KinematicBody2D *hostile, bool bounce = false) {
+        int* blocks(KinematicBody2D *hostile, bool bounce = false, char ignore = ' ') {
             int* side = this->collidesDir(hostile);
             if (side[2] == 1) {
-                if (side[1] <= -2) {
+                if (side[1] <= -2 && ignore != 'U') {
                     this->blockedUp(hostile, bounce);
-                } else if (side[1] >= 2){
+                } else if (side[1] >= 2 && ignore != 'D'){
                     this->blockedDown(hostile, bounce);
-                } else if (side[0] <= -2) {
+                } else if (side[0] <= -2 && ignore != 'L') {
                     this->blockedLeft(hostile, bounce);
-                } else if (side[0] >= 2) {
+                } else if (side[0] >= 2 && ignore != 'R') {
                     this->blockedRight(hostile, bounce);
-                } else if (side[1] <= -1) {
+                } else if (side[1] <= -1 && ignore != 'U') {
                     this->blockedUp(hostile, bounce);
-                } else if (side[0] <= -1) {
+                } else if (side[0] <= -1 && ignore != 'L') {
                     this->blockedLeft(hostile, bounce);
-                } else if (side[0] >= 1) {
+                } else if (side[0] >= 1 && ignore != 'R') {
                     this->blockedRight(hostile, bounce);
-                } else if (side[1] >= 1) {
+                } else if (side[1] >= 1 && ignore != 'D') {
                     this->blockedDown(hostile, bounce);
                 }
             }
@@ -788,6 +802,17 @@ class KinematicBody2D {
             this->rectangle.setFillColor(Color(0,0,0,255));
             this->rcset = true;
         };
+
+        /**
+        * @brief Set the color for the KinematicBody2D's rectangle.
+        * @param r The Red   (0-255)
+        * @param g The Green (0-255)
+        * @param b The Blue  (0-255)
+        * @param a The Transparency (0-255)
+        */
+        void setRectColor(int r, int g, int b, int a) {
+            if (this->rcset) {this->rectangle.setFillColor(Color(r,g,b,a)); }
+        }
         
         /**
         * @brief Get the Rectangle for drawing purposes. Make sure you've called initRectangle() first.
@@ -822,28 +847,49 @@ class KinematicBody2D {
             return Vector2D(this->x,this->y);
         };
 
+        /**
+         * @brief Get the Hitbox Y Offset
+         * 
+         * @return int 
+         */
+        int getHitboxOffsetY() {
+            return this->hby;
+        }
+        /**
+         * @brief Get the Hitbox X Offset
+         * 
+         * @return int 
+         */
+        int getHitboxOffsetX() {
+            return this->hbx;
+        }
+
         Vector2D p; //Save movement to apply next frame
         Vector2D v; //Save a velocity
         Vector2D a; //Save an acceleration
         
     private:
         void blockedLeft(KinematicBody2D *hostile, bool bounce) {
-            hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
+            //hostile->setPos(Vector2D(this->x-hostile->w,hostile->y));
+            hostile->setPos(Vector2D(this->hitbox->x - (hostile->getHitboxOffsetX() + hostile->getHitbox()->w), hostile->y));
             hostile->v.x = this->v.x - (hostile->v.x*bounce);
             hostile->p.y += this->v.y;
         }
         void blockedRight(KinematicBody2D *hostile, bool bounce) {
-            hostile->setPos(Vector2D(this->x+this->w,hostile->y));
+            //hostile->setPos(Vector2D(this->x+this->w,hostile->y));
+            hostile->setPos(Vector2D(this->hitbox->w + this->hitbox->x - hostile->getHitboxOffsetX(), hostile->y));
             hostile->v.x = this->v.x - (hostile->v.x*bounce);
             hostile->p.y += this->v.y;
         }
         void blockedUp(KinematicBody2D *hostile, bool bounce) {
-            hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
+            //hostile->setPos(Vector2D(hostile->x,this->y-hostile->h));
+            hostile->setPos(Vector2D(hostile->x,this->hitbox->y - (hostile->getHitboxOffsetY() + hostile->getHitbox()->h)));
             hostile->v.y = this->v.y;// - (hostile->v.y*bounce);
             hostile->p.x += this->v.x;
         }
         void blockedDown(KinematicBody2D *hostile, bool bounce) {
-            hostile->setPos(Vector2D(hostile->x,this->y+this->h));
+            //hostile->setPos(Vector2D(hostile->x,this->y+this->h));
+            hostile->setPos(Vector2D(hostile->x, this->hitbox->h + this->hitbox->y - hostile->getHitboxOffsetY()));
             hostile->v.y = this->v.y - (hostile->v.y*bounce);
             hostile->p.x += this->v.x;
         }
