@@ -21,7 +21,7 @@ class Player {
         this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_2.png"));
         this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_3.png"));
         this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_2.png"));
-        //this->idle.setMaxFrameTick(15);
+        this->idle.setMaxFrameTick(10);
 
         this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_1.png"));
         this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_2.png"));
@@ -35,6 +35,18 @@ class Player {
         this->leap.addAnimationData(make_sprite("./images/wolf_leap.png", scale));
         //*/
         this->body->a.y = 1;
+    }
+    void animate() {
+      /*
+      if (!this->on_ground) {
+        P1->body->setSprite(P1->leap.getCurrentFrame()); // Do leap animation
+      } else 
+      //*/
+      if (this->keys[1]^this->keys[0]) {
+        this->body->setSprite(this->walk.frameTick()); // Do walking animations
+      } else {
+        this->body->setSprite(this->idle.frameTick()); // Do idle animation
+      }
     }
     bool punch(Player* PN) {
         float scale = 2;
@@ -97,6 +109,7 @@ class Player {
     bool on_ground = false;
     bool double_jump = false;
     bool flying = false;
+    //int attackCooldown = 0;
     bool keys[5] = {false,false,false,false,false};
     //Body
     KinematicBody2D* body;
