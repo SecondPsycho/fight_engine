@@ -5,8 +5,6 @@
 
 // globals
 
-
-
 int main(int argc, char* argv[]) {
     printf("now playing: fighting game\n");
 
@@ -17,21 +15,31 @@ int main(int argc, char* argv[]) {
     string state = "game";
     TextBox title(0, -8, "assets/pixer.ttf", "fighting game demo");
     title.setColor(0, 0, 0);
+    int p1_attackTimer = -1;
+    Vector2D v(0, 0);
 
     animation_data p1_idle;
     animation_data p1_dead;
+    animation_data p1_attack;
 
-    sprite_data* idle = make_sprite("assets/p1_idle.png");
-    idle->imageSprite.setScale(2,2);
-    idle->flippedSprite.setScale(2,2);
 
     p1_dead.addAnimationData(make_sprite("assets/p1_dead.png"));
-    p1_idle.addAnimationData(idle);
 
-    p1_idle.setMaxFrameTick(1);
+    p1_idle.addAnimationData(make_sprite("assets/p1_idle0.png"));
+    p1_idle.addAnimationData(make_sprite("assets/p1_idle1.png"));
+
+    p1_attack.addAnimationData(make_sprite("assets/p1_attack2.png"));
+    p1_attack.addAnimationData(make_sprite("assets/p1_attack0.png"));
+    p1_attack.addAnimationData(make_sprite("assets/p1_attack1.png"));
+    p1_attack.addAnimationData(make_sprite("assets/p1_attack2.png"));
+    p1_attack.addAnimationData(make_sprite("assets/p1_attack3.png"));
+    p1_attack.addAnimationData(make_sprite("assets/p1_attack4.png"));
+
+    p1_idle.setMaxFrameTick(25);
     p1_dead.setMaxFrameTick(1);
+    p1_attack.setMaxFrameTick(5);
 
-    KinematicBody2D p1(100,100,128,128);
+    KinematicBody2D p1(100,100,256,512);
     p1.setSprite(p1_idle.getCurrentFrame());
     p1.initHitbox();
     p1.getHitbox()->initRectangle();
@@ -80,11 +88,15 @@ int main(int argc, char* argv[]) {
                             case Keyboard::W:
                                 if (p1keys[2] == 0 && p1_grounded){
                                     p1keys[2] = 1;
-                                    p1.v.y = -20;
+                                    p1.v.y = -8;
                                 }
                                 break;
-                            case Keyboard::BackSpace:
-                                p1.setSprite(p1_dead.getCurrentFrame());
+                            case Keyboard::Space:
+                                p1keys[3] = 1;
+                                if (p1_attackTimer == -1) {
+                                    p1_attackTimer = 0;
+                                }
+                                
                                 break;
                             case Keyboard::LAlt:
                                 cout << p1keys[2] << endl;
@@ -103,6 +115,9 @@ int main(int argc, char* argv[]) {
                             case Keyboard::W:
                                 p1keys[2] = 0;
                                 break;
+                            case Keyboard::Space:
+                                p1keys[3] = 0;
+                                break;
                             default:
                                 break;
                         }
@@ -113,17 +128,46 @@ int main(int argc, char* argv[]) {
             }
 
             // handle inputs
-
-            p1.p.x += 10*(p1keys[1]-p1keys[0]);
+            v.x = (-1 * p1keys[0]) + p1keys[1];
+            p1.move(v);
 
             // physics
 
+            /*
+            if (p1.posX() < 0) {
+                p1.setPos(0, p1.posY());
+            }
+            */
+           
             p1.tick();
 
             p1_grounded = false;
             p1_ground_test = ground.blocks(&p1);
             if (p1_ground_test[2] && p1_ground_test[1] <= -1) {
                 p1_grounded = true;
+            }
+
+            if (p1_attackTimer >= 0) {
+                p1_attackTimer++;
+                if (p1_attackTimer >= 50) {
+                    p1_attackTimer = -1;
+                    p1_attack.cur_frame = 0;
+                }
+            }
+            
+            
+
+            // animation
+            
+
+            if (p1_attackTimer >= 0) {
+                if (p1_attack.cur_frame <= 4) {
+                    p1.setSprite(p1_attack.frameTick());
+                } else {
+                    p1.setSprite(p1_attack.getCurrentFrame());
+                }
+            } else {
+                p1.setSprite(p1_idle.frameTick());
             }
             
 

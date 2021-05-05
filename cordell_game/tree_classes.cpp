@@ -10,6 +10,10 @@ class Player {
         this->h = 64;
         this->body = new KinematicBody2D(px,py,64*scale,64*scale);
         this->body->initHitbox();
+
+        this->body->getHitbox()->initRectangle();
+        this->body->adjustHitbox(30,10,68,108);
+
         this->punchbox = Hitbox(px,py,32*scale,48*scale);
         this->punchbox.initRectangle();
 
@@ -108,13 +112,16 @@ class Player {
 
 class NewGame {
   public:
-    NewGame(Player* player1, Player* player2, int n = 10, int f = 10) {
+    NewGame(Player* player1, Player* player2, int n = 10, int f = 10, int w = 10) {
       this->statics_count = 0;
       this->statics_max = n;
       this->flowers_count = 0;
       this->flowers_max = n;
+      this->waters_count = 0;
+      this->waters_max = n;
       this->statics = new KinematicBody2D[this->statics_max];
       this->flowers = new KinematicBody2D[this->flowers_max];
+      this->waters = new KinematicBody2D[this->waters_max];
       this->P1 = player1;
       this->P2 = player2;
     }
@@ -161,6 +168,27 @@ class NewGame {
     int getFlowersCount() {
       return this->flowers_count;
     }
+    KinematicBody2D* getWaters() {
+        return this->waters;
+    }
+    KinematicBody2D* getWater(int n) {
+      if (n < this->waters_max && n >= 0) {
+        return &(this->waters[n]);
+      }
+      cout << "Invalid Water Index.\n";
+      return nullptr;
+    }
+    void addWater(KinematicBody2D newwater) {
+      if (this->waters_count < this->waters_max) {
+        this->waters[this->waters_count] = newwater;
+        this->waters_count++;
+      } else {
+        cout << "Cannot add another water.\n";
+      }
+    }
+    int getWatersCount() {
+      return this->waters_count;
+    }
     void runPhysics() {
       P1->body->tick();
       P2->body->tick();
@@ -172,6 +200,29 @@ class NewGame {
       for (int i = 0; i < this->flowers_count; i++) {
         this->flowers[i].tick();
       }
+
+      int waterspeed = -1;
+      if (this->P1->body->collides(&this->waters[0])) {
+        this->P1->body->a.y = 0;
+        //this->P1->body->dampen(Vector2D(1,1));
+      } else {
+        this->P1->body->a.y = 1;
+      }
+      if (this->P2->body->collides(&this->waters[0])) {
+        this->P2->body->a.y = 0;
+        //this->P1->body->dampen(Vector2D(1,1));
+      } else {
+        this->P2->body->a.y = 1;
+      }
+
+      if (this->waters[0].pos().y >= 1200) {
+          waterspeed = -3;
+      }
+      for (int i = 0; i < this->waters_count; i++) {
+        this->waters[i].tick();
+        this->waters[i].v.y = waterspeed;
+      }
+
       for (int i = 0; i < this->statics_count; i++) {
         this->statics[i].tick();
         collide = this->statics[i].blocks(this->P1->body, P1->flying);
@@ -212,6 +263,18 @@ class NewGame {
       this->getFlower(1)->initRectangle();
       this->getFlower(1)->setRectColor(255,255,0,255);
       this->getFlower(1)->initHitbox();
+
+      this->addWater(KinematicBody2D(0,1200,2000,2000));
+      this->getWater(0)->initRectangle();
+      this->getWater(0)->setRectColor(0,192,255,192);
+      this->getWater(0)->initHitbox();
+      this->getWater(0)->v.y = -1;
+
+      this->addWater(KinematicBody2D(0,1500,2000,2000));
+      this->getWater(1)->initRectangle();
+      this->getWater(1)->setRectColor(0,192,255,255);
+      this->getWater(1)->v.y = -1;
+      //this->getWater(0)->initHitbox();
     }
     bool ON = true;
   private:
@@ -223,4 +286,7 @@ class NewGame {
     KinematicBody2D* flowers;
     int flowers_count;
     int flowers_max;
+    KinematicBody2D* waters;
+    int waters_count;
+    int waters_max;
 };
