@@ -20,9 +20,9 @@ class scythePlayer {
         int healthBar = 10;
 
         scythePlayer(){
-            this->scythe_player = *(new KinematicBody2D((this->window_w - 200),100,64,64));
+            this->scythe_player = *(new KinematicBody2D((this->window_w - 200),817,64,64));
             this->f = *(new Vector2D(1,0));
-            this->startingPos = *(new Vector2D((this->window_w - 200), 100));
+            this->startingPos = *(new Vector2D((this->window_w - 200), 817));
             //this->attack.max_frame_tick = 5; Might not want for this char.
             this->healthBody = *(new KinematicBody2D((this->window_w - 525), 10, 500, 64));
         }
@@ -50,6 +50,9 @@ class scythePlayer {
             this->healthBar = 10;
             this->healthSprite.cur_frame = 10;
             this->healthBody.setSprite(this->healthSprite.getCurrentFrame());
+            if(!this->scythe_player.isFlippedH()){
+                this->scythe_player.flipH();
+            }
         }
 
         void endGame(){

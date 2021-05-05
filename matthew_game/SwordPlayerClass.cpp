@@ -22,9 +22,9 @@ class swordPlayer {
         int healthBar = 10;
 
         swordPlayer(){
-            this->sword_player = *(new KinematicBody2D(100,100,64,64));
+            this->sword_player = *(new KinematicBody2D(100,817,64,64));
             this->f = *(new Vector2D(1,0));
-            this->startingPos = *(new Vector2D(100, 100));
+            this->startingPos = *(new Vector2D(100, 817));
             this->attack.max_frame_tick = 5;
             this->healthBody = *(new KinematicBody2D(25, 10, 500, 64));
         }
@@ -53,6 +53,9 @@ class swordPlayer {
             this->healthBar = 10;
             this->healthSprite.cur_frame = 10;
             this->healthBody.setSprite(this->healthSprite.getCurrentFrame());
+            if(this->sword_player.isFlippedH()){
+                this->sword_player.flipH();
+            }
         }
 
 

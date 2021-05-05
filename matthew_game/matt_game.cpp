@@ -4,6 +4,7 @@
 #include "./ScythePlayerClass.cpp"
 
 void handle_game_controls(Event event);
+void handle_title_controls(Event event);
 void handle_death_controls(Event event);
 void initializeGame();
 void resetGame();
@@ -13,10 +14,9 @@ void title_screen();
 
 
 #define TITLE_SCREEN 0
-#define GAME_START 1
-#define PLAYING_GAME 2
-#define DEATH_SCREEN 3
-#define QUIT_GAME 4
+#define PLAYING_GAME 1
+#define DEATH_SCREEN 2
+#define QUIT_GAME 3
 
 
 
@@ -24,7 +24,7 @@ const int window_w = 1920;
 const int window_h = 1080;
 
 
-create_window("Matthew's Game", window_w, window_h);
+create_window("Dash And Slash", window_w, window_h);
 
 
 // Globals:
@@ -32,8 +32,14 @@ swordPlayer player1;
 scythePlayer player2;
 NewGame Game(player1.sword_player, player2.scythe_player, 6);
 Event event;
-int gameState = GAME_START;
+int gameState = TITLE_SCREEN;
 SFX hitSound("./sounds/Hit_Hurt6.wav");
+TextBox titleText((window_w / 2), (window_h / 2) - 300, "./font/good-times-rg.ttf", "Dash And Slash", true);
+TextBox titleControls((window_w / 2), (window_h / 2) - 150, "./font/good-times-rg.ttf", "Press Space to Play Press Q to Quit!!!", true);
+TextBox titleP1Controls(150, (window_h / 2) + 50, "./font/good-times-rg.ttf", "Press A and D to move,\nW to jump,\nand G to attack.", true);
+TextBox titleP2Controls((window_w - 190), (window_h / 2) + 50, "./font/good-times-rg.ttf", "Press Left and Right to move,\nUp to jump,\nand 2 to attack.", true);
+TextBox deathScreenText((window_w / 2), (window_h / 2) - 300, "./font/good-times-rg.ttf", "Player X Wins!!!", true);
+TextBox deathScreenControls((window_w / 2), (window_h / 2) - 150, "./font/good-times-rg.ttf", "Press Space to Return to Title Press Q to Quit!!!", true);
 
 
 int main(){
@@ -43,11 +49,17 @@ int main(){
     Song song("./music/The_Last_Encounter_Original_Version (online-audio-converter.com).wav");
     song.setVolume(75.0f);
     song.play();
+    titleText.setCharacterSize(75);
+    titleControls.setCharacterSize(30);
+    titleP1Controls.setCharacterSize(15);
+    titleP2Controls.setCharacterSize(15);
+    deathScreenText.setCharacterSize(75);
+    deathScreenControls.setCharacterSize(30);
 
     while(gameState != QUIT_GAME && window.isOpen()){
-        if (gameState == GAME_START) {
+        if (gameState == TITLE_SCREEN){
             resetGame();
-            gameState = PLAYING_GAME;
+            title_screen();
         }
         if (gameState == PLAYING_GAME) {
             playing_game();
@@ -144,12 +156,14 @@ void playing_game(){
             player2.endGame();
             player1.dead = true;
             player1.endGame();
+            deathScreenText.setText("Player 2 Wins!!!");
             gameState = DEATH_SCREEN;
         }
         else if (player2.healthBar == 0){
             player1.endGame();
             player2.dead = true;
             player2.endGame();
+            deathScreenText.setText("Player 1 Wins!!!");
             gameState = DEATH_SCREEN;
         }
 
@@ -163,11 +177,11 @@ void playing_game(){
         window.draw(Game.getStatic(3)->getRectangle()); 
         // Draw Player1:
         window.draw(player1.sword_player.getSprite());
-        window.draw(player1.sword_player.getHitbox()->getRectangle());
+        //window.draw(player1.sword_player.getHitbox()->getRectangle());// Only for debugging
         window.draw(player1.healthBody.getSprite());
         // Draw Player2:
         window.draw(player2.scythe_player.getSprite());
-        window.draw(player2.scythe_player.getHitbox()->getRectangle());
+        //window.draw(player2.scythe_player.getHitbox()->getRectangle());// Only for debugging
         window.draw(player2.healthBody.getSprite());
 
         window.display();
@@ -178,12 +192,12 @@ void playing_game(){
 void title_screen(){
     // Framerate Control -Cordell King
     Framerate ticker(60);
-    while (gameState == DEATH_SCREEN && window.isOpen()) {
+    while (gameState == TITLE_SCREEN && window.isOpen()) {
         ticker.next_frame();
         
         // Do Controls:
         while(window.pollEvent(event)){
-            handle_death_controls(event);
+            handle_title_controls(event);
         }
 
         
@@ -209,12 +223,17 @@ void title_screen(){
         window.draw(Game.getStatic(3)->getRectangle()); 
         // Draw Player1:
         window.draw(player1.sword_player.getSprite());
-        window.draw(player1.sword_player.getHitbox()->getRectangle());
+        //window.draw(player1.sword_player.getHitbox()->getRectangle());// Only for debugging
         window.draw(player1.healthBody.getSprite());
         // Draw Player2:
         window.draw(player2.scythe_player.getSprite());
-        window.draw(player2.scythe_player.getHitbox()->getRectangle());
+        //window.draw(player2.scythe_player.getHitbox()->getRectangle());// Only for debugging
         window.draw(player2.healthBody.getSprite());
+        // Draw Title Text:
+        window.draw(titleText.text);
+        window.draw(titleControls.text);
+        window.draw(titleP1Controls.text);
+        window.draw(titleP2Controls.text);
 
         window.display();
     }
@@ -255,12 +274,15 @@ void death_screen(){
         window.draw(Game.getStatic(3)->getRectangle()); 
         // Draw Player1:
         window.draw(player1.sword_player.getSprite());
-        window.draw(player1.sword_player.getHitbox()->getRectangle());
+        //window.draw(player1.sword_player.getHitbox()->getRectangle());// Only for debugging
         window.draw(player1.healthBody.getSprite());
         // Draw Player2:
         window.draw(player2.scythe_player.getSprite());
-        window.draw(player2.scythe_player.getHitbox()->getRectangle());
+        //window.draw(player2.scythe_player.getHitbox()->getRectangle());// Only for debugging
         window.draw(player2.healthBody.getSprite());
+        // Draw Winning Text:
+        window.draw(deathScreenText.text);
+        window.draw(deathScreenControls.text);
 
         window.display();
     }
@@ -274,9 +296,6 @@ void handle_game_controls(Event event){
         break;
         case Event::KeyPressed:
         switch (event.key.code) {
-            case Keyboard::Escape:
-            window.close();
-            break;
             case Keyboard::A:
             player1.keys[0] = 1;
             if (!player1.sword_player.isFlippedH()) {
@@ -356,6 +375,29 @@ void handle_game_controls(Event event){
     }
 }
 
+void handle_title_controls(Event event){
+    switch (event.type) {
+        case Event::Closed:
+        window.close();
+        break;
+        case Event::KeyPressed:
+        switch (event.key.code) {
+            case Keyboard::Space:
+            gameState = PLAYING_GAME;
+            break;
+            case Keyboard::Q:
+            gameState = QUIT_GAME;
+            break;
+            default:
+            break;
+        }
+        break;
+        default:
+        break;
+    }
+}
+
+
 void handle_death_controls(Event event){
     switch (event.type) {
         case Event::Closed:
@@ -363,11 +405,8 @@ void handle_death_controls(Event event){
         break;
         case Event::KeyPressed:
         switch (event.key.code) {
-            case Keyboard::Escape:
-            window.close();
-            break;
-            case Keyboard::R:
-            gameState = GAME_START;
+            case Keyboard::Space:
+            gameState = TITLE_SCREEN;
             break;
             case Keyboard::Q:
             gameState = QUIT_GAME;
