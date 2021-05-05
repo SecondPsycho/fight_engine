@@ -460,13 +460,10 @@ int main(){
                 window.draw(Game.getStatic(2)->getRectangle()); //Draw the left wall
                 window.draw(Game.getStatic(3)->getRectangle()); //Draw the ceiling
                 window.draw(Game.getStatic(4)->getRectangle()); //Draw the crevice
-                //window.draw(Game.getStatic(1)->getRectangle());
-                //window.draw(Game.getStatic(2)->getRectangle());
-                //window.draw(Game.getStatic(3)->getRectangle());
                 window.draw(orange.getSprite());
-                window.draw(orange.getHitbox()->getRectangle());
+                // window.draw(orange.getHitbox()->getRectangle());
                 window.draw(blue.getSprite());
-                window.draw(blue.getHitbox()->getRectangle());
+                // window.draw(blue.getHitbox()->getRectangle());
                 window.draw(orange_KB.text);
                 window.draw(blue_KB.text);
 
