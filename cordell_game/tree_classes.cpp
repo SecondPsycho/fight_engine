@@ -28,6 +28,9 @@ class Player {
         this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_3.png"));
         this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_2.png"));
         this->walk.setMaxFrameTick(8);
+
+        this->fist.addAnimationData(make_sprite("./images/Ailie/A_fist_2.png"));
+        this->ouch.addAnimationData(make_sprite("./images/Ailie/A_ouch_g.png"));
         /*
         this->idle.addAnimationData(make_sprite("./images/wolf_idle.png", scale));
         this->walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk1.png", scale));
@@ -42,7 +45,11 @@ class Player {
         P1->body->setSprite(P1->leap.getCurrentFrame()); // Do leap animation
       } else 
       //*/
-      if (this->keys[1]^this->keys[0]) {
+      if (this->hitCooldown > 0) {
+        this->body->setSprite(this->ouch.frameTick()); 
+      } else if (this->attackCooldown > 0) {
+        this->body->setSprite(this->fist.frameTick());
+      } else if (this->keys[1]^this->keys[0]) {
         this->body->setSprite(this->walk.frameTick()); // Do walking animations
       } else {
         this->body->setSprite(this->idle.frameTick()); // Do idle animation
@@ -92,7 +99,7 @@ class Player {
     }
     void takeHit(Vector2D dir, bool flipped) {
         this->flying = true;
-        this->dmg += 1;
+        this->dmg += 2;
         if (flipped) {
             this->body->v.x -= this->dmg;
         } else {
@@ -109,13 +116,16 @@ class Player {
     bool on_ground = false;
     bool double_jump = false;
     bool flying = false;
-    //int attackCooldown = 0;
+    int attackCooldown = 0;
+    int hitCooldown = 0;
     bool keys[5] = {false,false,false,false,false};
     //Body
     KinematicBody2D* body;
     Hitbox punchbox;
     animation_data idle;
     animation_data walk;
+    animation_data fist;
+    animation_data ouch;
     animation_data leap;
   private:
     int w, h;
@@ -202,9 +212,33 @@ class NewGame {
     int getWatersCount() {
       return this->waters_count;
     }
-    void runPhysics() {
-      P1->body->tick();
-      P2->body->tick();
+    void runPhysics(int t, int fps) {
+      fps = fps / 10;
+      if (t % fps == 0) {
+        if (this->P1->attackCooldown > 0) {
+          this->P1->attackCooldown -= 1;
+        }
+        if (this->P2->attackCooldown > 0) {
+          this->P2->attackCooldown -= 1;
+        }
+        if (this->P1->hitCooldown > 0) {
+          this->P1->hitCooldown -= 1;
+        }
+        if (this->P2->hitCooldown > 0) {
+          this->P2->hitCooldown -= 1;
+        }
+      }
+
+      if (this->P1->attackCooldown == 0) {
+        this->P1->body->p.x += (this->P1->keys[1]-this->P1->keys[0])*10;
+        this->P1->body->p.y -= (this->P1->keys[2])*3;
+      }
+      if (this->P1->attackCooldown == 0) {
+        this->P2->body->p.x += (this->P2->keys[1]-this->P2->keys[0])*10;
+        this->P2->body->p.y -= (this->P2->keys[2])*3;
+      }
+      this->P1->body->tick();
+      this->P2->body->tick();
       
       int* collide;
       this->P1->on_ground = false;
@@ -213,8 +247,9 @@ class NewGame {
       for (int i = 0; i < this->flowers_count; i++) {
         this->flowers[i].tick();
       }
-
+      
       int waterspeed = -1;
+      /*
       if (this->P1->body->collides(&this->waters[0])) {
         this->P1->body->a.y = 0;
         //this->P1->body->dampen(Vector2D(1,1));
@@ -227,6 +262,7 @@ class NewGame {
       } else {
         this->P2->body->a.y = 1;
       }
+      //*/
 
       if (this->waters[0].pos().y >= 1200) {
           waterspeed = -3;
@@ -277,7 +313,7 @@ class NewGame {
       this->getFlower(1)->setRectColor(255,255,0,255);
       this->getFlower(1)->initHitbox();
 
-      this->addWater(KinematicBody2D(0,1200,2000,2000));
+      this->addWater(KinematicBody2D(0,1300,2000,2000));
       this->getWater(0)->initRectangle();
       this->getWater(0)->setRectColor(0,192,255,192);
       this->getWater(0)->initHitbox();

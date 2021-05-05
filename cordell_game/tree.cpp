@@ -61,7 +61,7 @@ int main(int argc, char* argv[]){
     int seconds = 0;
     int t = 0;
     int risespeed = 2;
-    int fps = 60;
+    int fps = 30;
 
     Framerate ticker(fps);
     while (window.isOpen()) {
@@ -165,8 +165,12 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::E:
                                 P1->keys[3] = true;
-                                if (P1->punch(P2)) {
-                                    P2->takeHit(Vector2D(0,0), P1->body->isFlippedH());
+                                if (P1->attackCooldown == 0) {
+                                    P1->attackCooldown += 3;
+                                    if (P1->punch(P2)) {
+                                        P2->takeHit(Vector2D(0,0), P1->body->isFlippedH());
+                                        P2->hitCooldown += 2;
+                                    }
                                 }
                                 break;
                             case Keyboard::H:
@@ -189,8 +193,12 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::I:
                                 P2->keys[3] = true;
-                                if (P2->punch(P1)) {
-                                    P1->takeHit(Vector2D(0,0), P2->body->isFlippedH());
+                                if (P2->attackCooldown == 0) {
+                                    P2->attackCooldown += 3;
+                                    if (P2->punch(P1)) {
+                                        P1->takeHit(Vector2D(0,0), P2->body->isFlippedH());
+                                        P1->hitCooldown += 2;
+                                    }
                                 }
                                 break;
                             default:
@@ -247,16 +255,12 @@ int main(int argc, char* argv[]){
             }
 
             //Apply Physics
-            P1->body->p.x += (P1->keys[1]-P1->keys[0])*10;
-            P2->body->p.x += (P2->keys[1]-P2->keys[0])*10;
-            P1->body->p.y -= (P1->keys[2])*3;
-            P2->body->p.y -= (P2->keys[2])*3;
-            P1->animate();
-            P2->animate();
-
-            Game.runPhysics();
+            Game.runPhysics(t, fps);
             P1->body->dampen(f);
             P2->body->dampen(f);
+
+            P1->animate();
+            P2->animate();
 
             //Apply animation
             //*
@@ -278,7 +282,7 @@ int main(int argc, char* argv[]){
                 Game.ON = false;
                 my_music.setPlayingOffset(78);
                 seconds = 78;
-                cout << "Game Over";
+                cout << "Game Over" << endl;
             }
             
 
