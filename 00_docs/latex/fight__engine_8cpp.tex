@@ -1,0 +1,83 @@
+\hypertarget{fight__engine_8cpp}{}\doxysection{fight\+\_\+engine.\+cpp File Reference}
+\label{fight__engine_8cpp}\index{fight\_engine.cpp@{fight\_engine.cpp}}
+
+
+This is the file containing all our code for our game engine built for fighting games.  
+
+
+{\ttfamily \#include $<$iostream$>$}\newline
+{\ttfamily \#include $<$string$>$}\newline
+{\ttfamily \#include $<$vector$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$dirent.\+h$>$}\newline
+{\ttfamily \#include $<$sys/types.\+h$>$}\newline
+{\ttfamily \#include $<$SFML/\+Audio.\+hpp$>$}\newline
+{\ttfamily \#include $<$SFML/\+Graphics.\+hpp$>$}\newline
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}}
+\begin{DoxyCompactList}\small\item\em The struct which contains all of the data necessary for a single sprite. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structanimation__data}{animation\+\_\+data}}
+\begin{DoxyCompactList}\small\item\em The struct which contains all of the data and functions for an animation. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classFramerate}{Framerate}}
+\begin{DoxyCompactList}\small\item\em A class for maintaining a set framerate. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classSFX}{SFX}}
+\begin{DoxyCompactList}\small\item\em The \mbox{\hyperlink{classSFX}{SFX}} class that can play sounds. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classSong}{Song}}
+\begin{DoxyCompactList}\small\item\em The \mbox{\hyperlink{classSong}{Song}} class that can play music. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classVector2D}{Vector2D}}
+\begin{DoxyCompactList}\small\item\em Class storing x and y postiton data. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classTextBox}{Text\+Box}}
+\item 
+class \mbox{\hyperlink{classHitbox}{Hitbox}}
+\begin{DoxyCompactList}\small\item\em Keeps track of a hitbox for collision. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}
+\begin{DoxyCompactList}\small\item\em A class that holds a Sprite and a \mbox{\hyperlink{classHitbox}{Hitbox}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Macros}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{fight__engine_8cpp_abcde7e59d7c57403a602a4967d580958}\label{fight__engine_8cpp_abcde7e59d7c57403a602a4967d580958}} 
+\#define {\bfseries create\+\_\+window}(name,  h,  w)~sf\+::\+Render\+Window window(sf\+::\+Video\+Mode(h, w), name);
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$ \mbox{\hyperlink{fight__engine_8cpp_a92342ffa5e8d777267a392389b572511}{make\+\_\+sprite}} (string sprite\+\_\+path, float scale=1)
+\begin{DoxyCompactList}\small\item\em Creates a sprite struct from a sprite path. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This is the file containing all our code for our game engine built for fighting games. 
+
+\begin{DoxyAuthor}{Author}
+Cordell 
+
+Joey 
+
+Matthew 
+
+Owen 
+\end{DoxyAuthor}
+
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{fight__engine_8cpp_a92342ffa5e8d777267a392389b572511}\label{fight__engine_8cpp_a92342ffa5e8d777267a392389b572511}} 
+\index{fight\_engine.cpp@{fight\_engine.cpp}!make\_sprite@{make\_sprite}}
+\index{make\_sprite@{make\_sprite}!fight\_engine.cpp@{fight\_engine.cpp}}
+\doxysubsubsection{\texorpdfstring{make\_sprite()}{make\_sprite()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}}$\ast$ make\+\_\+sprite (\begin{DoxyParamCaption}\item[{string}]{sprite\+\_\+path,  }\item[{float}]{scale = {\ttfamily 1} }\end{DoxyParamCaption})}
+
+
+
+Creates a sprite struct from a sprite path. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sprite\+\_\+path} & Pass in a string of the path to the sprite image. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+sprite\+\_\+data$\ast$ A pointer to the \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} struct that is created from the sprite\+\_\+path that was passed in is returned. 
+\end{DoxyReturn}
