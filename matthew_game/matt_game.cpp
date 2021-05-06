@@ -56,16 +56,12 @@ TextBox deathScreenControls((window_w / 2), (window_h / 2) - 150, "./font/good-t
 
 // Leaderboard Stuff
 TextBox leaderBoardText((window_w / 2), (window_h / 2) - 500, "./font/good-times-rg.ttf", "Leaderboard", true);
-//leaderBoardText.setCharacterSize(75);
+TextBox leaderBoardControls((window_w / 2), (window_h / 2) + 200, "./font/good-times-rg.ttf", "Press \"[\" to select player 1,\nPress \"]\" to select player 2,\nand Escape to go to title.", true);
 TextBox p1PreText(150, (window_h / 2) - 200, "./font/good-times-rg.ttf", "Player 1 Name: ", true);
-//p1PreText.setCharacterSize(25);
 TextBox currentPlayer1Name(290, (window_h / 2) - 200, "./font/good-times-rg.ttf", "", false);
-//newPlayer1Name.setCharacterSize(25);
 string p1StringName = "";
 TextBox p2PreText(150, (window_h / 2) - 100, "./font/good-times-rg.ttf", "Player 2 Name: ", true);
-//p2PreText.setCharacterSize(25);
 TextBox currentPlayer2Name(290, (window_h / 2) - 100, "./font/good-times-rg.ttf", "", false);
-//currentPlayer2Name.setCharacterSize(25);
 string p2StringName = "";
 int current_player_typing = 0;
 string randStr = "";
@@ -101,6 +97,7 @@ int main(int argc, char** argv){
     deathScreenText.setCharacterSize(75);
     deathScreenControls.setCharacterSize(30);
     leaderBoardText.setCharacterSize(75);
+    leaderBoardControls.setCharacterSize(30);
     p1PreText.setCharacterSize(25);
     currentPlayer1Name.setCharacterSize(25);
     p2PreText.setCharacterSize(25);
@@ -547,6 +544,7 @@ void leader_board(){
 
         // Draw Leaderboard Text:
         window.draw(leaderBoardText.text);
+        window.draw(leaderBoardControls.text);
         window.draw(p1PreText.text);
         window.draw(currentPlayer1Name.text);
         window.draw(p2PreText.text);
@@ -714,7 +712,7 @@ void loadLeaderBoard(string file_path){
             getline(lineStream, lossStr, ' ');
             wins = stoi(winStr);
             losses = stoi(lossStr);
-            cout << pName << " " << wins << " " << losses << endl;
+            //cout << pName << " " << wins << " " << losses << endl;
             if (wins == 0 && losses == 0){
                 leaderBoardRanking[pName] = -10000;
             }
@@ -732,7 +730,7 @@ void saveLeaderBoard(string file_path){
     ofstream saveFile(file_path);
     if(saveFile.is_open()){
         for (auto& it : leaderBoardRanking) {
-            cout << it.first << " " << leaderBoardWins[it.first] << " " << leaderBoardLosses[it.first] << endl;
+            //cout << it.first << " " << leaderBoardWins[it.first] << " " << leaderBoardLosses[it.first] << endl;
             saveFile << it.first << " " << leaderBoardWins[it.first] << " " << leaderBoardLosses[it.first] << endl;
         }
     }
@@ -767,7 +765,7 @@ void sortMap(map<string, int>& M) {
     // Print the sorted value
     int counter = 1;
     for (auto& it : A) {
-        cout << it.first << ' ' << it.second << endl;
+        //cout << it.first << ' ' << it.second << endl;
         string temp = "";
         if(counter == 1){
             temp = "1. ";
