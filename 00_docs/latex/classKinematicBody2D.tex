@@ -1,0 +1,418 @@
+\hypertarget{classKinematicBody2D}{}\doxysection{Kinematic\+Body2D Class Reference}
+\label{classKinematicBody2D}\index{KinematicBody2D@{KinematicBody2D}}
+
+
+A class that holds a Sprite and a \mbox{\hyperlink{classHitbox}{Hitbox}}.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classKinematicBody2D_a68fd8db7f37749070bd5fb8117387b69}{Kinematic\+Body2D}} (int px, int py, int pw, int ph)
+\begin{DoxyCompactList}\small\item\em Initialize a \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. Parameters optional. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classKinematicBody2D_a78e04fb764cbedd03639de77cb327aee}{set\+Pos}} (\mbox{\hyperlink{classVector2D}{Vector2D}} v)
+\begin{DoxyCompactList}\small\item\em Set the Position of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classKinematicBody2D_ab7805276b42265b6c2dd516b2904f78b}{move}} (\mbox{\hyperlink{classVector2D}{Vector2D}} v)
+\begin{DoxyCompactList}\small\item\em Move the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} relative to its current coordinates. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classKinematicBody2D_aa271813171e890d37a5b2c49cc42c81b}\label{classKinematicBody2D_aa271813171e890d37a5b2c49cc42c81b}} 
+void \mbox{\hyperlink{classKinematicBody2D_aa271813171e890d37a5b2c49cc42c81b}{tick}} ()
+\begin{DoxyCompactList}\small\item\em Update the Physics. Run every frame. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classKinematicBody2D_a609e945b32edad5b637e88cad808e272}{set\+Sprite}} (\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$newsprite)
+\begin{DoxyCompactList}\small\item\em Change the Current Sprite. Useful for animations. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$ \mbox{\hyperlink{classKinematicBody2D_a162d239fbbce314bca74612513e0ccd2}{get\+Sprite\+Data}} ()
+\begin{DoxyCompactList}\small\item\em Get the \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} from the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. Do NOT use for drawing. Use \mbox{\hyperlink{classKinematicBody2D_acbc4b4e72dc72d69de8c0472a4cc0874}{get\+Sprite()}} instead. \end{DoxyCompactList}\item 
+Sprite \mbox{\hyperlink{classKinematicBody2D_acbc4b4e72dc72d69de8c0472a4cc0874}{get\+Sprite}} ()
+\begin{DoxyCompactList}\small\item\em Get the Sprite. Use for drawing. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classKinematicBody2D_a5cad3c9bd891eeb00f6708b97e4a5c01}\label{classKinematicBody2D_a5cad3c9bd891eeb00f6708b97e4a5c01}} 
+void \mbox{\hyperlink{classKinematicBody2D_a5cad3c9bd891eeb00f6708b97e4a5c01}{flipH}} ()
+\begin{DoxyCompactList}\small\item\em Flip the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} horizontally for display purposes. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classKinematicBody2D_a506190b0a90c028eaef4c781b4483ab2}{is\+FlippedH}} ()
+\begin{DoxyCompactList}\small\item\em Set the horizontal flip direction for display purposes. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classKinematicBody2D_a485d92a82954717c8a269e4da17bc1f7}\label{classKinematicBody2D_a485d92a82954717c8a269e4da17bc1f7}} 
+void \mbox{\hyperlink{classKinematicBody2D_a485d92a82954717c8a269e4da17bc1f7}{init\+Hitbox}} ()
+\begin{DoxyCompactList}\small\item\em Initialize the \mbox{\hyperlink{classHitbox}{Hitbox}}. Use if you intend to use a \mbox{\hyperlink{classHitbox}{Hitbox}} for this \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classKinematicBody2D_aa78c73aba15af8f726a4fe1a139c04e8}{set\+Hitbox}} (\mbox{\hyperlink{classHitbox}{Hitbox}} $\ast$newhitbox)
+\begin{DoxyCompactList}\small\item\em Set up the \mbox{\hyperlink{classHitbox}{Hitbox}} to a pre-\/existing \mbox{\hyperlink{classHitbox}{Hitbox}}. Can be used instead of \mbox{\hyperlink{classKinematicBody2D_a485d92a82954717c8a269e4da17bc1f7}{init\+Hitbox()}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classKinematicBody2D_ab51d7731217dc2e4cb64f7a72a84b8ec}{adjust\+Hitbox}} (int px, int py, int pw, int ph)
+\begin{DoxyCompactList}\small\item\em Adjust the location and size of the \mbox{\hyperlink{classHitbox}{Hitbox}}. Doesn\textquotesingle{}t work yet. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classHitbox}{Hitbox}} $\ast$ \mbox{\hyperlink{classKinematicBody2D_a032f8f2d9e44cb817bf86d154316c25c}{get\+Hitbox}} ()
+\begin{DoxyCompactList}\small\item\em The \mbox{\hyperlink{classHitbox}{Hitbox}}. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classKinematicBody2D_a447dc1b8b42b289ce667b712f91f5c40}{collides}} (\mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} $\ast$hostile)
+\begin{DoxyCompactList}\small\item\em See if this \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} collides with another. \end{DoxyCompactList}\item 
+int $\ast$ \mbox{\hyperlink{classKinematicBody2D_a27a08c3b5e36855586ecdbb94587f688}{collides\+Dir}} (\mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} $\ast$hostile)
+\begin{DoxyCompactList}\small\item\em See if this \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} collides with another, and on which side. \end{DoxyCompactList}\item 
+int $\ast$ \mbox{\hyperlink{classKinematicBody2D_a0d7953dbba964ff9f73a2ba9cb10d7d1}{blocks}} (\mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} $\ast$hostile, bool bounce=false, char ignore=\textquotesingle{} \textquotesingle{})
+\begin{DoxyCompactList}\small\item\em See if this \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} collides with another, and on which side. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classKinematicBody2D_a6442d585ba557da0caa7cdfdb616e0de}{dampen}} (\mbox{\hyperlink{classVector2D}{Vector2D}} f)
+\begin{DoxyCompactList}\small\item\em Slow down the current velocity by a set amount. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classKinematicBody2D_ab2e823ee318ab39e9763067b5784227b}\label{classKinematicBody2D_ab2e823ee318ab39e9763067b5784227b}} 
+void \mbox{\hyperlink{classKinematicBody2D_ab2e823ee318ab39e9763067b5784227b}{init\+Rectangle}} ()
+\begin{DoxyCompactList}\small\item\em Set up the Rectangle. Use if you intend to draw a Rectangle over the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classKinematicBody2D_a2d01d16aaaa6f67b5065b83525f8e2c7}{set\+Rect\+Color}} (int r, int g, int b, int a)
+\begin{DoxyCompactList}\small\item\em Set the color for the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}\textquotesingle{}s rectangle. \end{DoxyCompactList}\item 
+Rectangle\+Shape \mbox{\hyperlink{classKinematicBody2D_a3d51298d2c431c5693868352d372cfe5}{get\+Rectangle}} ()
+\begin{DoxyCompactList}\small\item\em Get the Rectangle for drawing purposes. Make sure you\textquotesingle{}ve called \mbox{\hyperlink{classKinematicBody2D_ab2e823ee318ab39e9763067b5784227b}{init\+Rectangle()}} first. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classKinematicBody2D_aea43ac0eb870adff1e7a3134f6702bcb}{posX}} ()
+\begin{DoxyCompactList}\small\item\em Get the current x-\/position of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classKinematicBody2D_a59d17496b0e5028637c504bcf295254d}{posY}} ()
+\begin{DoxyCompactList}\small\item\em Get the current y-\/position of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classVector2D}{Vector2D}} \mbox{\hyperlink{classKinematicBody2D_a3ec80330b9cf80620f0b9f3428b03aaa}{pos}} ()
+\begin{DoxyCompactList}\small\item\em Get the current position of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classKinematicBody2D_a446d92f09ab6fe8ca19d7e2d702ce9b9}{get\+Hitbox\+OffsetY}} ()
+\begin{DoxyCompactList}\small\item\em Get the \mbox{\hyperlink{classHitbox}{Hitbox}} Y Offset. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{classKinematicBody2D_a9fc047f1eba11c39992c2850dc7f0918}{get\+Hitbox\+OffsetX}} ()
+\begin{DoxyCompactList}\small\item\em Get the \mbox{\hyperlink{classHitbox}{Hitbox}} X Offset. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classKinematicBody2D_a9671ddbfbb176e11fa41108dd35487f8}\label{classKinematicBody2D_a9671ddbfbb176e11fa41108dd35487f8}} 
+\mbox{\hyperlink{classVector2D}{Vector2D}} {\bfseries p}
+\item 
+\mbox{\Hypertarget{classKinematicBody2D_a4ce3c2c253c9de87634dc795cd3e20db}\label{classKinematicBody2D_a4ce3c2c253c9de87634dc795cd3e20db}} 
+\mbox{\hyperlink{classVector2D}{Vector2D}} {\bfseries v}
+\item 
+\mbox{\Hypertarget{classKinematicBody2D_ab76f2f9b6ee8636d6942f930aa5456c2}\label{classKinematicBody2D_ab76f2f9b6ee8636d6942f930aa5456c2}} 
+\mbox{\hyperlink{classVector2D}{Vector2D}} {\bfseries a}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A class that holds a Sprite and a \mbox{\hyperlink{classHitbox}{Hitbox}}. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classKinematicBody2D_a68fd8db7f37749070bd5fb8117387b69}\label{classKinematicBody2D_a68fd8db7f37749070bd5fb8117387b69}} 
+\index{KinematicBody2D@{KinematicBody2D}!KinematicBody2D@{KinematicBody2D}}
+\index{KinematicBody2D@{KinematicBody2D}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{KinematicBody2D()}{KinematicBody2D()}}
+{\footnotesize\ttfamily Kinematic\+Body2\+D\+::\+Kinematic\+Body2D (\begin{DoxyParamCaption}\item[{int}]{px,  }\item[{int}]{py,  }\item[{int}]{pw,  }\item[{int}]{ph }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Initialize a \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. Parameters optional. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em px} & x-\/position (int) \\
+\hline
+{\em py} & y-\/position (int) \\
+\hline
+{\em pw} & width (int) \\
+\hline
+{\em ph} & height (int) \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classKinematicBody2D_ab51d7731217dc2e4cb64f7a72a84b8ec}\label{classKinematicBody2D_ab51d7731217dc2e4cb64f7a72a84b8ec}} 
+\index{KinematicBody2D@{KinematicBody2D}!adjustHitbox@{adjustHitbox}}
+\index{adjustHitbox@{adjustHitbox}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{adjustHitbox()}{adjustHitbox()}}
+{\footnotesize\ttfamily void Kinematic\+Body2\+D\+::adjust\+Hitbox (\begin{DoxyParamCaption}\item[{int}]{px,  }\item[{int}]{py,  }\item[{int}]{pw,  }\item[{int}]{ph }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Adjust the location and size of the \mbox{\hyperlink{classHitbox}{Hitbox}}. Doesn\textquotesingle{}t work yet. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em px} & The \mbox{\hyperlink{classHitbox}{Hitbox}}\textquotesingle{}s new x location, relative to the origin of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. \\
+\hline
+{\em py} & The \mbox{\hyperlink{classHitbox}{Hitbox}}\textquotesingle{}s new y location, relative to the origin of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. \\
+\hline
+{\em pw} & The \mbox{\hyperlink{classHitbox}{Hitbox}}\textquotesingle{}s new width. \\
+\hline
+{\em ph} & The \mbox{\hyperlink{classHitbox}{Hitbox}}\textquotesingle{}s new height. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classKinematicBody2D_a0d7953dbba964ff9f73a2ba9cb10d7d1}\label{classKinematicBody2D_a0d7953dbba964ff9f73a2ba9cb10d7d1}} 
+\index{KinematicBody2D@{KinematicBody2D}!blocks@{blocks}}
+\index{blocks@{blocks}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{blocks()}{blocks()}}
+{\footnotesize\ttfamily int$\ast$ Kinematic\+Body2\+D\+::blocks (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} $\ast$}]{hostile,  }\item[{bool}]{bounce = {\ttfamily false},  }\item[{char}]{ignore = {\ttfamily \textquotesingle{}~\textquotesingle{}} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+See if this \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} collides with another, and on which side. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em hostile} & A pointer to the other \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} \\
+\hline
+{\em bounce} & Optional parameter for bouncing off collidables. \\
+\hline
+{\em ignore} & Optional parameter to pick a side to ignore collision for objects. Options are \mbox{[}\textquotesingle{}U\textquotesingle{}, \textquotesingle{}D\textquotesingle{}, \textquotesingle{}L\textquotesingle{}, \textquotesingle{}R\textquotesingle{}\mbox{]} anything else will do nothing. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A pointer to an array of 3 integers. The first indicates collision on the left or right side. The second indicates collision on the top or bottom. The third indicates collision in general. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_a447dc1b8b42b289ce667b712f91f5c40}\label{classKinematicBody2D_a447dc1b8b42b289ce667b712f91f5c40}} 
+\index{KinematicBody2D@{KinematicBody2D}!collides@{collides}}
+\index{collides@{collides}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{collides()}{collides()}}
+{\footnotesize\ttfamily bool Kinematic\+Body2\+D\+::collides (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} $\ast$}]{hostile }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+See if this \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} collides with another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em hostile} & A pointer to the other \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A boolean indicating whether or not they collide. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_a27a08c3b5e36855586ecdbb94587f688}\label{classKinematicBody2D_a27a08c3b5e36855586ecdbb94587f688}} 
+\index{KinematicBody2D@{KinematicBody2D}!collidesDir@{collidesDir}}
+\index{collidesDir@{collidesDir}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{collidesDir()}{collidesDir()}}
+{\footnotesize\ttfamily int$\ast$ Kinematic\+Body2\+D\+::collides\+Dir (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} $\ast$}]{hostile }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+See if this \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} collides with another, and on which side. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em hostile} & A pointer to the other \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A list of three integers. The first indicates horizontal collision, the second is vertical collision, and the third is collision in general. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_a6442d585ba557da0caa7cdfdb616e0de}\label{classKinematicBody2D_a6442d585ba557da0caa7cdfdb616e0de}} 
+\index{KinematicBody2D@{KinematicBody2D}!dampen@{dampen}}
+\index{dampen@{dampen}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{dampen()}{dampen()}}
+{\footnotesize\ttfamily void Kinematic\+Body2\+D\+::dampen (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classVector2D}{Vector2D}}}]{f }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Slow down the current velocity by a set amount. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em f} & a \mbox{\hyperlink{classVector2D}{Vector2D}} indicating how much to slow. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classKinematicBody2D_a032f8f2d9e44cb817bf86d154316c25c}\label{classKinematicBody2D_a032f8f2d9e44cb817bf86d154316c25c}} 
+\index{KinematicBody2D@{KinematicBody2D}!getHitbox@{getHitbox}}
+\index{getHitbox@{getHitbox}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{getHitbox()}{getHitbox()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classHitbox}{Hitbox}}$\ast$ Kinematic\+Body2\+D\+::get\+Hitbox (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+The \mbox{\hyperlink{classHitbox}{Hitbox}}. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the \mbox{\hyperlink{classHitbox}{Hitbox}}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_a9fc047f1eba11c39992c2850dc7f0918}\label{classKinematicBody2D_a9fc047f1eba11c39992c2850dc7f0918}} 
+\index{KinematicBody2D@{KinematicBody2D}!getHitboxOffsetX@{getHitboxOffsetX}}
+\index{getHitboxOffsetX@{getHitboxOffsetX}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{getHitboxOffsetX()}{getHitboxOffsetX()}}
+{\footnotesize\ttfamily int Kinematic\+Body2\+D\+::get\+Hitbox\+OffsetX (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the \mbox{\hyperlink{classHitbox}{Hitbox}} X Offset. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_a446d92f09ab6fe8ca19d7e2d702ce9b9}\label{classKinematicBody2D_a446d92f09ab6fe8ca19d7e2d702ce9b9}} 
+\index{KinematicBody2D@{KinematicBody2D}!getHitboxOffsetY@{getHitboxOffsetY}}
+\index{getHitboxOffsetY@{getHitboxOffsetY}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{getHitboxOffsetY()}{getHitboxOffsetY()}}
+{\footnotesize\ttfamily int Kinematic\+Body2\+D\+::get\+Hitbox\+OffsetY (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the \mbox{\hyperlink{classHitbox}{Hitbox}} Y Offset. 
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_a3d51298d2c431c5693868352d372cfe5}\label{classKinematicBody2D_a3d51298d2c431c5693868352d372cfe5}} 
+\index{KinematicBody2D@{KinematicBody2D}!getRectangle@{getRectangle}}
+\index{getRectangle@{getRectangle}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{getRectangle()}{getRectangle()}}
+{\footnotesize\ttfamily Rectangle\+Shape Kinematic\+Body2\+D\+::get\+Rectangle (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Rectangle for drawing purposes. Make sure you\textquotesingle{}ve called \mbox{\hyperlink{classKinematicBody2D_ab2e823ee318ab39e9763067b5784227b}{init\+Rectangle()}} first. 
+
+\begin{DoxyReturn}{Returns}
+The Rectangle of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_acbc4b4e72dc72d69de8c0472a4cc0874}\label{classKinematicBody2D_acbc4b4e72dc72d69de8c0472a4cc0874}} 
+\index{KinematicBody2D@{KinematicBody2D}!getSprite@{getSprite}}
+\index{getSprite@{getSprite}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{getSprite()}{getSprite()}}
+{\footnotesize\ttfamily Sprite Kinematic\+Body2\+D\+::get\+Sprite (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Sprite. Use for drawing. 
+
+\begin{DoxyReturn}{Returns}
+The Sprite to be drawn. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_a162d239fbbce314bca74612513e0ccd2}\label{classKinematicBody2D_a162d239fbbce314bca74612513e0ccd2}} 
+\index{KinematicBody2D@{KinematicBody2D}!getSpriteData@{getSpriteData}}
+\index{getSpriteData@{getSpriteData}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{getSpriteData()}{getSpriteData()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}}$\ast$ Kinematic\+Body2\+D\+::get\+Sprite\+Data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} from the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. Do NOT use for drawing. Use \mbox{\hyperlink{classKinematicBody2D_acbc4b4e72dc72d69de8c0472a4cc0874}{get\+Sprite()}} instead. 
+
+\begin{DoxyReturn}{Returns}
+A pointer to the \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} from the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_a506190b0a90c028eaef4c781b4483ab2}\label{classKinematicBody2D_a506190b0a90c028eaef4c781b4483ab2}} 
+\index{KinematicBody2D@{KinematicBody2D}!isFlippedH@{isFlippedH}}
+\index{isFlippedH@{isFlippedH}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{isFlippedH()}{isFlippedH()}}
+{\footnotesize\ttfamily bool Kinematic\+Body2\+D\+::is\+FlippedH (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the horizontal flip direction for display purposes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em to\+Flip} & Whether we want it flipped from default or not.\\
+\hline
+\end{DoxyParams}
+Determine if the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} is already flipped. \mbox{\Hypertarget{classKinematicBody2D_ab7805276b42265b6c2dd516b2904f78b}\label{classKinematicBody2D_ab7805276b42265b6c2dd516b2904f78b}} 
+\index{KinematicBody2D@{KinematicBody2D}!move@{move}}
+\index{move@{move}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{move()}{move()}}
+{\footnotesize\ttfamily void Kinematic\+Body2\+D\+::move (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classVector2D}{Vector2D}}}]{v }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Move the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}} relative to its current coordinates. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & A \mbox{\hyperlink{classVector2D}{Vector2D}} holding the distances to move. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classKinematicBody2D_a3ec80330b9cf80620f0b9f3428b03aaa}\label{classKinematicBody2D_a3ec80330b9cf80620f0b9f3428b03aaa}} 
+\index{KinematicBody2D@{KinematicBody2D}!pos@{pos}}
+\index{pos@{pos}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{pos()}{pos()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classVector2D}{Vector2D}} Kinematic\+Body2\+D\+::pos (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the current position of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. 
+
+\begin{DoxyReturn}{Returns}
+A \mbox{\hyperlink{classVector2D}{Vector2D}} with the current x and y-\/positions. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_aea43ac0eb870adff1e7a3134f6702bcb}\label{classKinematicBody2D_aea43ac0eb870adff1e7a3134f6702bcb}} 
+\index{KinematicBody2D@{KinematicBody2D}!posX@{posX}}
+\index{posX@{posX}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{posX()}{posX()}}
+{\footnotesize\ttfamily int Kinematic\+Body2\+D\+::posX (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the current x-\/position of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. 
+
+\begin{DoxyReturn}{Returns}
+An integer with the current x-\/position. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_a59d17496b0e5028637c504bcf295254d}\label{classKinematicBody2D_a59d17496b0e5028637c504bcf295254d}} 
+\index{KinematicBody2D@{KinematicBody2D}!posY@{posY}}
+\index{posY@{posY}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{posY()}{posY()}}
+{\footnotesize\ttfamily int Kinematic\+Body2\+D\+::posY (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the current y-\/position of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. 
+
+\begin{DoxyReturn}{Returns}
+An integer with the current y-\/position. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classKinematicBody2D_aa78c73aba15af8f726a4fe1a139c04e8}\label{classKinematicBody2D_aa78c73aba15af8f726a4fe1a139c04e8}} 
+\index{KinematicBody2D@{KinematicBody2D}!setHitbox@{setHitbox}}
+\index{setHitbox@{setHitbox}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{setHitbox()}{setHitbox()}}
+{\footnotesize\ttfamily void Kinematic\+Body2\+D\+::set\+Hitbox (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHitbox}{Hitbox}} $\ast$}]{newhitbox }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set up the \mbox{\hyperlink{classHitbox}{Hitbox}} to a pre-\/existing \mbox{\hyperlink{classHitbox}{Hitbox}}. Can be used instead of \mbox{\hyperlink{classKinematicBody2D_a485d92a82954717c8a269e4da17bc1f7}{init\+Hitbox()}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em newhitbox} & A pointer to the new \mbox{\hyperlink{classHitbox}{Hitbox}}. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classKinematicBody2D_a78e04fb764cbedd03639de77cb327aee}\label{classKinematicBody2D_a78e04fb764cbedd03639de77cb327aee}} 
+\index{KinematicBody2D@{KinematicBody2D}!setPos@{setPos}}
+\index{setPos@{setPos}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{setPos()}{setPos()}}
+{\footnotesize\ttfamily void Kinematic\+Body2\+D\+::set\+Pos (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classVector2D}{Vector2D}}}]{v }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the Position of the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v} & A \mbox{\hyperlink{classVector2D}{Vector2D}} holding the new coordinates. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classKinematicBody2D_a2d01d16aaaa6f67b5065b83525f8e2c7}\label{classKinematicBody2D_a2d01d16aaaa6f67b5065b83525f8e2c7}} 
+\index{KinematicBody2D@{KinematicBody2D}!setRectColor@{setRectColor}}
+\index{setRectColor@{setRectColor}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{setRectColor()}{setRectColor()}}
+{\footnotesize\ttfamily void Kinematic\+Body2\+D\+::set\+Rect\+Color (\begin{DoxyParamCaption}\item[{int}]{r,  }\item[{int}]{g,  }\item[{int}]{b,  }\item[{int}]{a }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the color for the \mbox{\hyperlink{classKinematicBody2D}{Kinematic\+Body2D}}\textquotesingle{}s rectangle. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em r} & The Red (0-\/255) \\
+\hline
+{\em g} & The Green (0-\/255) \\
+\hline
+{\em b} & The Blue (0-\/255) \\
+\hline
+{\em a} & The Transparency (0-\/255) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classKinematicBody2D_a609e945b32edad5b637e88cad808e272}\label{classKinematicBody2D_a609e945b32edad5b637e88cad808e272}} 
+\index{KinematicBody2D@{KinematicBody2D}!setSprite@{setSprite}}
+\index{setSprite@{setSprite}!KinematicBody2D@{KinematicBody2D}}
+\doxysubsubsection{\texorpdfstring{setSprite()}{setSprite()}}
+{\footnotesize\ttfamily void Kinematic\+Body2\+D\+::set\+Sprite (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$}]{newsprite }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Change the Current Sprite. Useful for animations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em newsprite} & A pointer to the \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} object which holds the sprite. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{fight__engine_8cpp}{fight\+\_\+engine.\+cpp}}\end{DoxyCompactItemize}

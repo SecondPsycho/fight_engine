@@ -1,0 +1,163 @@
+\hypertarget{classHitbox}{}\doxysection{Hitbox Class Reference}
+\label{classHitbox}\index{Hitbox@{Hitbox}}
+
+
+Keeps track of a hitbox for collision.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classHitbox_af306f3ad1982f2dca3369ffeb9d38422}{Hitbox}} (int px, int py, int pw, int ph)
+\begin{DoxyCompactList}\small\item\em Construct a new \mbox{\hyperlink{classHitbox}{Hitbox}} object. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classHitbox_a999b0be8486978b3dd7bcd001c7c3c03}\label{classHitbox_a999b0be8486978b3dd7bcd001c7c3c03}} 
+\mbox{\hyperlink{classHitbox_a999b0be8486978b3dd7bcd001c7c3c03}{Hitbox}} ()
+\begin{DoxyCompactList}\small\item\em Construct a new \mbox{\hyperlink{classHitbox}{Hitbox}} object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classHitbox_acdd2f05cfea4b5c494e80b45c3184cb0}{set\+Position}} (int px, int py)
+\begin{DoxyCompactList}\small\item\em Set the new position. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classHitbox_a6f0a526bab60121a79f7777b20267ea1}{set\+Size}} (int pw, int ph)
+\begin{DoxyCompactList}\small\item\em Set the new size. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classHitbox_a05d40d20aa4f0a6619b58653da3071f0}{collides}} (\mbox{\hyperlink{classHitbox}{Hitbox}} rect)
+\begin{DoxyCompactList}\small\item\em Boolean function to tell you if this hitbox is colliding with another. \end{DoxyCompactList}\item 
+int $\ast$ \mbox{\hyperlink{classHitbox_a3cad0511c434b9985c08d08ebb43f5b3}{collides\+Dir}} (\mbox{\hyperlink{classHitbox}{Hitbox}} rect)
+\begin{DoxyCompactList}\small\item\em Gives a collision detection that includes what side the collision is happening on. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classHitbox_a207705e0266a25b999ec3b6c637159d3}\label{classHitbox_a207705e0266a25b999ec3b6c637159d3}} 
+void \mbox{\hyperlink{classHitbox_a207705e0266a25b999ec3b6c637159d3}{init\+Rectangle}} ()
+\begin{DoxyCompactList}\small\item\em Initializes rectangle data for a hitbox. \end{DoxyCompactList}\item 
+Rectangle\+Shape \mbox{\hyperlink{classHitbox_a6805ebd17504d0a25ffb6a1d322255b6}{get\+Rectangle}} ()
+\begin{DoxyCompactList}\small\item\em Get the Rectangle object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classHitbox_aab68f53c1b86afb3ff7337463629afca}\label{classHitbox_aab68f53c1b86afb3ff7337463629afca}} 
+int {\bfseries x}
+\item 
+\mbox{\Hypertarget{classHitbox_aab3df05d703d58112d95a530636dc693}\label{classHitbox_aab3df05d703d58112d95a530636dc693}} 
+int {\bfseries y}
+\item 
+\mbox{\Hypertarget{classHitbox_a3135c99819677e1456c3a148aeac9155}\label{classHitbox_a3135c99819677e1456c3a148aeac9155}} 
+int {\bfseries h}
+\item 
+\mbox{\Hypertarget{classHitbox_a81a224805f055e90d9b1ae5ca2b437aa}\label{classHitbox_a81a224805f055e90d9b1ae5ca2b437aa}} 
+int {\bfseries w}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Keeps track of a hitbox for collision. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classHitbox_af306f3ad1982f2dca3369ffeb9d38422}\label{classHitbox_af306f3ad1982f2dca3369ffeb9d38422}} 
+\index{Hitbox@{Hitbox}!Hitbox@{Hitbox}}
+\index{Hitbox@{Hitbox}!Hitbox@{Hitbox}}
+\doxysubsubsection{\texorpdfstring{Hitbox()}{Hitbox()}}
+{\footnotesize\ttfamily Hitbox\+::\+Hitbox (\begin{DoxyParamCaption}\item[{int}]{px,  }\item[{int}]{py,  }\item[{int}]{pw,  }\item[{int}]{ph }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a new \mbox{\hyperlink{classHitbox}{Hitbox}} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em px} & Initial x value. \\
+\hline
+{\em py} & Initial y value. \\
+\hline
+{\em pw} & Inital width. \\
+\hline
+{\em ph} & Initial height. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classHitbox_a05d40d20aa4f0a6619b58653da3071f0}\label{classHitbox_a05d40d20aa4f0a6619b58653da3071f0}} 
+\index{Hitbox@{Hitbox}!collides@{collides}}
+\index{collides@{collides}!Hitbox@{Hitbox}}
+\doxysubsubsection{\texorpdfstring{collides()}{collides()}}
+{\footnotesize\ttfamily bool Hitbox\+::collides (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHitbox}{Hitbox}}}]{rect }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Boolean function to tell you if this hitbox is colliding with another. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rect} & The other hitbox to check collision against. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true When the two objects are colliding. 
+
+false When the two objects aren\textquotesingle{}t colliding. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classHitbox_a3cad0511c434b9985c08d08ebb43f5b3}\label{classHitbox_a3cad0511c434b9985c08d08ebb43f5b3}} 
+\index{Hitbox@{Hitbox}!collidesDir@{collidesDir}}
+\index{collidesDir@{collidesDir}!Hitbox@{Hitbox}}
+\doxysubsubsection{\texorpdfstring{collidesDir()}{collidesDir()}}
+{\footnotesize\ttfamily int$\ast$ Hitbox\+::collides\+Dir (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHitbox}{Hitbox}}}]{rect }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gives a collision detection that includes what side the collision is happening on. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em rect} & The other hitbox to check collision against. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int$\ast$ An array containing directional collision data. The first indicates x collision (negative means collision on the left, positive is on the right). The second indicates y collision (negative means collision on the bottom, positive is on the top). If either of the previous two are -\/2 or 2, the system thinks that collision should be applied first. The third integer indicates 1 for collision and 0 for no collision. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classHitbox_a6805ebd17504d0a25ffb6a1d322255b6}\label{classHitbox_a6805ebd17504d0a25ffb6a1d322255b6}} 
+\index{Hitbox@{Hitbox}!getRectangle@{getRectangle}}
+\index{getRectangle@{getRectangle}!Hitbox@{Hitbox}}
+\doxysubsubsection{\texorpdfstring{getRectangle()}{getRectangle()}}
+{\footnotesize\ttfamily Rectangle\+Shape Hitbox\+::get\+Rectangle (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the Rectangle object. 
+
+\begin{DoxyReturn}{Returns}
+Rectangle\+Shape Returns the rectangle object and the data for it. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classHitbox_acdd2f05cfea4b5c494e80b45c3184cb0}\label{classHitbox_acdd2f05cfea4b5c494e80b45c3184cb0}} 
+\index{Hitbox@{Hitbox}!setPosition@{setPosition}}
+\index{setPosition@{setPosition}!Hitbox@{Hitbox}}
+\doxysubsubsection{\texorpdfstring{setPosition()}{setPosition()}}
+{\footnotesize\ttfamily void Hitbox\+::set\+Position (\begin{DoxyParamCaption}\item[{int}]{px,  }\item[{int}]{py }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the new position. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em px} & New x position. \\
+\hline
+{\em py} & New y position. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classHitbox_a6f0a526bab60121a79f7777b20267ea1}\label{classHitbox_a6f0a526bab60121a79f7777b20267ea1}} 
+\index{Hitbox@{Hitbox}!setSize@{setSize}}
+\index{setSize@{setSize}!Hitbox@{Hitbox}}
+\doxysubsubsection{\texorpdfstring{setSize()}{setSize()}}
+{\footnotesize\ttfamily void Hitbox\+::set\+Size (\begin{DoxyParamCaption}\item[{int}]{pw,  }\item[{int}]{ph }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the new size. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pw} & New width. \\
+\hline
+{\em ph} & New height. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{fight__engine_8cpp}{fight\+\_\+engine.\+cpp}}\end{DoxyCompactItemize}
