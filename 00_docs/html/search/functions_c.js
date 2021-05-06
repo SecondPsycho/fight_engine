@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['setcharactersize_106',['setCharacterSize',['../classTextBox.html#a2aa3f576362355e4c87558ce0d914bfa',1,'TextBox']]],
+  ['setcolor_107',['setColor',['../classTextBox.html#a62a3dcfd0e152819d029c84fb1afcaac',1,'TextBox']]],
+  ['setfps_108',['setFPS',['../classFramerate.html#a880c4d6d9beb321c12992ce4c8d86cd9',1,'Framerate']]],
+  ['sethitbox_109',['setHitbox',['../classKinematicBody2D.html#aa78c73aba15af8f726a4fe1a139c04e8',1,'KinematicBody2D']]],
+  ['setloop_110',['setLoop',['../classSFX.html#a49cad726a9b9ddaebb92257eb111ee50',1,'SFX::setLoop()'],['../classSong.html#a1d15c75f4ce1130c4f68b4717c5613cd',1,'Song::setLoop()']]],
+  ['setmaxframetick_111',['setMaxFrameTick',['../structanimation__data.html#acb1e1072abf7bbe55bab6b9f2bca1cc6',1,'animation_data']]],
+  ['setpitch_112',['setPitch',['../classSFX.html#ae03ed055188348a33ae8c9b8ce73ddc6',1,'SFX::setPitch()'],['../classSong.html#a8adfddf491904d3919a3e41d51e5c6a4',1,'Song::setPitch()']]],
+  ['setplayingoffset_113',['setPlayingOffset',['../classSFX.html#afd49e92cb7790c229c4f0c273eb6eec9',1,'SFX::setPlayingOffset()'],['../classSong.html#aa7e28336e4cc125c1c8f83e0d9ef0eb0',1,'Song::setPlayingOffset()']]],
+  ['setpos_114',['setPos',['../classKinematicBody2D.html#a78e04fb764cbedd03639de77cb327aee',1,'KinematicBody2D']]],
+  ['setposition_115',['setPosition',['../classTextBox.html#aca0a141d01e364b7721d9984929fecba',1,'TextBox::setPosition()'],['../classHitbox.html#acdd2f05cfea4b5c494e80b45c3184cb0',1,'Hitbox::setPosition()']]],
+  ['setrectcolor_116',['setRectColor',['../classKinematicBody2D.html#a2d01d16aaaa6f67b5065b83525f8e2c7',1,'KinematicBody2D']]],
+  ['setsize_117',['setSize',['../classHitbox.html#a6f0a526bab60121a79f7777b20267ea1',1,'Hitbox']]],
+  ['setsprite_118',['setSprite',['../classKinematicBody2D.html#a609e945b32edad5b637e88cad808e272',1,'KinematicBody2D']]],
+  ['settext_119',['setText',['../classTextBox.html#ac87dc822d67a4450628a0fb0c306e72e',1,'TextBox']]],
+  ['setvolume_120',['setVolume',['../classSFX.html#ade00ebbdb0a0fe903cc33769b8f784d1',1,'SFX::setVolume()'],['../classSong.html#a1e249894a97492f8847e51a9dc6eef00',1,'Song::setVolume()']]],
+  ['sfx_121',['SFX',['../classSFX.html#a085d888a256b6bc024624d56b6a6cc76',1,'SFX']]],
+  ['song_122',['Song',['../classSong.html#a00ead6160d81b409ffa8063dacd5db88',1,'Song']]],
+  ['stop_123',['stop',['../classSFX.html#a5640715e2226ce41801a1b14c441720a',1,'SFX::stop()'],['../classSong.html#a434e25d4f1467c0bd67dbbf3a8169f41',1,'Song::stop()']]]
+];
