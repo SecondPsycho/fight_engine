@@ -99,7 +99,7 @@ class Player {
     }
     void takeHit(Vector2D dir, bool flipped) {
         this->flying = true;
-        this->dmg += 2;
+        this->dmg += 5;
         if (flipped) {
             this->body->v.x -= this->dmg;
         } else {
@@ -233,7 +233,7 @@ class NewGame {
         this->P1->body->p.x += (this->P1->keys[1]-this->P1->keys[0])*10;
         this->P1->body->p.y -= (this->P1->keys[2])*3;
       }
-      if (this->P1->attackCooldown == 0) {
+      if (this->P2->attackCooldown == 0) {
         this->P2->body->p.x += (this->P2->keys[1]-this->P2->keys[0])*10;
         this->P2->body->p.y -= (this->P2->keys[2])*3;
       }
