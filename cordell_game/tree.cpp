@@ -12,7 +12,7 @@ int main(int argc, char* argv[]){
     animation_data leap;
 
     Player* P1 = new Player(250,450);
-    Player* P2 = new Player(1200,750);
+    Player* P2 = new Player(1222,450);
 
     //Create Sprite Data
     NewGame Game(P1, P2, 6);

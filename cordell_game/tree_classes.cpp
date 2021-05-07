@@ -290,18 +290,6 @@ class NewGame {
         int getWatersCount() {
             return this->waters_count;
         }
-        void movePlatforms(int worldshifty) {
-            if (this->getStatic(2)->posX() <= 200) {
-                this->getStatic(2)->v.x = 5;
-            } else if (this->getStatic(2)->posX() >= 800) {
-                this->getStatic(2)->v.x = -5;
-            }
-            if (this->getStatic(3)->posY() <= worldshifty+200) {
-                this->getStatic(3)->v.y = 5;
-            } else if (this->getStatic(3)->posY() >= worldshifty+700) {
-                this->getStatic(3)->v.y = -5;
-            }
-        }
         void runPhysics(int t, int fps) {
             fps = fps / 10;
             if (t % fps == 0) {
@@ -350,46 +338,68 @@ class NewGame {
                 this->P2->runCollision(collide);
             };
         }
+        void platformControlX(int index, int left, int right, int speed = 5) {
+            KinematicBody2D* box = this->getStatic(index);
+            if (box->posX() <= left) {
+                box->v.x = speed;
+            } else if (box->posX() >= right - box->getHitbox()->w) {
+                box->v.x = -speed;
+            }
+        }
+        void platformControlY(int worldshifty, int index, int bottom, int top, int speed = 5) {
+            KinematicBody2D* box = this->getStatic(index);
+            if (box->posY() <= worldshifty + bottom) {
+                box->v.y = speed;
+            } else if (box->posY() >= worldshifty + top - box->getHitbox()->h) {
+                box->v.y = -speed;
+            }
+        }
+        void movePlatforms(int worldshifty) {
+            platformControlX(3, 200, 1000);
+            platformControlY(worldshifty, 4, 200, 475);
+
+        }
         void buildLevel() {
+
+            //Section 0
             this->addStatic(KinematicBody2D(200,900,1200,200));
-            this->getStatic(0)->initRectangle();
-            this->getStatic(0)->initHitbox();
-
             this->addStatic(KinematicBody2D(200,600,300,300));
-            this->getStatic(1)->initRectangle();
-            this->getStatic(1)->initHitbox();
-
-            this->addStatic(KinematicBody2D(200,300,300,50));
-            this->getStatic(2)->initRectangle();
-            this->getStatic(2)->initHitbox();
-            this->getStatic(2)->v.x = 5;
-
-            this->addStatic(KinematicBody2D(1100,200,300,50));
-            this->getStatic(3)->initRectangle();
-            this->getStatic(3)->initHitbox();
-            this->getStatic(3)->v.y = 5;
+            this->addStatic(KinematicBody2D(1100,600,300,300));
 
             this->addFlower(KinematicBody2D(75,500,50,50));
-            this->getFlower(0)->initRectangle();
-            this->getFlower(0)->setRectColor(255,255,0,255);
-            this->getFlower(0)->initHitbox();
-
             this->addFlower(KinematicBody2D(1475,500,50,50));
-            this->getFlower(1)->initRectangle();
-            this->getFlower(1)->setRectColor(255,255,0,255);
-            this->getFlower(1)->initHitbox();
 
+            //Section 1
+            this->addStatic(KinematicBody2D(200,300,300,50));
+            //this->getStatic(3)->v.x = 5;
+
+            this->addStatic(KinematicBody2D(1100,200,300,50));
+            //this->getStatic(4)->v.y = 5;
+
+            //Section 2
+
+            //Set 'em up
+            for (int i = 0; i < this->statics_count; i ++) {
+                this->getStatic(i)->initRectangle();
+                this->getStatic(i)->initHitbox();
+            }
+            for (int i = 0; i < this->flowers_count; i ++) {
+                this->getFlower(i)->initRectangle();
+                this->getFlower(i)->setRectColor(255,255,0,255);
+                this->getFlower(i)->initHitbox();
+            }
+
+            //Water
             this->addWater(KinematicBody2D(0,1300,2000,2000));
-            this->getWater(0)->initRectangle();
-            this->getWater(0)->setRectColor(0,192,255,192);
             this->getWater(0)->initHitbox();
-            this->getWater(0)->v.y = -1;
-
             this->addWater(KinematicBody2D(0,1500,2000,2000));
-            this->getWater(1)->initRectangle();
-            this->getWater(1)->setRectColor(0,192,255,255);
-            this->getWater(1)->v.y = -1;
-            //this->getWater(0)->initHitbox();
+
+            for (int i = 0; i < this->waters_count; i ++) {
+                this->getWater(i)->initRectangle();
+                this->getWater(i)->setRectColor(0,192,255,255);
+                this->getWater(i)->v.y = -1;
+            }
+            
         }
         bool ON = true;
     private:
