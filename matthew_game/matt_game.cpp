@@ -528,10 +528,10 @@ void leader_board(){
                 handle_leader_board_controls(event, randStr, current_player_typing, randStr);
             }
             else if (current_player_typing == 1){
-                handle_leader_board_controls(event, p1StringName, current_player_typing, p2StringName);
+                handle_leader_board_controls(event, p1StringName, current_player_typing, p1StringName);
             }
             else if (current_player_typing == 2){
-                handle_leader_board_controls(event, p2StringName, current_player_typing, p1StringName);
+                handle_leader_board_controls(event, p2StringName, current_player_typing, p2StringName);
             }
 
         }
@@ -561,12 +561,12 @@ void leader_board(){
     titleP1Name.setText(p1StringName);
     titleP2Name.setText(p2StringName);
     if (p1StringName != "" && p2StringName != ""){
-        if (leaderBoardRanking[p1StringName] == 0){
+        if (leaderBoardRanking[p1StringName] == 0 && leaderBoardWins[p1StringName] == 0 && leaderBoardLosses[p1StringName] == 0){
             leaderBoardRanking[p1StringName] = 0;
             leaderBoardWins[p1StringName] = 0;
             leaderBoardLosses[p1StringName] = 0;
         }
-        if (leaderBoardRanking[p2StringName] == 0){
+        if (leaderBoardRanking[p2StringName] == 0 && leaderBoardWins[p2StringName] == 0 && leaderBoardLosses[p2StringName] == 0){
             leaderBoardRanking[p2StringName] = 0;
             leaderBoardWins[p2StringName] = 0;
             leaderBoardLosses[p2StringName] = 0;
@@ -712,7 +712,6 @@ void loadLeaderBoard(string file_path){
             getline(lineStream, lossStr, ' ');
             wins = stoi(winStr);
             losses = stoi(lossStr);
-            //cout << pName << " " << wins << " " << losses << endl;
             if (wins == 0 && losses == 0){
                 leaderBoardRanking[pName] = -10000;
             }
