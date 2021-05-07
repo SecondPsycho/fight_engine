@@ -115,9 +115,6 @@ int main(int argc, char* argv[]){
         }
         while (Game.ON && window.isOpen()) {
             ticker.next_frame();
-            //cout << "Tick: ";
-            //cout << Game.getStatic(0)->getHitbox()->x << ' ' << Game.getStatic(0)->getHitbox()->y << ' ' << Game.getStatic(0)->getHitbox()->w << ' ' << Game.getStatic(0)->getHitbox()->h << "   ";
-            //cout << P2->body->getHitbox()->x << ' ' << P2->body->getHitbox()->y << ' ' << P2->body->getHitbox()->w << ' ' << P2->body->getHitbox()->h << endl;
             
             if (P1->body->pos().y < 400 || P2->body->pos().y < 400) {
                 //t = 0;
@@ -152,15 +149,11 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::A:
                                 P1->keys[0] = true;
-                                if (!P1->body->isFlippedH() && !P1->blocking) {
-                                    P1->body->flipH();
-                                }
+                                P1->faceRight(false);
                                 break;
                             case Keyboard::D:
                                 P1->keys[1] = true;
-                                if (P1->body->isFlippedH() && !P1->blocking) {
-                                    P1->body->flipH();
-                                }
+                                P1->faceRight(true);
                                 break;
                             case Keyboard::W:
                                 P1->jump(Game.getFlowers(), Game.getFlowersCount(), P2);
@@ -177,16 +170,12 @@ int main(int argc, char* argv[]){
                             case Keyboard::H:
                             case Keyboard::Left:
                                 P2->keys[0] = true;
-                                if (!P2->body->isFlippedH() && !P2->blocking) {
-                                    P2->body->flipH();
-                                }
+                                P2->faceRight(false);
                                 break;
                             case Keyboard::K:
                             case Keyboard::Right:
                                 P2->keys[1] = true;
-                                if (P2->body->isFlippedH() && !P2->blocking) {
-                                    P2->body->flipH();
-                                }
+                                P2->faceRight(true);
                                 break;
                             case Keyboard::U:
                             case Keyboard::Up:
@@ -251,16 +240,7 @@ int main(int argc, char* argv[]){
                 }
             }
 
-            if (Game.getStatic(2)->posX() <= 200) {
-                Game.getStatic(2)->v.x = 5;
-            } else if (Game.getStatic(2)->posX() >= 800) {
-                Game.getStatic(2)->v.x = -5;
-            }
-            if (Game.getStatic(3)->posY() <= worldshifty+200) {
-                Game.getStatic(3)->v.y = 5;
-            } else if (Game.getStatic(3)->posY() >= worldshifty+700) {
-                Game.getStatic(3)->v.y = -5;
-            }
+            Game.movePlatforms(worldshifty);
 
             //Apply Physics
             Game.runPhysics(t, fps);

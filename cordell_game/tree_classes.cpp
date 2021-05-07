@@ -167,6 +167,11 @@ class Player {
             this->hurt = false;
             this->stomped = false;
         }
+        void faceRight(bool right) {
+            if (this->body->isFlippedH() == right && !this->blocking) {
+                this->body->flipH();
+            }
+        }
         void cooldowns() {
             if (this->attackCooldown > 0) {
                 this->attackCooldown -= 1;
@@ -284,6 +289,18 @@ class NewGame {
         }
         int getWatersCount() {
             return this->waters_count;
+        }
+        void movePlatforms(int worldshifty) {
+            if (this->getStatic(2)->posX() <= 200) {
+                this->getStatic(2)->v.x = 5;
+            } else if (this->getStatic(2)->posX() >= 800) {
+                this->getStatic(2)->v.x = -5;
+            }
+            if (this->getStatic(3)->posY() <= worldshifty+200) {
+                this->getStatic(3)->v.y = 5;
+            } else if (this->getStatic(3)->posY() >= worldshifty+700) {
+                this->getStatic(3)->v.y = -5;
+            }
         }
         void runPhysics(int t, int fps) {
             fps = fps / 10;
