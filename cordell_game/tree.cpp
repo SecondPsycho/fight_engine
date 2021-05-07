@@ -61,7 +61,7 @@ int main(int argc, char* argv[]){
     int seconds = 0;
     int t = 0;
     int risespeed = 2;
-    int fps = 60;
+    int fps = 30;
 
     Framerate ticker(fps);
     while (window.isOpen()) {
@@ -165,7 +165,7 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::E:
                                 P1->keys[3] = true;
-                                if (P1->punch(P2)) {
+                                if (P1->attackCooldown == 0 && P1->punch(P2)) {
                                     P2->takeHit(Vector2D(0,0), P1->body->isFlippedH());
                                 }
                                 break;
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::I:
                                 P2->keys[3] = true;
-                                if (P2->punch(P1)) {
+                                if (P2->attackCooldown == 0 && P2->punch(P1)) {
                                     P1->takeHit(Vector2D(0,0), P2->body->isFlippedH());
                                 }
                                 break;
@@ -247,46 +247,34 @@ int main(int argc, char* argv[]){
             }
 
             //Apply Physics
-            P1->body->p.x += (P1->keys[1]-P1->keys[0])*10;
-            P2->body->p.x += (P2->keys[1]-P2->keys[0])*10;
-            P1->body->p.y -= (P1->keys[2])*3;
-            P2->body->p.y -= (P2->keys[2])*3;
-            Game.runPhysics();
+            Game.runPhysics(t, fps);
             P1->body->dampen(f);
             P2->body->dampen(f);
 
+            P1->animate();
+            P2->animate();
+
             //Apply animation
-            /*
-            if (!P1->on_ground) {
-                P1->body->setSprite(P1->leap.getCurrentFrame()); // Do leap animation
-            }
-            else 
-            //*/
-            if (P1->keys[1]^P1->keys[0]) {
-                P1->body->setSprite(P1->walk.frameTick()); // Do walking animations
-            }
-            else {
-                P1->body->setSprite(P1->idle.frameTick()); // Do idle animation
-            }
+            //*
+            
             /*
             if (!P2->on_ground) {
                 P2->body->setSprite(P2->leap.getCurrentFrame()); // Do leap animation
             }
             else 
-            //*/
             if (P2->keys[1]^P2->keys[0]) {
                 P2->body->setSprite(P2->walk.frameTick()); // Do walking animations
             }
             else {
                 P2->body->setSprite(P2->idle.frameTick()); // Do idle animation
-            }
+            }//*/
 
             //Process death
             if (P1->body->posY() >= Game.getWater(1)->pos().y || P2->body->posY() >= Game.getWater(1)->pos().y) {
                 Game.ON = false;
                 my_music.setPlayingOffset(78);
                 seconds = 78;
-                cout << "Game Over";
+                cout << "Game Over" << endl;
             }
             
 

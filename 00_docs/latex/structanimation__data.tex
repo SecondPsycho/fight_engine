@@ -1,0 +1,150 @@
+\hypertarget{structanimation__data}{}\doxysection{animation\+\_\+data Struct Reference}
+\label{structanimation__data}\index{animation\_data@{animation\_data}}
+
+
+The struct which contains all of the data and functions for an animation.  
+
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{structanimation__data_a9318bfe45d0c9c3202f94dacf4ac94b6}{add\+Animation\+Data}} (\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$frame)
+\begin{DoxyCompactList}\small\item\em Enqueues the provided sprite data into the \textquotesingle{}animations\textquotesingle{} vector. \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{structanimation__data_ae131fa116ef2e317140a60eda76fd6a4}{get\+Size}} ()
+\begin{DoxyCompactList}\small\item\em Get the size of the animations vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$ \mbox{\hyperlink{structanimation__data_a4eb83514dfb8b2cbd0635dd966044772}{get\+Current\+Frame}} ()
+\begin{DoxyCompactList}\small\item\em Get the current frame being displayed in the animations vector. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$ \mbox{\hyperlink{structanimation__data_af0cd6bcae0d92e17eac7f4d842f0d192}{get\+Next\+Frame}} ()
+\begin{DoxyCompactList}\small\item\em Get the frame after the current frame in the animations vector. If the current frame is the last, the first frame is returned. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$ \mbox{\hyperlink{structanimation__data_aa1bcbf097a4d0b72e61f767a1232d204}{get\+Frame}} (int index)
+\begin{DoxyCompactList}\small\item\em Get the frame at the provided index. If index is larger than the size of the animations vector, return the first frame. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$ \mbox{\hyperlink{structanimation__data_a0c65efb5ff11ab807f54ad665395f60f}{frame\+Tick}} ()
+\begin{DoxyCompactList}\small\item\em Move the current frame forward by one. If the frame is the last, wrap around back to the first frame. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{structanimation__data_acb1e1072abf7bbe55bab6b9f2bca1cc6}{set\+Max\+Frame\+Tick}} (int new\+\_\+tick)
+\begin{DoxyCompactList}\small\item\em Set the max\+\_\+frame\+\_\+tick to a new integer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{structanimation__data_a8c8754d6c578dc8d1b449589dc4982d7}\label{structanimation__data_a8c8754d6c578dc8d1b449589dc4982d7}} 
+vector$<$ \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$ $>$ {\bfseries animations}
+\item 
+\mbox{\Hypertarget{structanimation__data_acf34ea62d808ad7e86c64e6dc63800e1}\label{structanimation__data_acf34ea62d808ad7e86c64e6dc63800e1}} 
+int {\bfseries cur\+\_\+frame} = 0
+\item 
+\mbox{\Hypertarget{structanimation__data_af756d1f0fc394d34bd5762bdf10d8883}\label{structanimation__data_af756d1f0fc394d34bd5762bdf10d8883}} 
+int {\bfseries frame\+\_\+tick} = 1
+\item 
+\mbox{\Hypertarget{structanimation__data_ad6d53521cd46548cd7b25103a269ce69}\label{structanimation__data_ad6d53521cd46548cd7b25103a269ce69}} 
+int {\bfseries max\+\_\+frame\+\_\+tick} = 10
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The struct which contains all of the data and functions for an animation. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structanimation__data_a9318bfe45d0c9c3202f94dacf4ac94b6}\label{structanimation__data_a9318bfe45d0c9c3202f94dacf4ac94b6}} 
+\index{animation\_data@{animation\_data}!addAnimationData@{addAnimationData}}
+\index{addAnimationData@{addAnimationData}!animation\_data@{animation\_data}}
+\doxysubsubsection{\texorpdfstring{addAnimationData()}{addAnimationData()}}
+{\footnotesize\ttfamily void animation\+\_\+data\+::add\+Animation\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} $\ast$}]{frame }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Enqueues the provided sprite data into the \textquotesingle{}animations\textquotesingle{} vector. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em frame} & The pointer to the \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} to add to the back of the animation. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structanimation__data_a0c65efb5ff11ab807f54ad665395f60f}\label{structanimation__data_a0c65efb5ff11ab807f54ad665395f60f}} 
+\index{animation\_data@{animation\_data}!frameTick@{frameTick}}
+\index{frameTick@{frameTick}!animation\_data@{animation\_data}}
+\doxysubsubsection{\texorpdfstring{frameTick()}{frameTick()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}}$\ast$ animation\+\_\+data\+::frame\+Tick (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Move the current frame forward by one. If the frame is the last, wrap around back to the first frame. 
+
+\begin{DoxyReturn}{Returns}
+sprite\+\_\+data$\ast$ A pointer to the new current frame 
+\end{DoxyReturn}
+\mbox{\Hypertarget{structanimation__data_a4eb83514dfb8b2cbd0635dd966044772}\label{structanimation__data_a4eb83514dfb8b2cbd0635dd966044772}} 
+\index{animation\_data@{animation\_data}!getCurrentFrame@{getCurrentFrame}}
+\index{getCurrentFrame@{getCurrentFrame}!animation\_data@{animation\_data}}
+\doxysubsubsection{\texorpdfstring{getCurrentFrame()}{getCurrentFrame()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}}$\ast$ animation\+\_\+data\+::get\+Current\+Frame (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the current frame being displayed in the animations vector. 
+
+\begin{DoxyReturn}{Returns}
+Return the current frame being displayed in the animations vector. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{structanimation__data_aa1bcbf097a4d0b72e61f767a1232d204}\label{structanimation__data_aa1bcbf097a4d0b72e61f767a1232d204}} 
+\index{animation\_data@{animation\_data}!getFrame@{getFrame}}
+\index{getFrame@{getFrame}!animation\_data@{animation\_data}}
+\doxysubsubsection{\texorpdfstring{getFrame()}{getFrame()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}}$\ast$ animation\+\_\+data\+::get\+Frame (\begin{DoxyParamCaption}\item[{int}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the frame at the provided index. If index is larger than the size of the animations vector, return the first frame. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & The index into animations. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Return a pointer to a \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}} struct. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{structanimation__data_af0cd6bcae0d92e17eac7f4d842f0d192}\label{structanimation__data_af0cd6bcae0d92e17eac7f4d842f0d192}} 
+\index{animation\_data@{animation\_data}!getNextFrame@{getNextFrame}}
+\index{getNextFrame@{getNextFrame}!animation\_data@{animation\_data}}
+\doxysubsubsection{\texorpdfstring{getNextFrame()}{getNextFrame()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structsprite__data}{sprite\+\_\+data}}$\ast$ animation\+\_\+data\+::get\+Next\+Frame (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the frame after the current frame in the animations vector. If the current frame is the last, the first frame is returned. 
+
+\begin{DoxyReturn}{Returns}
+Return the frame after the current frame in the animations vector. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{structanimation__data_ae131fa116ef2e317140a60eda76fd6a4}\label{structanimation__data_ae131fa116ef2e317140a60eda76fd6a4}} 
+\index{animation\_data@{animation\_data}!getSize@{getSize}}
+\index{getSize@{getSize}!animation\_data@{animation\_data}}
+\doxysubsubsection{\texorpdfstring{getSize()}{getSize()}}
+{\footnotesize\ttfamily int animation\+\_\+data\+::get\+Size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the size of the animations vector. 
+
+\begin{DoxyReturn}{Returns}
+Return the size of the animations vector. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{structanimation__data_acb1e1072abf7bbe55bab6b9f2bca1cc6}\label{structanimation__data_acb1e1072abf7bbe55bab6b9f2bca1cc6}} 
+\index{animation\_data@{animation\_data}!setMaxFrameTick@{setMaxFrameTick}}
+\index{setMaxFrameTick@{setMaxFrameTick}!animation\_data@{animation\_data}}
+\doxysubsubsection{\texorpdfstring{setMaxFrameTick()}{setMaxFrameTick()}}
+{\footnotesize\ttfamily void animation\+\_\+data\+::set\+Max\+Frame\+Tick (\begin{DoxyParamCaption}\item[{int}]{new\+\_\+tick }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set the max\+\_\+frame\+\_\+tick to a new integer. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+\_\+tick} & The new integer which max\+\_\+frame\+\_\+tick is set to. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{fight__engine_8cpp}{fight\+\_\+engine.\+cpp}}\end{DoxyCompactItemize}

@@ -1,0 +1,123 @@
+\hypertarget{classTextBox}{}\doxysection{Text\+Box Class Reference}
+\label{classTextBox}\index{TextBox@{TextBox}}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classTextBox_a0bc1e4846c38320f09e51f78cf1290ad}{Text\+Box}} (int x, int y, string new\+Font\+Path, string new\+Text=\char`\"{}\char`\"{}, bool pcentered=false)
+\begin{DoxyCompactList}\small\item\em Construct a new \mbox{\hyperlink{classTextBox}{Text\+Box}} object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classTextBox_ac87dc822d67a4450628a0fb0c306e72e}{set\+Text}} (string new\+Text)
+\begin{DoxyCompactList}\small\item\em Set new text for your text box. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classTextBox_aca0a141d01e364b7721d9984929fecba}{set\+Position}} (int x, int y)
+\begin{DoxyCompactList}\small\item\em Sets the position of the \mbox{\hyperlink{classTextBox}{Text\+Box}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classTextBox_a2aa3f576362355e4c87558ce0d914bfa}{set\+Character\+Size}} (int size)
+\begin{DoxyCompactList}\small\item\em Sets the font size of \mbox{\hyperlink{classTextBox}{Text\+Box}}. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classTextBox_a62a3dcfd0e152819d029c84fb1afcaac}{set\+Color}} (int r, int g, int b)
+\begin{DoxyCompactList}\small\item\em Sets the color of \mbox{\hyperlink{classTextBox}{Text\+Box}}. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classTextBox_ae2e457e260b46fd41ceb200e62b2b312}\label{classTextBox_ae2e457e260b46fd41ceb200e62b2b312}} 
+Text {\bfseries text}
+\item 
+\mbox{\Hypertarget{classTextBox_a3817872c391e8adde0d7fb01b1af71fc}\label{classTextBox_a3817872c391e8adde0d7fb01b1af71fc}} 
+Vector2f {\bfseries position}
+\item 
+\mbox{\Hypertarget{classTextBox_a1eb985ec0fb2dca6e82dbcb38d85d4fb}\label{classTextBox_a1eb985ec0fb2dca6e82dbcb38d85d4fb}} 
+bool {\bfseries centered}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classTextBox_a0bc1e4846c38320f09e51f78cf1290ad}\label{classTextBox_a0bc1e4846c38320f09e51f78cf1290ad}} 
+\index{TextBox@{TextBox}!TextBox@{TextBox}}
+\index{TextBox@{TextBox}!TextBox@{TextBox}}
+\doxysubsubsection{\texorpdfstring{TextBox()}{TextBox()}}
+{\footnotesize\ttfamily Text\+Box\+::\+Text\+Box (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y,  }\item[{string}]{new\+Font\+Path,  }\item[{string}]{new\+Text = {\ttfamily \char`\"{}\char`\"{}},  }\item[{bool}]{pcentered = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Construct a new \mbox{\hyperlink{classTextBox}{Text\+Box}} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+Position} & Position for the textbox. \\
+\hline
+{\em new\+Font\+Path} & Font for your text in the box. \\
+\hline
+{\em new\+Text} & The text to be in your text box. \\
+\hline
+{\em pcentered} & An optional boolean allowing the text box to be centered. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classTextBox_a2aa3f576362355e4c87558ce0d914bfa}\label{classTextBox_a2aa3f576362355e4c87558ce0d914bfa}} 
+\index{TextBox@{TextBox}!setCharacterSize@{setCharacterSize}}
+\index{setCharacterSize@{setCharacterSize}!TextBox@{TextBox}}
+\doxysubsubsection{\texorpdfstring{setCharacterSize()}{setCharacterSize()}}
+{\footnotesize\ttfamily void Text\+Box\+::set\+Character\+Size (\begin{DoxyParamCaption}\item[{int}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the font size of \mbox{\hyperlink{classTextBox}{Text\+Box}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em size} & The new font size of \mbox{\hyperlink{classTextBox}{Text\+Box}}. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classTextBox_a62a3dcfd0e152819d029c84fb1afcaac}\label{classTextBox_a62a3dcfd0e152819d029c84fb1afcaac}} 
+\index{TextBox@{TextBox}!setColor@{setColor}}
+\index{setColor@{setColor}!TextBox@{TextBox}}
+\doxysubsubsection{\texorpdfstring{setColor()}{setColor()}}
+{\footnotesize\ttfamily void Text\+Box\+::set\+Color (\begin{DoxyParamCaption}\item[{int}]{r,  }\item[{int}]{g,  }\item[{int}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the color of \mbox{\hyperlink{classTextBox}{Text\+Box}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em r} & The new font color of \mbox{\hyperlink{classTextBox}{Text\+Box}} (red should be 0 to 255) \\
+\hline
+{\em g} & The new font color of \mbox{\hyperlink{classTextBox}{Text\+Box}} (green should be 0 to 255) \\
+\hline
+{\em b} & The new font color of \mbox{\hyperlink{classTextBox}{Text\+Box}} (blue should be 0 to 255) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classTextBox_aca0a141d01e364b7721d9984929fecba}\label{classTextBox_aca0a141d01e364b7721d9984929fecba}} 
+\index{TextBox@{TextBox}!setPosition@{setPosition}}
+\index{setPosition@{setPosition}!TextBox@{TextBox}}
+\doxysubsubsection{\texorpdfstring{setPosition()}{setPosition()}}
+{\footnotesize\ttfamily void Text\+Box\+::set\+Position (\begin{DoxyParamCaption}\item[{int}]{x,  }\item[{int}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the position of the \mbox{\hyperlink{classTextBox}{Text\+Box}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+Position} & The new position of the \mbox{\hyperlink{classTextBox}{Text\+Box}}. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classTextBox_ac87dc822d67a4450628a0fb0c306e72e}\label{classTextBox_ac87dc822d67a4450628a0fb0c306e72e}} 
+\index{TextBox@{TextBox}!setText@{setText}}
+\index{setText@{setText}!TextBox@{TextBox}}
+\doxysubsubsection{\texorpdfstring{setText()}{setText()}}
+{\footnotesize\ttfamily void Text\+Box\+::set\+Text (\begin{DoxyParamCaption}\item[{string}]{new\+Text }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Set new text for your text box. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+Text} & The new text for your text box. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{fight__engine_8cpp}{fight\+\_\+engine.\+cpp}}\end{DoxyCompactItemize}

@@ -41,31 +41,53 @@ class NewGame {
     int statics_max;
 };
 
+struct pos{
+    pos(int theH, int theW){
+        this->thisH=theH;
+        this->thisW=theW;
+    }
+    int h(){
+        return this->thisH;
+    }
+    int w(){
+        return this->thisW;
+    }
+    private:
+        int thisH;
+        int thisW;
+};
+
+
+const int WINW = 2500;
+const int WINH = 1440;
+
 
 int main(){
-    //create_window("Joey's Game", 2560, 1440); // Fullscreen but at cost of sprites looking small and needing to make stage bigger with adjusting speed and jump vals.
-    create_window("Joey's Game", 800, 800); // Small window but works same as in out test.cpp
+    create_window("Joey's Game", WINW, WINH); //previous: 1200, 800
     window.setKeyRepeatEnabled(false);
     int state = TITLE;
+    string winner = "";
+    
 
-    while(state!=GAME_OVER){
+    while(window.isOpen()){
         if(state==TITLE){
-            TextBox title(0, -8, "./images/pixer.ttf", "Joey's Game");
+            TextBox title(WINW/4, WINH/4-8, "./images/pixer.ttf", "Joey's Game");
             title.setColor(255, 255, 255);
 
             Event event;
             while(window.pollEvent(event)){
-                    switch (event.type) {
-                        case Event::Closed:
-                            window.close();
-                            break;
-                        case Event::KeyReleased:
-                            state=GAME;
-                            break;
-                        default:
-                            break;
-                    }
+                // cout << "pollEvent while loop (TITLE)" << endl;
+                switch (event.type) {
+                    case Event::Closed:
+                        window.close();
+                        break;
+                    case Event::KeyReleased:
+                        state=GAME;
+                        break;
+                    default:
+                        break;
                 }
+            }
 
             window.clear(Color(42,42,42,255)); // Dark gray.
 
@@ -117,35 +139,56 @@ int main(){
             blue_kick.addAnimationData(make_sprite("./images/blue/kick_large.png"));
             blue_punch.addAnimationData(make_sprite("./images/blue/punch_large.png"));
 
+            pos center = pos((int)WINH/2, (int)WINW/2);
+
             // Create orange object
-            KinematicBody2D orange(50,100,64,64);
+            KinematicBody2D orange(center.w()-64-WINW/4,center.h()-64,64,64);
             orange.setSprite(orange_idle.getCurrentFrame());
             orange.initHitbox();
             orange.getHitbox()->initRectangle(); //Testing
             //orange.adjustHitbox(2,4,52,50);
             orange.a.y = 1;
             // Create blue object
-            KinematicBody2D blue(550,100,64,64);
+            KinematicBody2D blue(center.w(),center.h()-64,64,64);
             blue.setSprite(blue_idle.getCurrentFrame());
             blue.initHitbox();
             blue.getHitbox()->initRectangle(); //Testing
             //blue.adjustHitbox(2,4,52,50);
             blue.a.y = 1;
 
+
             // Initialize game object and static bodies.
-            NewGame Game(orange, blue, 6);
-            Game.addStatic(KinematicBody2D(0,600,800,200));
+                        //xPos, yPos, width, height
+            NewGame Game(orange, blue, 20);
+            Game.addStatic(KinematicBody2D(center.w()-WINW/2+((WINW-center.w())/4),center.h(),WINW/2,75));
             Game.getStatic(0)->initRectangle();
             Game.getStatic(0)->initHitbox();
 
+            Game.addStatic(KinematicBody2D(2120,0,900,1100));
+            Game.getStatic(1)->initRectangle();
+            Game.getStatic(1)->initHitbox();
+
+            Game.addStatic(KinematicBody2D(-1100,0,900,1100));
+            Game.getStatic(2)->initRectangle();
+            Game.getStatic(2)->initHitbox();
+
+            Game.addStatic(KinematicBody2D(-200,-1100,1400,900));
+            Game.getStatic(3)->initRectangle();
+            Game.getStatic(3)->initHitbox();
+
+            Game.addStatic(KinematicBody2D(-200,1100,2900,900));
+            Game.getStatic(4)->initRectangle();
+            Game.getStatic(4)->initHitbox();
 
 
             Event event;
             int orange_keys[5] = {0,0,0,0,0};
             int blue_keys[5] = {0,0,0,0,0};
+            int *collide;
             int orange_punch_counter=0;
             int blue_punch_counter=0;
-            int *collide;
+            int orange_knockback=1;
+            int blue_knockback=1;
             bool orange_on_ground = false;
             bool blue_on_ground = false;
             bool orange_touching = false;
@@ -157,10 +200,13 @@ int main(){
 
             // Framerate Control -Cordell King
             Framerate ticker(30);
-            while (window.isOpen()) {
+            while (window.isOpen() && state==GAME) {
+                // cout << "isOpen while loop (GAME)" << endl;
                 ticker.next_frame();
                 
                 while(window.pollEvent(event)){
+                    // cout << "pollEvent while loop (GAME)" << endl;
+                    int velocity_mod = -30;
                     switch (event.type) {
                         case Event::Closed:
                             window.close();
@@ -186,7 +232,7 @@ int main(){
                                     if (orange_keys[2] == 0 && orange_on_ground){
                                         //pew_sound.play();
                                         orange_keys[2] = 1;
-                                        orange.v.y = -20;
+                                        orange.v.y = velocity_mod;
                                     }
                                     break;
                                 case Keyboard::S:
@@ -212,7 +258,7 @@ int main(){
                                     if (blue_keys[2] == 0 && blue_on_ground){
                                         //pew_sound.play();
                                         blue_keys[2] = 1;
-                                        blue.v.y = -20;
+                                        blue.v.y = velocity_mod;
                                     }
                                     break;
                                 case Keyboard::Down:
@@ -275,6 +321,20 @@ int main(){
                 // blue:
                 //blue.v.x -= 10*(keys[3]-keys[2]);
                 blue.dampen(blue_f);
+
+                // is player out of bounds?
+                for (int i = 1; i < 5; i++) {
+                    if (Game.getStatic(i)->collides(&orange) || Game.getStatic(i)->collides(&blue)) {
+                        // cout << "ended game" << endl;
+                        state=POST_GAME;
+                        if(Game.getStatic(i)->collides(&blue)){
+                            winner = "orange";
+                        }else{
+                            winner = "blue";
+                        }
+                        break;
+                    };
+                };
 
                 // orange: 
                 orange_on_ground = false;
@@ -368,24 +428,47 @@ int main(){
                 
                 //handle attacks
                 if((orange_frame=="punch" || orange_frame=="kick") && (orange_touching && blue_touching) && (blue_frame=="punch" || blue_frame=="kick")){
-                    cout << "They collided" << endl;
+                    // cout << "Both collided" << endl;
                 }else if((orange_frame=="punch" || orange_frame=="kick") && (orange_touching && blue_touching) && (blue_frame!="punch" && blue_frame!="kick")){
-                    cout << "ORANGE HIT BLUE" << endl;
+                    // cout << "ORANGE HIT BLUE" << endl;
+                    if(orange.isFlippedH()){
+                        blue.p.x -= 10*(blue_knockback);
+                    }else{
+                        blue.p.x += 10*(blue_knockback);
+                    }
+                    blue_knockback*=2;
                 }else if((blue_frame=="punch" || blue_frame=="kick") && (orange_touching && blue_touching) && (orange_frame!="punch" && orange_frame!="kick")){
-                    cout << "BLUE HIT ORANGE" << endl;
+                    // cout << "BLUE HIT ORANGE" << endl;
+                    if(blue.isFlippedH()){
+                        orange.p.x -= 10*(orange_knockback);
+                    }else{
+                        orange.p.x += 10*(orange_knockback);
+                    }
+                    orange_knockback*=2;
                 }
+
+                TextBox orange_KB(center.w()-64-WINW/4, WINH/2, "./images/pixer.ttf", to_string(orange_knockback));
+                orange_KB.setColor(255, 150, 0);
+                TextBox blue_KB(center.w(), WINH/2, "./images/pixer.ttf", to_string(blue_knockback));
+                blue_KB.setColor(50, 20, 255);
                 
 
                 //Draw the Screen
                 window.clear(Color(42,42,42,255)); // Dark gray.
-                window.draw(Game.getStatic(0)->getRectangle()); //Draw the Floor
-                //window.draw(Game.getStatic(1)->getRectangle());
-                //window.draw(Game.getStatic(2)->getRectangle());
-                //window.draw(Game.getStatic(3)->getRectangle());
+                window.draw(Game.getStatic(0)->getRectangle()); //Draw the floor
+                window.draw(Game.getStatic(1)->getRectangle()); //Draw the right wall
+                window.draw(Game.getStatic(2)->getRectangle()); //Draw the left wall
+                window.draw(Game.getStatic(3)->getRectangle()); //Draw the ceiling
+                window.draw(Game.getStatic(4)->getRectangle()); //Draw the crevice
                 window.draw(orange.getSprite());
-                window.draw(orange.getHitbox()->getRectangle());
+                // window.draw(orange.getHitbox()->getRectangle());
                 window.draw(blue.getSprite());
-                window.draw(blue.getHitbox()->getRectangle());
+                // window.draw(blue.getHitbox()->getRectangle());
+                window.draw(orange_KB.text);
+                window.draw(blue_KB.text);
+
+                
+                
 
                 // Text Test
                 //window.draw(test_text.txt);
@@ -393,22 +476,23 @@ int main(){
                 window.display();
             }
         }else if(state==POST_GAME){
-            TextBox title(0, -8, "./images/pixer.ttf", "End Screen");
+            TextBox title(WINW/4, WINH/4-8, "./images/pixer.ttf", winner + " wins!");
             title.setColor(255, 255, 255);
 
             Event event;
             while(window.pollEvent(event)){
-                    switch (event.type) {
-                        case Event::Closed:
-                            window.close();
-                            break;
-                        case Event::KeyReleased:
-                            state=TITLE;
-                            break;
-                        default:
-                            break;
-                    }
+                // cout << "pollEvent while loop (POST_GAME)" << endl;
+                switch (event.type) {
+                    case Event::Closed:
+                        window.close();
+                        break;
+                    case Event::KeyReleased:
+                        state=TITLE;
+                        break;
+                    default:
+                        break;
                 }
+            }
 
             window.clear(Color(42,42,42,255)); // Dark gray.
 
