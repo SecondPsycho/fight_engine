@@ -37,8 +37,8 @@ class Player {
 
             this->knocked.addAnimationData(make_sprite("./images/Ailie/A_hurt_2.png"));
 
-            this->kick.addAnimationData(make_sprite("./images/Ailie/A_kick_1.png"));
-            this->kick_windup.addAnimationData(make_sprite("./images/Ailie/A_kick_2.png"));
+            this->kick_windup.addAnimationData(make_sprite("./images/Ailie/A_kick_1.png"));
+            this->kick.addAnimationData(make_sprite("./images/Ailie/A_kick_2.png"));
 
             this->hang.addAnimationData(make_sprite("./images/Ailie/A_hang_s.png"));
 
@@ -91,6 +91,7 @@ class Player {
             if (collide[2]) {
                 if (collide[1] >= 1) {
                     this->hanging = true;
+                    this->double_jump = true;
                 } else if (collide[1] <= -1) {
                     this->onGround();
                 }
@@ -122,7 +123,6 @@ class Player {
                 for (int i = 0; i < flowercount; i++) {
                     if (this->body->collides(&(Flowers[i]))) {
                         this->make_jump();
-                        this->double_jump = true;
                         return true;
                     }
                 }
@@ -159,7 +159,7 @@ class Player {
             } else {
                 this->body->v.x += this->dmg;
             }
-            this->body->v.y -= this->dmg;
+            this->body->v.y -= this->dmg/3;
         }
         void onGround() {
             this->on_ground = true;
@@ -214,13 +214,13 @@ class Player {
 
 class NewGame {
     public:
-        NewGame(Player* player1, Player* player2, int n = 10, int f = 10, int w = 10) {
+        NewGame(Player* player1, Player* player2, int s = 30, int f = 30, int w = 2) {
             this->statics_count = 0;
-            this->statics_max = n;
+            this->statics_max = s;
             this->flowers_count = 0;
-            this->flowers_max = n;
+            this->flowers_max = f;
             this->waters_count = 0;
-            this->waters_max = n;
+            this->waters_max = w;
             this->statics = new KinematicBody2D[this->statics_max];
             this->flowers = new KinematicBody2D[this->flowers_max];
             this->waters = new KinematicBody2D[this->waters_max];
@@ -237,7 +237,8 @@ class NewGame {
             cout << "Invalid Static Index.\n";
             return nullptr;
         }
-        void addStatic(KinematicBody2D newstatic) {
+        void addStatic(int x, int y, int w = 300, int h = 50) {
+            KinematicBody2D newstatic(x,y,w,h);
             if (this->statics_count < this->statics_max) {
                 this->statics[this->statics_count] = newstatic;
                 this->statics_count++;
@@ -258,7 +259,8 @@ class NewGame {
             cout << "Invalid Flower Index.\n";
             return nullptr;
         }
-        void addFlower(KinematicBody2D newflower) {
+        void addFlower(int x, int y) {
+            KinematicBody2D newflower(x,y,50,50);
             if (this->flowers_count < this->flowers_max) {
                 this->flowers[this->flowers_count] = newflower;
                 this->flowers_count++;
@@ -279,7 +281,8 @@ class NewGame {
             cout << "Invalid Water Index.\n";
             return nullptr;
         }
-        void addWater(KinematicBody2D newwater) {
+        void addWater(int x, int y, int w = 2000, int h = 2000) {
+            KinematicBody2D newwater(x,y,w,h);
             if (this->waters_count < this->waters_max) {
                 this->waters[this->waters_count] = newwater;
                 this->waters_count++;
@@ -346,37 +349,123 @@ class NewGame {
                 box->v.x = -speed;
             }
         }
-        void platformControlY(int worldshifty, int index, int bottom, int top, int speed = 5) {
+        void platformControlY(int worldshifty, int index, int top, int bottom, int speed = 5) {
             KinematicBody2D* box = this->getStatic(index);
-            if (box->posY() <= worldshifty + bottom) {
+            if (box->posY() <= worldshifty + top) {
                 box->v.y = speed;
-            } else if (box->posY() >= worldshifty + top - box->getHitbox()->h) {
+            } else if (box->posY() >= worldshifty + bottom - box->getHitbox()->h) {
                 box->v.y = -speed;
             }
         }
         void movePlatforms(int worldshifty) {
-            platformControlX(3, 200, 1000);
-            platformControlY(worldshifty, 4, 200, 475);
+            //Section 1
+            int count = 5;
+            platformControlX(count, 200, 1000); count++;
+            platformControlY(worldshifty, count, 0, 475); count++;
 
+            //Section 2
+            count = 10;
+            platformControlX(count, 500, 1400); count++;
+            platformControlX(count, 300, 1000); count++;
+
+            //Section 3
+            count = 14;
+            platformControlY(worldshifty, count, -2500, -800); count++;
+            platformControlY(worldshifty, count, -1600, -900, 10); count++;
+
+            //Section 4
+            count = 20;
+            platformControlY(worldshifty, count, -3400, -2600); count++;
+
+            //Section 5
+            count = 24;
+            platformControlX(count, 800, 1400); count++;
+
+            //Section 6
+            count = 28;
+            platformControlY(worldshifty, count, -5000, -4200); count++;
+            platformControlY(worldshifty, count, -5000, -4200); count++;
         }
         void buildLevel() {
 
             //Section 0
-            this->addStatic(KinematicBody2D(200,900,1200,200));
-            this->addStatic(KinematicBody2D(200,600,300,300));
-            this->addStatic(KinematicBody2D(1100,600,300,300));
+            this->addStatic(200,900,1200,200);
+            this->addStatic(200,600,300,300);
+            this->addStatic(1100,600,300,300);
 
-            this->addFlower(KinematicBody2D(75,500,50,50));
-            this->addFlower(KinematicBody2D(1475,500,50,50));
+            //Wall 1
+            this->addStatic(-100,-700,200,2200);
+            this->addStatic(1500,-2600,200,4000);
 
             //Section 1
-            this->addStatic(KinematicBody2D(200,300,300,50));
-            //this->getStatic(3)->v.x = 5;
+            this->addStatic(200,300); //5
+            this->addStatic(1100,0); //6
 
-            this->addStatic(KinematicBody2D(1100,200,300,50));
-            //this->getStatic(4)->v.y = 5;
+            this->addFlower(75,450);
+            this->addFlower(1475,500);
+            this->addFlower(900,400);
 
             //Section 2
+            this->addStatic(100,-100,350,50);
+            this->addStatic(100,-500,200);
+            this->addStatic(-100,-700,300);
+
+            this->addStatic(500,-300,400); //10
+            this->addStatic(300,-700,400,75); //11
+
+            this->addFlower(725,75);
+            this->addFlower(1300,-150);
+            this->addFlower(200,-250);
+            this->addFlower(125,-1025);
+            this->addFlower(75,-850);
+            this->addFlower(275,-875);
+
+            //Section 3
+            this->addStatic(0,-1300,300,100);
+            this->addStatic(700,-1300,300,100);
+
+            this->addStatic(1100,-2500,300,100); //14
+            this->addStatic(400,-1600,200); //15
+
+            this->addFlower(0,-1750);
+            this->addFlower(750,-1525);
+            this->addFlower(200,-1500);
+
+            //Section 4
+            this->addStatic(100,-2000,900,200);
+            this->addStatic(200,-2100,200,100);
+            this->addStatic(800,-2450,200,100);
+            this->addStatic(1400,-2600,300);
+
+            this->addStatic(500,-3400,600,50); //20
+
+            this->addFlower(550,-2500);
+            this->addFlower(300,-2725);
+            this->addFlower(1350,-3450);
+            this->addFlower(375,-3050);
+            this->addFlower(1350,-3175);
+            this->addFlower(1125,-3300);
+            this->addFlower(200,-3200);
+            this->addFlower(225,-3425);
+            this->addFlower(75,-2900);
+
+            //Wall 2
+            this->addStatic(-100,-4000,200,1700);
+            this->addStatic(1500,-4000,200,1100);
+
+            //Section 5
+            this->addStatic(100,-3700,600,100);
+
+            this->addStatic(800,-3700,300,100); //24
+
+            //Section 6
+            this->addStatic(300,-4300,1000,300);
+            this->addStatic(400,-4500);
+            this->addStatic(900,-4500);
+
+            this->addStatic(0,-5000); //28
+            this->addStatic(1300,-5000); //29
+            
 
             //Set 'em up
             for (int i = 0; i < this->statics_count; i ++) {
@@ -390,9 +479,9 @@ class NewGame {
             }
 
             //Water
-            this->addWater(KinematicBody2D(0,1300,2000,2000));
+            this->addWater(0,1300);
             this->getWater(0)->initHitbox();
-            this->addWater(KinematicBody2D(0,1500,2000,2000));
+            this->addWater(0,1500);
 
             for (int i = 0; i < this->waters_count; i ++) {
                 this->getWater(i)->initRectangle();

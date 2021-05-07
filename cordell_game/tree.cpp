@@ -15,7 +15,7 @@ int main(int argc, char* argv[]){
     Player* P2 = new Player(1222,450);
 
     //Create Sprite Data
-    NewGame Game(P1, P2, 6);
+    NewGame Game(P1, P2);
     Game.buildLevel();
     Game.ON = false;
 
@@ -116,17 +116,20 @@ int main(int argc, char* argv[]){
         while (Game.ON && window.isOpen()) {
             ticker.next_frame();
             
-            if (P1->body->pos().y < 400 || P2->body->pos().y < 400) {
-                //t = 0;
+            if (worldshifty > -5200 && (P1->body->pos().y < 400 || P2->body->pos().y < 400)) {
+                int scale = 1;
+                if (P1->body->pos().y < 0 || P2->body->pos().y < 0) {
+                    scale = 2;
+                }
                 for (int i = 0; i < Game.getStaticsCount(); i++) {
-                    Game.getStatic(i)->p.y += risespeed;
+                    Game.getStatic(i)->p.y += risespeed*scale;
                 }
                 for (int i = 0; i < Game.getFlowersCount(); i++) {
-                    Game.getFlower(i)->p.y += risespeed;
+                    Game.getFlower(i)->p.y += risespeed*scale;
                 }
-                worldshifty += risespeed;
-                P1->body->p.y += risespeed;
-                P2->body->p.y += risespeed;
+                worldshifty += risespeed*scale;
+                P1->body->p.y += risespeed*scale;
+                P2->body->p.y += risespeed*scale;
             }
             t += 1;
             if (t >= fps) {
@@ -234,6 +237,10 @@ int main(int argc, char* argv[]){
                             default:
                                 break;
                         }
+                        break;
+                    case Event::MouseButtonPressed:
+                        cout << "Mouse: " << event.mouseButton.x << ' ' << event.mouseButton.y - worldshifty << endl;
+                        cout << "Worldshifty: " << worldshifty << endl;
                         break;
                     default:
                         break;
