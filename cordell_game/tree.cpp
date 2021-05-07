@@ -165,12 +165,8 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::E:
                                 P1->keys[3] = true;
-                                if (P1->attackCooldown == 0) {
-                                    P1->attackCooldown += 3;
-                                    if (P1->punch(P2)) {
-                                        P2->takeHit(Vector2D(0,0), P1->body->isFlippedH());
-                                        P2->hitCooldown += 2;
-                                    }
+                                if (P1->attackCooldown == 0 && P1->punch(P2)) {
+                                    P2->takeHit(Vector2D(0,0), P1->body->isFlippedH());
                                 }
                                 break;
                             case Keyboard::H:
@@ -193,12 +189,8 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::I:
                                 P2->keys[3] = true;
-                                if (P2->attackCooldown == 0) {
-                                    P2->attackCooldown += 3;
-                                    if (P2->punch(P1)) {
-                                        P1->takeHit(Vector2D(0,0), P2->body->isFlippedH());
-                                        P1->hitCooldown += 2;
-                                    }
+                                if (P2->attackCooldown == 0 && P2->punch(P1)) {
+                                    P1->takeHit(Vector2D(0,0), P2->body->isFlippedH());
                                 }
                                 break;
                             default:

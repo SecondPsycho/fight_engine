@@ -17,11 +17,11 @@ class Player {
         this->punchbox = Hitbox(px,py,32*scale,48*scale);
         this->punchbox.initRectangle();
 
-        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_1.png"));
-        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_2.png"));
-        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_3.png"));
-        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_2.png"));
-        this->idle.setMaxFrameTick(10);
+        this->ouch.addAnimationData(make_sprite("./images/Ailie/A_hurt_1.png"));
+        this->block.addAnimationData(make_sprite("./images/Ailie/A_stop_1.png"));
+
+        this->fist_windup.addAnimationData(make_sprite("./images/Ailie/A_fist_1.png"));
+        this->fist.addAnimationData(make_sprite("./images/Ailie/A_fist_2.png"));
 
         this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_1.png"));
         this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_2.png"));
@@ -29,14 +29,22 @@ class Player {
         this->walk.addAnimationData(make_sprite("./images/Ailie/A_walk_2.png"));
         this->walk.setMaxFrameTick(8);
 
-        this->fist.addAnimationData(make_sprite("./images/Ailie/A_fist_2.png"));
-        this->ouch.addAnimationData(make_sprite("./images/Ailie/A_ouch_g.png"));
-        /*
-        this->idle.addAnimationData(make_sprite("./images/wolf_idle.png", scale));
-        this->walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk1.png", scale));
-        this->walk.addAnimationData(make_sprite("./images/wolf_walk/wolf_walk2.png", scale));
-        this->leap.addAnimationData(make_sprite("./images/wolf_leap.png", scale));
-        //*/
+        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_1.png"));
+        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_2.png"));
+        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_3.png"));
+        this->idle.addAnimationData(make_sprite("./images/Ailie/A_idle_2.png"));
+        this->idle.setMaxFrameTick(10);
+
+        this->knocked.addAnimationData(make_sprite("./images/Ailie/A_hurt_2.png"));
+
+        this->kick.addAnimationData(make_sprite("./images/Ailie/A_kick_1.png"));
+        this->kick_windup.addAnimationData(make_sprite("./images/Ailie/A_kick_2.png"));
+
+        this->hang.addAnimationData(make_sprite("./images/Ailie/A_hang_s.png"));
+
+        this->rise.addAnimationData(make_sprite("./images/Ailie/A_rise_s.png"));
+        this->fall.addAnimationData(make_sprite("./images/Ailie/A_fall_s.png"));
+
         this->body->a.y = 1;
     }
     void animate() {
@@ -45,20 +53,38 @@ class Player {
         P1->body->setSprite(P1->leap.getCurrentFrame()); // Do leap animation
       } else 
       //*/
-      if (this->hitCooldown > 0) {
-        this->body->setSprite(this->ouch.frameTick()); 
-      } else if (this->attackCooldown > 0) {
-        this->body->setSprite(this->fist.frameTick());
-      } else if (this->keys[1]^this->keys[0]) {
-        this->body->setSprite(this->walk.frameTick()); // Do walking animations
+      
+      if (this->hurt) {
+        if (this->stomped) {
+          this->body->setSprite(this->knocked.frameTick()); 
+        } else {
+          this->body->setSprite(this->ouch.frameTick()); 
+        }
+      } else if (this->on_ground) {
+        if (this->attackCooldown > 0) {
+          this->body->setSprite(this->fist.frameTick());
+        } else if (this->keys[1]^this->keys[0]) {
+          this->body->setSprite(this->walk.frameTick()); // Do walking animations
+        } else {
+          this->body->setSprite(this->idle.frameTick()); // Do idle animation
+        }
       } else {
-        this->body->setSprite(this->idle.frameTick()); // Do idle animation
+        if (this->blocking) {
+          this->body->setSprite(this->block.frameTick());
+        } else if (this->attackCooldown > 0) {
+          this->body->setSprite(this->kick.frameTick());
+        } else if (this->hanging) {
+          this->body->setSprite(this->hang.frameTick());
+        } else if (this->body->p.y + this->body->v.y < 0) {
+          this->body->setSprite(this->rise.frameTick());
+        } else {
+          this->body->setSprite(this->fall.frameTick());
+        }
       }
     }
     bool punch(Player* PN) {
         float scale = 2;
-        //cout << this->punchbox.x << ' ' << this->punchbox.y << ' ' << this->punchbox.w << ' ' << this->punchbox.h << "   ";
-        //cout << PN->body->getHitbox()->x << ' ' << PN->body->getHitbox()->y << ' ' << PN->body->getHitbox()->w << ' ' << PN->body->getHitbox()->h << "   ";
+        this->attackCooldown += 3;
         if (this->body->isFlippedH()) {
             this->punchbox.setPosition(this->body->posX()-(16*scale), this->body->posY()+(8*scale));
         } else {
@@ -69,36 +95,39 @@ class Player {
     bool jump(KinematicBody2D* Flowers, int flowercount, Player* PN) {
         if (!this->keys[2]) {
             if (this->on_ground) {
-                this->body->v.y = -20;
-                this->keys[2] = true;
+                this->make_jump();
                 return true;
             } else if (this->body->collides(PN->body)) {
-                this->body->v.y = -20;
-                this->keys[2] = true;
+                this->make_jump();
                 PN->body->v.y = 20;
-                PN->flying = true;
+                PN->stomped = true;
+                PN->hurt = true;
                 this->double_jump = true;
                 return true;
             } 
             for (int i = 0; i < flowercount; i++) {
                 if (this->body->collides(&(Flowers[i]))) {
-                    this->body->v.y = -20;
-                    this->keys[2] = true;
+                    this->make_jump();
                     this->double_jump = true;
                     return true;
                 }
             }
             if (this->double_jump) {
-                this->body->v.y = -20;
-                this->keys[2] = true;
+                this->make_jump();
                 this->double_jump = false;
                 return true;
             }
         }
         return false;
     }
+    void make_jump() {
+      this->body->v.y = -20;
+      this->keys[2] = true;
+      this->hurt = false;
+      this->stomped = false;
+    }
     void takeHit(Vector2D dir, bool flipped) {
-        this->flying = true;
+        this->hurt = true;
         this->dmg += 5;
         if (flipped) {
             this->body->v.x -= this->dmg;
@@ -106,27 +135,47 @@ class Player {
             this->body->v.x += this->dmg;
         }
         this->body->v.y -= this->dmg;
+        
     }
     void onGround() {
         this->on_ground = true;
         this->double_jump = true;
-        this->flying = false;
+        this->hurt = false;
+        this->stomped = false;
+    }
+    void cooldowns() {
+      if (this->attackCooldown > 0) {
+          this->attackCooldown -= 1;
+        }
     }
     //Attributes
+    bool hurt = false;
     bool on_ground = false;
+    bool windup = false;
+    bool attack = false;
+    bool hanging = false;
+    bool stomped = false;
+    bool blocking = false;
+
     bool double_jump = false;
-    bool flying = false;
     int attackCooldown = 0;
-    int hitCooldown = 0;
+    
     bool keys[5] = {false,false,false,false,false};
     //Body
     KinematicBody2D* body;
     Hitbox punchbox;
-    animation_data idle;
-    animation_data walk;
-    animation_data fist;
     animation_data ouch;
-    animation_data leap;
+    animation_data block;
+    animation_data fist_windup;
+    animation_data fist;
+    animation_data walk;
+    animation_data idle;
+    animation_data knocked;
+    animation_data kick_windup;
+    animation_data kick;
+    animation_data hang;
+    animation_data rise;
+    animation_data fall;
   private:
     int w, h;
     int dmg = 0;
@@ -215,18 +264,8 @@ class NewGame {
     void runPhysics(int t, int fps) {
       fps = fps / 10;
       if (t % fps == 0) {
-        if (this->P1->attackCooldown > 0) {
-          this->P1->attackCooldown -= 1;
-        }
-        if (this->P2->attackCooldown > 0) {
-          this->P2->attackCooldown -= 1;
-        }
-        if (this->P1->hitCooldown > 0) {
-          this->P1->hitCooldown -= 1;
-        }
-        if (this->P2->hitCooldown > 0) {
-          this->P2->hitCooldown -= 1;
-        }
+        this->P1->cooldowns();
+        this->P2->cooldowns();
       }
 
       if (this->P1->attackCooldown == 0) {
@@ -274,13 +313,21 @@ class NewGame {
 
       for (int i = 0; i < this->statics_count; i++) {
         this->statics[i].tick();
-        collide = this->statics[i].blocks(this->P1->body, P1->flying);
-        if (collide[2] && collide[1] <= -1) {
-          this->P1->onGround();
+        collide = this->statics[i].blocks(this->P1->body, P1->hurt);
+        if (collide[2]) {
+          if (collide[1] <= -1) {
+            this->P1->onGround();
+          } else if (collide[1] >= 1) {
+            this->P1->hanging = true;
+          }
         };
-        collide = this->statics[i].blocks(this->P2->body, P2->flying);
-        if (collide[2] && collide[1] <= -1) {
-          this->P2->onGround();
+        collide = this->statics[i].blocks(this->P2->body, P2->hurt);
+        if (collide[2]) {
+          if (collide[1] <= -1) {
+            this->P2->onGround();
+          } else if (collide[1] >= 1) {
+            this->P2->hanging = true;
+          }
         };
       };
     }
