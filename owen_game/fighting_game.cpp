@@ -3,8 +3,6 @@
 // fighting game
 // by owen
 
-// globals
-
 int main(int argc, char* argv[]) {
     printf("now playing: fighting game\n");
 
@@ -13,14 +11,25 @@ int main(int argc, char* argv[]) {
     Event event;
     int p1keys[5] = {0,0,0,0,0};
     int p2keys[5] = {0,0,0,0,0};
-    string state = "game";
-    TextBox title(0, -8, "assets/pixer.ttf", "fighting game demo");
+    string state = "menu";
+    TextBox title(280, 350, "assets/pixer.ttf", "fighting game demo");
+    TextBox title2(328, 390, "assets/pixer.ttf", "press enter to play");
+    TextBox hp1(0, 770, "assets/pixer.ttf", "ooooo");
+    TextBox hp2(726, 770, "assets/pixer.ttf", "ooooo");
+    TextBox winner1(280, 350, "assets/pixer.ttf", "player one wins");
+    TextBox winner2(280, 350, "assets/pixer.ttf", "player two wins");
     title.setColor(0, 0, 0);
+    title2.setColor(0, 0, 0);
+    winner1.setColor(0, 0, 0);
+    winner2.setColor(0, 0, 0);
+    title2.setCharacterSize(20);
     int p1_attackTimer = -1;
     int p2_attackTimer = -1;
     Vector2D v(0, 0);
     int p1hp = 5;
     int p2hp = 5;
+    int diff = 0;
+    string health = "ooooo";
 
     animation_data p1_idle;
     animation_data p1_dead;
@@ -105,6 +114,8 @@ int main(int argc, char* argv[]) {
     Framerate ticker(60);
     while (window.isOpen()) {
         ticker.next_frame();
+
+        // game
         
         if (state == "game") {
 
@@ -212,6 +223,8 @@ int main(int argc, char* argv[]) {
             p1.tick();
             p2.tick();
 
+            // collision
+
             p1.blocks(&p2);
 
             p1_grounded = false;
@@ -221,14 +234,6 @@ int main(int argc, char* argv[]) {
                 p1_grounded = true;
             }
 
-            if (p1_attackTimer >= 0) {
-                p1_attackTimer++;
-                if (p1_attackTimer >= 50) {
-                    p1_attackTimer = -1;
-                    p1_attack.cur_frame = 0;
-                }
-            }
-
             p2_grounded = false;
             p2_ground_test = ground.blocks(&p2);
             rwall.blocks(&p2);
@@ -236,8 +241,50 @@ int main(int argc, char* argv[]) {
                 p2_grounded = true;
             }
 
+
+            // attacking
+
+            if (p1_attackTimer >= 0) {
+                p1_attackTimer++;
+                if (p1_attackTimer == 25) {
+                    diff = p2.posX() - p1.posX();
+                    
+                    if (diff < 150) {
+
+                        // update hp
+
+                        p2hp -= 1;
+                        health = "";
+                        for (int i = 0; i < p2hp; i++) {
+                            health.append("o");
+                        }
+                        hp2.setText(health);
+                    }
+                }
+
+                if (p1_attackTimer >= 50) {
+                    p1_attackTimer = -1;
+                    p1_attack.cur_frame = 0;
+                }
+            }
+
             if (p2_attackTimer >= 0) {
                 p2_attackTimer++;
+                if (p2_attackTimer == 25) {
+                    diff = p2.posX() - p1.posX();
+                    
+                    if (diff < 150) {
+
+                        // update hp
+
+                        p1hp -= 1;
+                        health = "";
+                        for (int i = 0; i < p1hp; i++) {
+                            health.append("o");
+                        }
+                        hp1.setText(health);
+                    }
+                }
                 if (p2_attackTimer >= 50) {
                     p2_attackTimer = -1;
                     p2_attack.cur_frame = 0;
@@ -287,8 +334,105 @@ int main(int argc, char* argv[]) {
             window.draw(ground.getRectangle());
             window.draw(title.text);
 
+            window.draw(hp1.text);
+            window.draw(hp2.text);
+
             window.display();
 
+        }
+        
+        // main menu
+        
+        else if (state == "menu") {
+
+            // draw title screen
+
+            window.clear(Color(255,255,255,255));
+            window.draw(title.text);
+            window.draw(title2.text);
+            window.display();
+
+            // start game
+
+            while(window.pollEvent(event)){
+                switch (event.type) {
+                    case Event::Closed:
+                        window.close();
+                        break;
+                    case Event::KeyPressed:
+                        if (event.key.code == Keyboard::Enter) {
+                            state = "game";
+                            title.setPosition(0,-8);
+                        }
+                    default:
+                        break;
+                }
+            }
+
+        }
+
+        // player one wins
+
+        else if (state == "gg1"){
+
+            // draw win screen
+
+            window.clear(Color(255,255,255,255));
+            window.draw(winner1.text);
+            window.display();
+
+            // close window
+
+            while(window.pollEvent(event)){
+                switch (event.type) {
+                    case Event::Closed:
+                        window.close();
+                        break;
+                    case Event::KeyPressed:
+                        switch (event.key.code) {
+                            case Keyboard::Escape:
+                                window.close();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        // player two wins
+
+        else if (state == "gg2"){
+
+            // draw win screen
+
+            window.clear(Color(255,255,255,255));
+            window.draw(winner2.text);
+            window.display();
+
+            // close window
+
+            while(window.pollEvent(event)){
+                switch (event.type) {
+                    case Event::Closed:
+                        window.close();
+                        break;
+                    case Event::KeyPressed:
+                        switch (event.key.code) {
+                            case Keyboard::Escape:
+                                window.close();
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
     }
 }
