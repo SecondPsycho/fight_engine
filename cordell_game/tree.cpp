@@ -12,10 +12,10 @@ int main(int argc, char* argv[]){
     animation_data leap;
 
     Player* P1 = new Player(250,450);
-    Player* P2 = new Player(1200,750);
+    Player* P2 = new Player(1222,450);
 
     //Create Sprite Data
-    NewGame Game(P1, P2, 6);
+    NewGame Game(P1, P2);
     Game.buildLevel();
     Game.ON = false;
 
@@ -115,19 +115,21 @@ int main(int argc, char* argv[]){
         }
         while (Game.ON && window.isOpen()) {
             ticker.next_frame();
-            //cout << "Tick: ";
-            //cout << Game.getStatic(0)->getHitbox()->x << ' ' << Game.getStatic(0)->getHitbox()->y << ' ' << Game.getStatic(0)->getHitbox()->w << ' ' << Game.getStatic(0)->getHitbox()->h << "   ";
-            //cout << P2->body->getHitbox()->x << ' ' << P2->body->getHitbox()->y << ' ' << P2->body->getHitbox()->w << ' ' << P2->body->getHitbox()->h << endl;
             
-            if (P1->body->pos().y < 400 || P2->body->pos().y < 400) {
-                //t = 0;
+            if (worldshifty > -5200 && (P1->body->pos().y < 400 || P2->body->pos().y < 400)) {
+                int scale = 1;
+                if (P1->body->pos().y < 0 || P2->body->pos().y < 0) {
+                    scale = 2;
+                }
                 for (int i = 0; i < Game.getStaticsCount(); i++) {
-                    Game.getStatic(i)->p.y += risespeed;
+                    Game.getStatic(i)->p.y += risespeed*scale;
                 }
                 for (int i = 0; i < Game.getFlowersCount(); i++) {
-                    Game.getFlower(i)->p.y += risespeed;
+                    Game.getFlower(i)->p.y += risespeed*scale;
                 }
-                worldshifty += risespeed;
+                worldshifty += risespeed*scale;
+                P1->body->p.y += risespeed*scale;
+                P2->body->p.y += risespeed*scale;
             }
             t += 1;
             if (t >= fps) {
@@ -150,21 +152,20 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::A:
                                 P1->keys[0] = true;
-                                if (!P1->body->isFlippedH()) {
-                                    P1->body->flipH();
-                                }
+                                P1->faceRight(false);
                                 break;
                             case Keyboard::D:
                                 P1->keys[1] = true;
-                                if (P1->body->isFlippedH()) {
-                                    P1->body->flipH();
-                                }
+                                P1->faceRight(true);
                                 break;
                             case Keyboard::W:
                                 P1->jump(Game.getFlowers(), Game.getFlowersCount(), P2);
                                 break;
+                            case Keyboard::S:
+                                P1->block();
+                                break;
                             case Keyboard::E:
-                                P1->keys[3] = true;
+                                P1->keys[4] = true;
                                 if (P1->attackCooldown == 0 && P1->punch(P2)) {
                                     P2->takeHit(Vector2D(0,0), P1->body->isFlippedH());
                                 }
@@ -172,23 +173,23 @@ int main(int argc, char* argv[]){
                             case Keyboard::H:
                             case Keyboard::Left:
                                 P2->keys[0] = true;
-                                if (!P2->body->isFlippedH()) {
-                                    P2->body->flipH();
-                                }
+                                P2->faceRight(false);
                                 break;
                             case Keyboard::K:
                             case Keyboard::Right:
                                 P2->keys[1] = true;
-                                if (P2->body->isFlippedH()) {
-                                    P2->body->flipH();
-                                }
+                                P2->faceRight(true);
                                 break;
                             case Keyboard::U:
                             case Keyboard::Up:
                                 P2->jump(Game.getFlowers(), Game.getFlowersCount(), P1);
                                 break;
+                            case Keyboard::J:
+                            case Keyboard::Down:
+                                P2->block();
+                                break;
                             case Keyboard::I:
-                                P2->keys[3] = true;
+                                P2->keys[4] = true;
                                 if (P2->attackCooldown == 0 && P2->punch(P1)) {
                                     P1->takeHit(Vector2D(0,0), P2->body->isFlippedH());
                                 }
@@ -208,8 +209,11 @@ int main(int argc, char* argv[]){
                             case Keyboard::W:
                                 P1->keys[2] = false;
                                 break;
+                            case Keyboard::S:
+                                P1->unblock();
+                                break;
                             case Keyboard::E:
-                                P1->keys[3] = false;
+                                P1->keys[4] = false;
                                 break;
                             case Keyboard::H:
                             case Keyboard::Left:
@@ -223,28 +227,27 @@ int main(int argc, char* argv[]){
                             case Keyboard::Up:
                                 P2->keys[2] = false;
                                 break;
+                            case Keyboard::J:
+                            case Keyboard::Down:
+                                P2->unblock();
+                                break;
                             case Keyboard::I:
-                                P2->keys[3] = false;
+                                P2->keys[4] = false;
                                 break;
                             default:
                                 break;
                         }
+                        break;
+                    case Event::MouseButtonPressed:
+                        cout << "Mouse: " << event.mouseButton.x << ' ' << event.mouseButton.y - worldshifty << endl;
+                        cout << "Worldshifty: " << worldshifty << endl;
                         break;
                     default:
                         break;
                 }
             }
 
-            if (Game.getStatic(2)->posX() <= 200) {
-                Game.getStatic(2)->v.x = 5;
-            } else if (Game.getStatic(2)->posX() >= 800) {
-                Game.getStatic(2)->v.x = -5;
-            }
-            if (Game.getStatic(3)->posY() <= worldshifty+200) {
-                Game.getStatic(3)->v.y = 5;
-            } else if (Game.getStatic(3)->posY() >= worldshifty+700) {
-                Game.getStatic(3)->v.y = -5;
-            }
+            Game.movePlatforms(worldshifty);
 
             //Apply Physics
             Game.runPhysics(t, fps);
