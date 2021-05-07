@@ -605,6 +605,9 @@ void handle_leader_board_controls(Event event, string &text, int &current_player
                 }
             }
             break;
+            case Keyboard::Hyphen:
+            new_char = "-";
+            break;
             case Keyboard::Q:
             new_char = "Q";
             break;
