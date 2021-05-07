@@ -18,7 +18,7 @@ class Player {
             this->punchbox.initRectangle();
 
             this->ouch.addAnimationData(make_sprite("./images/Ailie/A_hurt_1.png"));
-            this->block.addAnimationData(make_sprite("./images/Ailie/A_stop_1.png"));
+            this->stop.addAnimationData(make_sprite("./images/Ailie/A_stop_1.png"));
 
             this->fist_windup.addAnimationData(make_sprite("./images/Ailie/A_fist_1.png"));
             this->fist.addAnimationData(make_sprite("./images/Ailie/A_fist_2.png"));
@@ -55,7 +55,9 @@ class Player {
                     this->body->setSprite(this->ouch.frameTick()); 
                 }
             } else if (this->on_ground) {
-                if (this->attackCooldown > 0) {
+                if (this->blocking) {
+                    this->body->setSprite(this->stop.frameTick());
+                } else if (this->attackCooldown > 0) {
                     this->body->setSprite(this->fist.frameTick());
                 } else if (this->keys[1]^this->keys[0]) {
                     this->body->setSprite(this->walk.frameTick()); // Do walking animations
@@ -63,9 +65,7 @@ class Player {
                     this->body->setSprite(this->idle.frameTick()); // Do idle animation
                 }
             } else {
-                if (this->blocking) {
-                    this->body->setSprite(this->block.frameTick());
-                } else if (this->attackCooldown > 0) {
+                if (this->attackCooldown > 0) {
                     this->body->setSprite(this->kick.frameTick());
                 } else if (this->hanging) {
                     this->body->setSprite(this->hang.frameTick());
@@ -75,6 +75,26 @@ class Player {
                     this->body->setSprite(this->fall.frameTick());
                 }
             }
+        }
+        void Tick() {
+            if (this->attackCooldown == 0) {
+                if (!this->blocking) {
+                    this->body->p.x += (this->keys[1]-this->keys[0])*10;
+                    this->body->p.y += (this->keys[3]-this->keys[2])*5;
+                }
+            }
+            this->body->tick();
+            this->on_ground = false;
+            this->hanging = false;
+        }
+        void runCollision(int* collide) {
+            if (collide[2]) {
+                if (collide[1] >= 1) {
+                    this->hanging = true;
+                } else if (collide[1] <= -1) {
+                    this->onGround();
+                }
+            };
         }
         bool punch(Player* PN) {
             float scale = 2;
@@ -114,6 +134,17 @@ class Player {
             }
             return false;
         }
+        bool block() {
+            this->keys[3] = true;
+            if (this->on_ground) {
+                this->blocking = true;
+            }
+            return this->blocking;
+        }
+        void unblock() {
+            this->keys[3] = false;
+            this->blocking = false;
+        }
         void make_jump() {
             this->body->v.y = -20;
             this->keys[2] = true;
@@ -141,6 +172,7 @@ class Player {
                 this->attackCooldown -= 1;
             }
         }
+
         //Attributes
         bool hurt = false;
         bool on_ground = false;
@@ -153,12 +185,13 @@ class Player {
         bool double_jump = false;
         int attackCooldown = 0;
         
+        //Left, Right, Up, Down, Punch
         bool keys[5] = {false,false,false,false,false};
         //Body
         KinematicBody2D* body;
         Hitbox punchbox;
         animation_data ouch;
-        animation_data block;
+        animation_data stop;
         animation_data fist_windup;
         animation_data fist;
         animation_data walk;
@@ -258,28 +291,24 @@ class NewGame {
                 this->P1->cooldowns();
                 this->P2->cooldowns();
             }
+            this->P1->Tick();
+            this->P2->Tick();
 
-            if (this->P1->attackCooldown == 0) {
-                this->P1->body->p.x += (this->P1->keys[1]-this->P1->keys[0])*10;
-                this->P1->body->p.y -= (this->P1->keys[2])*3;
-            }
-            if (this->P2->attackCooldown == 0) {
-                this->P2->body->p.x += (this->P2->keys[1]-this->P2->keys[0])*10;
-                this->P2->body->p.y -= (this->P2->keys[2])*3;
-            }
-            this->P1->body->tick();
-            this->P2->body->tick();
-            
-            int* collide;
-            this->P1->on_ground = false;
-            this->P2->on_ground = false;
-            
             for (int i = 0; i < this->flowers_count; i++) {
                 this->flowers[i].tick();
             }
             
+            /* Stop the Waters for testing purposes
             int waterspeed = -1;
-            /*
+            if (this->waters[0].pos().y >= 1200) {
+                waterspeed = -3;
+            }
+            for (int i = 0; i < this->waters_count; i++) {
+                this->waters[i].tick();
+                this->waters[i].v.y = waterspeed;
+            }
+            //*/
+            /* Change Player Movement Underwater
             if (this->P1->body->collides(&this->waters[0])) {
                 this->P1->body->a.y = 0;
                 //this->P1->body->dampen(Vector2D(1,1));
@@ -294,32 +323,14 @@ class NewGame {
             }
             //*/
 
-            if (this->waters[0].pos().y >= 1200) {
-                waterspeed = -3;
-            }
-            for (int i = 0; i < this->waters_count; i++) {
-                this->waters[i].tick();
-                this->waters[i].v.y = waterspeed;
-            }
-
+            int* collide;
             for (int i = 0; i < this->statics_count; i++) {
                 this->statics[i].tick();
                 collide = this->statics[i].blocks(this->P1->body, P1->hurt);
-                if (collide[2]) {
-                    if (collide[1] <= -1) {
-                        this->P1->onGround();
-                    } else if (collide[1] >= 1) {
-                        this->P1->hanging = true;
-                    }
-                };
+                this->P1->runCollision(collide);
+                
                 collide = this->statics[i].blocks(this->P2->body, P2->hurt);
-                if (collide[2]) {
-                    if (collide[1] <= -1) {
-                        this->P2->onGround();
-                    } else if (collide[1] >= 1) {
-                        this->P2->hanging = true;
-                    }
-                };
+                this->P2->runCollision(collide);
             };
         }
         void buildLevel() {

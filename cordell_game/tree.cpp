@@ -128,6 +128,8 @@ int main(int argc, char* argv[]){
                     Game.getFlower(i)->p.y += risespeed;
                 }
                 worldshifty += risespeed;
+                P1->body->p.y += risespeed;
+                P2->body->p.y += risespeed;
             }
             t += 1;
             if (t >= fps) {
@@ -150,21 +152,24 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::A:
                                 P1->keys[0] = true;
-                                if (!P1->body->isFlippedH()) {
+                                if (!P1->body->isFlippedH() && !P1->blocking) {
                                     P1->body->flipH();
                                 }
                                 break;
                             case Keyboard::D:
                                 P1->keys[1] = true;
-                                if (P1->body->isFlippedH()) {
+                                if (P1->body->isFlippedH() && !P1->blocking) {
                                     P1->body->flipH();
                                 }
                                 break;
                             case Keyboard::W:
                                 P1->jump(Game.getFlowers(), Game.getFlowersCount(), P2);
                                 break;
+                            case Keyboard::S:
+                                P1->block();
+                                break;
                             case Keyboard::E:
-                                P1->keys[3] = true;
+                                P1->keys[4] = true;
                                 if (P1->attackCooldown == 0 && P1->punch(P2)) {
                                     P2->takeHit(Vector2D(0,0), P1->body->isFlippedH());
                                 }
@@ -172,14 +177,14 @@ int main(int argc, char* argv[]){
                             case Keyboard::H:
                             case Keyboard::Left:
                                 P2->keys[0] = true;
-                                if (!P2->body->isFlippedH()) {
+                                if (!P2->body->isFlippedH() && !P2->blocking) {
                                     P2->body->flipH();
                                 }
                                 break;
                             case Keyboard::K:
                             case Keyboard::Right:
                                 P2->keys[1] = true;
-                                if (P2->body->isFlippedH()) {
+                                if (P2->body->isFlippedH() && !P2->blocking) {
                                     P2->body->flipH();
                                 }
                                 break;
@@ -187,8 +192,12 @@ int main(int argc, char* argv[]){
                             case Keyboard::Up:
                                 P2->jump(Game.getFlowers(), Game.getFlowersCount(), P1);
                                 break;
+                            case Keyboard::J:
+                            case Keyboard::Down:
+                                P2->block();
+                                break;
                             case Keyboard::I:
-                                P2->keys[3] = true;
+                                P2->keys[4] = true;
                                 if (P2->attackCooldown == 0 && P2->punch(P1)) {
                                     P1->takeHit(Vector2D(0,0), P2->body->isFlippedH());
                                 }
@@ -208,8 +217,11 @@ int main(int argc, char* argv[]){
                             case Keyboard::W:
                                 P1->keys[2] = false;
                                 break;
+                            case Keyboard::S:
+                                P1->unblock();
+                                break;
                             case Keyboard::E:
-                                P1->keys[3] = false;
+                                P1->keys[4] = false;
                                 break;
                             case Keyboard::H:
                             case Keyboard::Left:
@@ -223,8 +235,12 @@ int main(int argc, char* argv[]){
                             case Keyboard::Up:
                                 P2->keys[2] = false;
                                 break;
+                            case Keyboard::J:
+                            case Keyboard::Down:
+                                P2->unblock();
+                                break;
                             case Keyboard::I:
-                                P2->keys[3] = false;
+                                P2->keys[4] = false;
                                 break;
                             default:
                                 break;
