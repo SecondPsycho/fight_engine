@@ -61,7 +61,7 @@ int main(int argc, char* argv[]){
     int seconds = 0;
     int t = 0;
     int risespeed = 2;
-    int fps = 30;
+    int fps = 48;
 
     Framerate ticker(fps);
     while (window.isOpen()) {
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]){
         while (Game.ON && window.isOpen()) {
             ticker.next_frame();
             
-            if (worldshifty > -5200 && (P1->body->pos().y < 400 || P2->body->pos().y < 400)) {
+            if (worldshifty < 5200 && (P1->body->pos().y < 400 || P2->body->pos().y < 400)) {
                 int scale = 1;
                 if (P1->body->pos().y < 0 || P2->body->pos().y < 0) {
                     scale = 2;
@@ -126,6 +126,9 @@ int main(int argc, char* argv[]){
                 }
                 for (int i = 0; i < Game.getFlowersCount(); i++) {
                     Game.getFlower(i)->p.y += risespeed*scale;
+                }
+                for (int i = 0; i < Game.getWatersCount(); i++) {
+                    Game.getWater(i)->p.y += risespeed*scale;
                 }
                 worldshifty += risespeed*scale;
                 P1->body->p.y += risespeed*scale;
@@ -166,8 +169,12 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::E:
                                 P1->keys[4] = true;
-                                if (P1->attackCooldown == 0 && P1->punch(P2)) {
-                                    P2->takeHit(Vector2D(0,0), P1->body->isFlippedH());
+                                if (P1->attackCooldown == 0) {
+                                    if (P1->on_ground) {
+                                        P1->attackCooldown = 3;
+                                    } else {
+                                        P1->attackCooldown = 20;
+                                    }
                                 }
                                 break;
                             case Keyboard::H:
@@ -190,8 +197,12 @@ int main(int argc, char* argv[]){
                                 break;
                             case Keyboard::I:
                                 P2->keys[4] = true;
-                                if (P2->attackCooldown == 0 && P2->punch(P1)) {
-                                    P1->takeHit(Vector2D(0,0), P2->body->isFlippedH());
+                                if (P2->attackCooldown == 0) {
+                                    if (P2->on_ground) {
+                                        P2->attackCooldown = 3;
+                                    } else {
+                                        P2->attackCooldown = 20;
+                                    }
                                 }
                                 break;
                             default:
@@ -239,8 +250,6 @@ int main(int argc, char* argv[]){
                         }
                         break;
                     case Event::MouseButtonPressed:
-                        cout << "Mouse: " << event.mouseButton.x << ' ' << event.mouseButton.y - worldshifty << endl;
-                        cout << "Worldshifty: " << worldshifty << endl;
                         break;
                     default:
                         break;
@@ -249,28 +258,16 @@ int main(int argc, char* argv[]){
 
             Game.movePlatforms(worldshifty);
 
+            P1->processAttack(P2);
+            P2->processAttack(P1);
+
             //Apply Physics
-            Game.runPhysics(t, fps);
+            Game.runPhysics(t, fps, worldshifty);
             P1->body->dampen(f);
             P2->body->dampen(f);
 
             P1->animate();
             P2->animate();
-
-            //Apply animation
-            //*
-            
-            /*
-            if (!P2->on_ground) {
-                P2->body->setSprite(P2->leap.getCurrentFrame()); // Do leap animation
-            }
-            else 
-            if (P2->keys[1]^P2->keys[0]) {
-                P2->body->setSprite(P2->walk.frameTick()); // Do walking animations
-            }
-            else {
-                P2->body->setSprite(P2->idle.frameTick()); // Do idle animation
-            }//*/
 
             //Process death
             if (P1->body->posY() >= Game.getWater(1)->pos().y || P2->body->posY() >= Game.getWater(1)->pos().y) {
@@ -279,7 +276,6 @@ int main(int argc, char* argv[]){
                 seconds = 78;
                 cout << "Game Over" << endl;
             }
-            
 
             //Draw the Screen
             window.clear(Color(42,42,42,255)); // Dark gray.
@@ -297,12 +293,13 @@ int main(int argc, char* argv[]){
                 window.draw(Game.getWater(i)->getRectangle());
             }
 
-            //*
+            /*
             window.draw(P1->punchbox.getRectangle());
             window.draw(P2->punchbox.getRectangle());
-            //*/
+            
             window.draw(P1->body->getHitbox()->getRectangle());
             window.draw(P2->body->getHitbox()->getRectangle());
+            //*/
 
             window.display();
         }
