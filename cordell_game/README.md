@@ -9,6 +9,6 @@ Our game engine called fight_engine is fairly robust and helps to handle physics
 I used the engine to handle sprite information and physics. The physics allowed me to include moving platforms, collideable and non-collideable objects, clean jumping arcs, and even the ability to send characters flying with only a few lines of code! The Music and Text functions were also very nice, allowing me to easily create a title screen and add atmosphere.
 
 ## Screenshots
-![Title](./title.png)
-![Playing](./fight.png)
-![End](./end.png)
+![Title](./screenshots/title.png)
+![Playing](./screenshots/fight.png)
+![End](./screenshots/end.png)
