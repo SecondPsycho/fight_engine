@@ -94,7 +94,6 @@ class Player {
                 if (collide[1] >= 1 and collide[0] == 0) {
                     this->hanging = true;
                     this->on_ground = false;
-                    //this->double_jump = true;
                 } else if (collide[1] <= -1) {
                     this->onGround();
                 } else {
@@ -182,7 +181,7 @@ class Player {
                 this->attackCooldown = 1;
             }
 
-            this->dmg += 5;
+            this->dmg += 3;
             if (flipped) {
                 this->body->v.x -= this->dmg;
             } else {
