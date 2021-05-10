@@ -14,7 +14,7 @@ class Player {
             this->body->getHitbox()->initRectangle();
             this->body->adjustHitbox(30,10,68,108);
 
-            this->punchbox = Hitbox(px,py,32*scale,48*scale);
+            this->punchbox = Hitbox(px,py,32*scale,32*scale);
             this->punchbox.initRectangle();
 
             this->ouch.addAnimationData(make_sprite("./images/Ailie/A_hurt_1.png"));
@@ -80,30 +80,52 @@ class Player {
             if (this->attackCooldown == 0) {
                 if (!this->blocking) {
                     this->body->p.x += (this->keys[1]-this->keys[0])*10;
-                    this->body->p.y += (this->keys[3]-this->keys[2])*5;
+                    if (!this->hurt && !this->attack) {
+                        this->body->p.y += (this->keys[3]-this->keys[2])*5;
+                    }
                 }
             }
             this->body->tick();
-            this->on_ground = false;
+            
             this->hanging = false;
         }
         void runCollision(int* collide) {
             if (collide[2]) {
-                if (collide[1] >= 1) {
+                if (collide[1] >= 1 and collide[0] == 0) {
                     this->hanging = true;
-                    this->double_jump = true;
+                    this->on_ground = false;
                 } else if (collide[1] <= -1) {
                     this->onGround();
+                } else {
+                    this->on_ground = false;
                 }
             };
         }
+        void processAttack(Player* PN) {
+            if (this->attackCooldown > 0 && !this->hit_target && this->punch(PN)) {
+                this->hit_target = true;
+                if (PN->blocking) {
+                    this->takeHit(Vector2D(0,0), !this->body->isFlippedH());
+                } else {
+                    PN->takeHit(Vector2D(0,0), this->body->isFlippedH());
+                }
+            }
+
+        }
         bool punch(Player* PN) {
             float scale = 2;
-            this->attackCooldown += 3;
-            if (this->body->isFlippedH()) {
-                this->punchbox.setPosition(this->body->posX()-(16*scale), this->body->posY()+(8*scale));
+            if (this->on_ground) {
+                if (this->body->isFlippedH()) {
+                    this->punchbox.setPosition(this->body->posX()-(4*scale), this->body->posY()+(8*scale));
+                } else {
+                    this->punchbox.setPosition(this->body->posX()+(36*scale), this->body->posY()+(8*scale));
+                }
             } else {
-                this->punchbox.setPosition(this->body->posX()+(48*scale), this->body->posY()+(8*scale));
+                if (this->body->isFlippedH()) {
+                    this->punchbox.setPosition(this->body->posX()-(4*scale), this->body->posY()+(32*scale));
+                } else {
+                    this->punchbox.setPosition(this->body->posX()+(36*scale), this->body->posY()+(32*scale));
+                }
             }
             return this->punchbox.collides(*(PN->body->getHitbox()));
         }
@@ -146,6 +168,7 @@ class Player {
             this->blocking = false;
         }
         void make_jump() {
+            this->on_ground = false;
             this->body->v.y = -20;
             this->keys[2] = true;
             this->hurt = false;
@@ -153,7 +176,12 @@ class Player {
         }
         void takeHit(Vector2D dir, bool flipped) {
             this->hurt = true;
-            this->dmg += 5;
+            this->on_ground = false;
+            if (this->attackCooldown > 0) {
+                this->attackCooldown = 1;
+            }
+
+            this->dmg += 3;
             if (flipped) {
                 this->body->v.x -= this->dmg;
             } else {
@@ -162,6 +190,10 @@ class Player {
             this->body->v.y -= this->dmg/3;
         }
         void onGround() {
+            if (!this->on_ground) {
+                this->attackCooldown = 0;
+                this->hit_target = false;
+            }
             this->on_ground = true;
             this->double_jump = true;
             this->hurt = false;
@@ -175,6 +207,9 @@ class Player {
         void cooldowns() {
             if (this->attackCooldown > 0) {
                 this->attackCooldown -= 1;
+                if (this->attackCooldown == 0) {
+                    this->hit_target = false;
+                }
             }
         }
 
@@ -188,6 +223,7 @@ class Player {
         bool blocking = false;
 
         bool double_jump = false;
+        bool hit_target = false;
         int attackCooldown = 0;
         
         //Left, Right, Up, Down, Punch
@@ -293,7 +329,7 @@ class NewGame {
         int getWatersCount() {
             return this->waters_count;
         }
-        void runPhysics(int t, int fps) {
+        void runPhysics(int t, int fps, int worldshifty) {
             fps = fps / 10;
             if (t % fps == 0) {
                 this->P1->cooldowns();
@@ -306,16 +342,21 @@ class NewGame {
                 this->flowers[i].tick();
             }
             
-            /* Stop the Waters for testing purposes
+            // Waters
             int waterspeed = -1;
-            if (this->waters[0].pos().y >= 1200) {
+            if (this->waters[0].pos().y >= 1205) {
                 waterspeed = -3;
             }
-            for (int i = 0; i < this->waters_count; i++) {
-                this->waters[i].tick();
-                this->waters[i].v.y = waterspeed;
+            this->waters[0].tick();
+            this->waters[1].tick();
+            if (-4200 + worldshifty < this->waters[0].pos().y ) {
+                this->waters[0].v.y = waterspeed;
+                this->waters[1].v.y = waterspeed;
+            } else {
+                this->waters[0].v.y = 0;
+                this->waters[1].v.y = 0;
             }
-            //*/
+
             /* Change Player Movement Underwater
             if (this->P1->body->collides(&this->waters[0])) {
                 this->P1->body->a.y = 0;
@@ -383,8 +424,8 @@ class NewGame {
 
             //Section 6
             count = 28;
-            platformControlY(worldshifty, count, -5000, -4200); count++;
-            platformControlY(worldshifty, count, -5000, -4200); count++;
+            platformControlY(worldshifty, count, -5000, -4450); count++;
+            platformControlY(worldshifty, count, -5000, -4450); count++;
         }
         void buildLevel() {
 
@@ -430,6 +471,8 @@ class NewGame {
             this->addFlower(0,-1750);
             this->addFlower(750,-1525);
             this->addFlower(200,-1500);
+            this->addFlower(675,-1275);
+            this->addFlower(1000,-1000);
 
             //Section 4
             this->addStatic(100,-2000,900,200);
@@ -460,12 +503,17 @@ class NewGame {
 
             //Section 6
             this->addStatic(300,-4300,1000,300);
-            this->addStatic(400,-4500);
-            this->addStatic(900,-4500);
+            this->addStatic(400,-4600);
+            this->addStatic(900,-4600);
 
             this->addStatic(0,-5000); //28
             this->addStatic(1300,-5000); //29
-            
+
+            this->addFlower(125,-4175);
+            this->addFlower(1425,-4175);
+            this->addFlower(775,-4800);
+            this->addFlower(525,-5000);
+            this->addFlower(1025,-5000);
 
             //Set 'em up
             for (int i = 0; i < this->statics_count; i ++) {
@@ -485,9 +533,10 @@ class NewGame {
 
             for (int i = 0; i < this->waters_count; i ++) {
                 this->getWater(i)->initRectangle();
-                this->getWater(i)->setRectColor(0,192,255,255);
                 this->getWater(i)->v.y = -1;
             }
+            this->getWater(0)->setRectColor(0,192,255,127);
+            this->getWater(1)->setRectColor(0,192,255,255);
             
         }
         bool ON = true;
