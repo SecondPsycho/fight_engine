@@ -689,7 +689,7 @@ void handle_leader_board_controls(Event event, string &text, int &current_player
             default:
             break;
         }
-        break;00
+        break;
         default:
         break;
     }
