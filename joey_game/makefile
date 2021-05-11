@@ -5,8 +5,8 @@ INCLUDE_SFML_EXTRAS = -lsfml-audio -lsfml-network
 
 joey: ./src/joey.cpp ../fight_engine.cpp
 	g++ -o joey ./src/joey.cpp $(INCLUDE_SFML) $(INCLUDE_SFML_EXTRAS) -Wall -Werror
-	./joey
-	rm -f joey
+#	./joey
+#	rm -f joey
 
 clean:
 	rm -f joey
